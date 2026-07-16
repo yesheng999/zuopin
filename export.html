@@ -381,18 +381,34 @@
         </div>
 
         <!-- 6. 互联网类：H5二维码 -->
-        <div class="export-section" id="section-h5">
+       <div class="export-section" id="section-h5">
           <div class="export-header">
             <div class="export-icon icon-h5">📱</div>
             <div>
               <h3>互联网类 · H5页面二维码</h3>
-              <div class="format">格式：PNG二维码 · 含H5链接</div>
+              <div class="format">格式：PNG二维码 · 含H5链接 · 评审扫码即可访问</div>
             </div>
           </div>
           <div class="export-body">
             <p style="font-size:14px; color:var(--text-light); margin-bottom:12px;">
-              生成H5互动页面的二维码图片，扫码即可打开答题游戏。
+              在下方输入 GitHub Pages 部署后的 H5 页面链接，点击生成二维码。<br>
+              评审人员用手机扫码即可打开互动答题页面。
             </p>
+
+            <!-- URL输入 -->
+            <div style="margin-bottom:16px;">
+              <label style="display:block; font-size:13px; font-weight:700; color:var(--text-main); margin-bottom:8px;">
+                H5页面链接地址（GitHub Pages URL）
+              </label>
+              <input type="text" id="h5UrlInput" 
+                style="width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:12px; font-size:14px; font-family:inherit; transition:all 0.3s;"
+                placeholder="https://你的用户名.github.io/zuopin/internet/h5.html"
+                value="" />
+              <p style="font-size:12px; color:var(--text-light); margin-top:6px;">
+                示例：https://yesheng999.github.io/zuopin/internet/h5.html
+              </p>
+            </div>
+
             <div class="export-actions">
               <button class="export-btn btn-purple" onclick="generateQRCode()">
                 📱 生成H5二维码
@@ -402,9 +418,62 @@
             <div class="export-preview" id="qrPreview"></div>
           </div>
           <div class="export-tips">
-            <strong>说明：</strong>互联网类H5需以电子文档形式（含二维码/链接）提交。
-            将H5页面部署到服务器后，生成二维码图片即可提交。<br>
-            <strong>部署方法：</strong>可将整个作品文件夹上传到免费托管平台（如GitHub Pages、Vercel等）。
+            <strong>📖 GitHub Pages 部署步骤（3步搞定）：</strong><br>
+            <strong>第1步：</strong>登录 GitHub（github.com），点击右上角"+"→"New repository"，
+            仓库名填 <code>zuopin</code>，选 Public，点"Create repository"<br>
+            <strong>第2步：</strong>在本页面下方点击"一键推送代码到GitHub"按钮（需先在本机配置GitHub登录）<br>
+            <strong>第3步：</strong>在GitHub仓库页面点 Settings → Pages → Source 选"master"分支 → Save，
+            等待1-2分钟后页面顶部出现链接地址
+            <br><br>
+            <strong>部署成功后：</strong>将生成的链接（如 <code>https://用户名.github.io/zuopin/internet/h5.html</code>）
+            填入上方输入框，点击生成二维码即可用于投稿。<br>
+            <strong>提示：</strong>链接在征集活动期间需保持可访问，请勿删除GitHub仓库。
+          </div>
+        </div>
+
+        <!-- GitHub 推送 -->
+        <div class="export-section">
+          <div class="export-header">
+            <div class="export-icon" style="background:#F0F0F0;">🚀</div>
+            <div>
+              <h3>一键推送代码到 GitHub</h3>
+              <div class="format">将作品部署到 GitHub Pages，生成公网可访问链接</div>
+            </div>
+          </div>
+          <div class="export-body">
+            <p style="font-size:14px; color:var(--text-light); margin-bottom:12px;">
+              请先在 GitHub 网站上创建好仓库（名称建议为 zuopin），然后填入你的 GitHub 用户名，点击推送。
+            </p>
+            <div style="margin-bottom:16px;">
+              <label style="display:block; font-size:13px; font-weight:700; color:var(--text-main); margin-bottom:8px;">
+                GitHub 用户名
+              </label>
+              <input type="text" id="ghUsername" 
+                style="width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:12px; font-size:14px; font-family:inherit;"
+                placeholder="例如：yesheng999"
+                value="yesheng999" />
+            </div>
+            <div style="margin-bottom:16px;">
+              <label style="display:block; font-size:13px; font-weight:700; color:var(--text-main); margin-bottom:8px;">
+                仓库名称
+              </label>
+              <input type="text" id="ghRepo" 
+                style="width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:12px; font-size:14px; font-family:inherit;"
+                placeholder="例如：zuopin"
+                value="zuopin" />
+            </div>
+            <div class="export-actions">
+              <button class="export-btn btn-purple" id="pushBtn" onclick="pushToGitHub()">
+                🚀 推送代码到 GitHub
+              </button>
+            </div>
+            <div class="export-status" id="pushStatus"></div>
+          </div>
+          <div class="export-tips">
+            <strong>前提条件：</strong>
+            1. 已在 GitHub 网站创建好空仓库（不要勾选 README）<br>
+            2. 本机已安装 Git 并配置好 GitHub 登录（用户名/邮箱或Token）<br>
+            3. 首次推送可能需要输入 GitHub 密码或 Personal Access Token
           </div>
         </div>
 
@@ -1090,13 +1159,19 @@
     async function generateQRCode() {
       showStatus('qrStatus', 'loading', '正在生成二维码...');
 
-      try {
-        // H5页面URL（当前服务器地址 + internet/h5.html）
-        const baseUrl = window.location.origin + window.location.pathname.replace('export.html', '');
-        const h5Url = baseUrl + 'internet/h5.html';
+      // 读取输入的URL
+      let h5Url = document.getElementById('h5UrlInput').value.trim();
 
+      // 如果未输入，使用当前页面地址作为fallback
+      if (!h5Url) {
+        const baseUrl = window.location.origin + window.location.pathname.replace('export.html', '');
+        h5Url = baseUrl + 'internet/h5.html';
+        showStatus('qrStatus', 'info', '未输入链接，使用当前本地地址生成。部署到GitHub后请填入正式链接重新生成。');
+      }
+
+      try {
         // 使用API生成二维码
-        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(h5Url)}`;
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(h5Url)}`;
 
         const preview = document.getElementById('qrPreview');
         preview.innerHTML = '';
@@ -1130,10 +1205,89 @@
         showStatus('qrStatus', 'success',
           `✅ 二维码已生成！\n` +
           `H5链接：${h5Url}\n` +
-          '扫码即可打开互动答题页面。下载二维码图片用于投稿。');
+          '扫码即可打开互动答题页面。下载二维码图片用于投稿。\n' +
+          '请确认链接在征集活动期间可正常访问。');
       } catch (e) {
-        showStatus('qrStatus', 'error', '生成失败：' + e.message + '。可手动使用在线二维码工具生成。');
+        showStatus('qrStatus', 'error', '生成失败：' + e.message + '\n可手动访问 https://www.cli.im 在线生成二维码。');
       }
+    }
+
+    // ===== 7. 推送代码到GitHub（生成命令） =====
+    function pushToGitHub() {
+      const username = document.getElementById('ghUsername').value.trim();
+      const repo = document.getElementById('ghRepo').value.trim();
+
+      if (!username || !repo) {
+        showStatus('pushStatus', 'error', '请填写 GitHub 用户名和仓库名称！');
+        return;
+      }
+
+      const remoteUrl = `https://github.com/${username}/${repo}.git`;
+      const pagesUrl = `https://${username}.github.io/${repo}/internet/h5.html`;
+      const repoUrl = `https://github.com/${username}/${repo}`;
+      const settingsUrl = `https://github.com/${username}/${repo}/settings/pages`;
+
+      const statusEl = document.getElementById('pushStatus');
+      statusEl.className = 'export-status show info';
+      statusEl.innerHTML = `
+        <div style="margin-bottom:16px;">
+          <strong>📋 请按以下步骤操作：</strong>
+        </div>
+        <div style="background:#1a1a2e; color:#00ff88; padding:16px; border-radius:8px; font-family:'Courier New',monospace; font-size:13px; line-height:1.8; margin-bottom:16px; white-space:pre-wrap;">
+# 第1步：在GitHub网站创建仓库
+#   打开 https://github.com/new
+#   仓库名填: ${repo}
+#   选 Public → Create repository
+
+# 第2步：在终端执行以下命令
+cd e:\\Projects\\Workspace\\zuopin
+git remote add origin ${remoteUrl}
+git push -u origin master
+
+# 如果提示认证失败，需要输入密码或Token
+# Token生成: GitHub → Settings → Developer settings
+#           → Personal access tokens → Generate new token
+        </div>
+        <button class="export-btn btn-blue" style="font-size:13px;padding:8px 16px;" onclick="copyGitCommands('${username}','${repo}')">
+          📋 一键复制命令
+        </button>
+        <div style="margin-top:16px; padding-top:16px; border-top:1px dashed var(--border);">
+          <strong>第3步：推送成功后，开启 GitHub Pages</strong><br>
+          ① 打开 <a href="${settingsUrl}" target="_blank" style="color:#2E86DE;">${settingsUrl}</a><br>
+          ② Source 选 master 分支 → Save<br>
+          ③ 等1-2分钟，页面顶部出现绿色链接
+        </div>
+        <div style="margin-top:16px; padding-top:16px; border-top:1px dashed var(--border);">
+          <strong>第4步：生成二维码</strong><br>
+          推送成功后，H5链接为：<br>
+          <code style="background:var(--bg-warm);padding:4px 8px;border-radius:4px;font-size:13px;">${pagesUrl}</code><br>
+          <button class="export-btn btn-purple" style="font-size:13px;padding:8px 16px;margin-top:8px;" onclick="fillH5Url('${pagesUrl}')">
+            ✅ 填入链接并生成二维码
+          </button>
+        </div>
+      `;
+    }
+
+    function copyGitCommands(username, repo) {
+      const cmds = `cd e:\\Projects\\Workspace\\zuopin
+git remote add origin https://github.com/${username}/${repo}.git
+git push -u origin master`;
+      navigator.clipboard.writeText(cmds).then(() => {
+        const btn = event.target;
+        const orig = btn.textContent;
+        btn.textContent = '✅ 已复制！';
+        btn.style.background = '#00B894';
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.style.background = '';
+        }, 2000);
+      });
+    }
+
+    function fillH5Url(url) {
+      document.getElementById('h5UrlInput').value = url;
+      document.getElementById('qrStatus').scrollIntoView({ behavior:'smooth' });
+      generateQRCode();
     }
 
   </script>
