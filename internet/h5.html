@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>法治知识大闯关 - 互联网类·H5</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .h5-wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 700px;
+      background: linear-gradient(180deg, #667EEA 0%, #764BA2 100%);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    /* H5 手机模拟框 */
+    .h5-frame {
+      position: relative;
+      min-height: 700px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 开始页 */
+    .h5-start {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+      color: white;
+    }
+
+    .h5-start .title-icon {
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .h5-start .title-icon svg {
+      width: 60px;
+      height: 60px;
+    }
+
+    .h5-start h1 {
+      font-size: 30px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    .h5-start p {
+      font-size: 15px;
+      opacity: 0.85;
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
+    .h5-start .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      padding: 8px 20px;
+      border-radius: var(--radius-xl);
+      font-size: 13px;
+      margin: 16px 0 32px;
+    }
+
+    .h5-start .start-btn {
+      background: linear-gradient(135deg, #FFD93D, #FF8C42);
+      color: white;
+      border: none;
+      padding: 16px 48px;
+      border-radius: var(--radius-xl);
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(255, 217, 61, 0.4);
+      transition: var(--transition);
+      font-family: inherit;
+      letter-spacing: 2px;
+    }
+
+    .h5-start .start-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 32px rgba(255, 217, 61, 0.5);
+    }
+
+    /* 答题页 */
+    .h5-quiz {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      padding: 24px;
+      color: white;
+    }
+
+    .h5-quiz.active {
+      display: flex;
+    }
+
+    .quiz-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .quiz-progress-text {
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    .quiz-score {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 16px;
+      border-radius: var(--radius-xl);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .quiz-progress-bar {
+      height: 8px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .quiz-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FFD93D, #FF8C42);
+      width: 0%;
+      transition: width 0.4s ease;
+      border-radius: 4px;
+    }
+
+    .quiz-scene-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 16px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+
+    .quiz-question {
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .quiz-hint {
+      font-size: 13px;
+      text-align: center;
+      opacity: 0.7;
+      margin-bottom: 24px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .quiz-option {
+      background: rgba(255,255,255,0.12);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: left;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .quiz-option:hover:not(.disabled) {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.4);
+      transform: translateX(4px);
+    }
+
+    .quiz-option .opt-letter {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .quiz-option.correct {
+      background: rgba(0, 184, 148, 0.4);
+      border-color: #00B894;
+    }
+
+    .quiz-option.correct .opt-letter {
+      background: #00B894;
+    }
+
+    .quiz-option.wrong {
+      background: rgba(231, 76, 60, 0.3);
+      border-color: #E74C3C;
+    }
+
+    .quiz-option.wrong .opt-letter {
+      background: #E74C3C;
+    }
+
+    .quiz-option.disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+
+    /* 反馈 */
+    .quiz-feedback {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      color: var(--text-main);
+      display: none;
+      box-shadow: var(--shadow-lg);
+      animation: bounce-in 0.4s ease;
+    }
+
+    .quiz-feedback.show {
+      display: block;
+    }
+
+    .feedback-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .feedback-text {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .feedback-text strong {
+      color: var(--primary);
+    }
+
+    .feedback-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #667EEA, #764BA2);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+
+    .feedback-btn:hover {
+      transform: scale(1.02);
+    }
+
+    /* 结束页 */
+    .h5-result {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+      color: white;
+    }
+
+    .h5-result.active {
+      display: flex;
+    }
+
+    .result-trophy {
+      font-size: 64px;
+      margin-bottom: 16px;
+      animation: bounce-in 0.8s ease;
+    }
+
+    .result-score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      border: 4px solid rgba(255,255,255,0.3);
+    }
+
+    .result-score-circle .num {
+      font-size: 40px;
+      font-weight: 900;
+      color: #FFD93D;
+    }
+
+    .result-score-circle .label {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .result-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .result-msg {
+      font-size: 15px;
+      opacity: 0.85;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .result-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .result-btn {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+
+    .result-btn.primary {
+      background: linear-gradient(135deg, #FFD93D, #FF8C42);
+      color: white;
+    }
+
+    .result-btn.secondary {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    /* 星星动画 */
+    .star-particle {
+      position: absolute;
+      font-size: 20px;
+      pointer-events: none;
+      animation: star-fly 1s ease-out forwards;
+    }
+
+    @keyframes star-fly {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-100px) scale(0.5) rotate(360deg); }
+    }
+
+    /* 装饰泡泡 */
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    @media (max-width: 520px) {
+      .h5-wrapper { border-radius: 0; min-height: calc(100vh - 60px); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">⚖️</span>
+        <span>普法创意作品集</span>
+      </a>
+      <a href="../index.html" class="back-btn">← 返回首页</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper" style="padding: 20px 0;">
+    <div class="container">
+
+      <!-- 作品头部 -->
+      <div class="work-header" style="margin-bottom: 24px;">
+        <span class="work-badge badge-internet">互联网类 · H5</span>
+        <h1 class="work-title">法治知识大闯关</h1>
+        <p class="work-subtitle">在浙里·看见杭州法治——我与杭州法治20年</p>
+        <div class="author-info">
+          <span>👤 作者：二年级小朋友</span>
+          <span class="sep"></span>
+          <span>📱 形式：H5互动页面</span>
+          <span class="sep"></span>
+          <span>🎮 互动答题</span>
+        </div>
+      </div>
+
+      <!-- H5互动页面 -->
+      <div class="h5-wrapper">
+        <div class="h5-frame" id="h5Frame">
+
+          <!-- 装饰泡泡 -->
+          <div class="bubble" style="width:80px;height:80px;top:60px;left:-20px;"></div>
+          <div class="bubble" style="width:120px;height:120px;top:200px;right:-40px;"></div>
+          <div class="bubble" style="width:60px;height:60px;bottom:100px;left:20px;"></div>
+
+          <!-- 开始页 -->
+          <div class="h5-start" id="h5Start">
+            <div class="title-icon">
+              <svg viewBox="0 0 60 60">
+                <rect x="10" y="5" width="40" height="50" rx="6" fill="white" opacity="0.95"/>
+                <text x="30" y="35" text-anchor="middle" font-size="22" fill="#667EEA" font-weight="bold">闯</text>
+              </svg>
+            </div>
+            <h1>法治知识大闯关</h1>
+            <p>边玩边学法治知识</p>
+            <p>看看你能闯几关！</p>
+            <div class="info-badge">
+              <span>📊 共5道题</span>
+              <span>·</span>
+              <span>⏱ 约2分钟</span>
+            </div>
+            <button class="start-btn" onclick="startQuiz()">开始闯关 →</button>
+            <p style="margin-top:24px; font-size:12px; opacity:0.5;">在浙里·看见杭州法治</p>
+          </div>
+
+          <!-- 答题页 -->
+          <div class="h5-quiz" id="h5Quiz">
+            <div class="quiz-topbar">
+              <span class="quiz-progress-text" id="progressText">第 1 题 / 共 5 题</span>
+              <span class="quiz-score" id="scoreDisplay">⭐ 0 分</span>
+            </div>
+            <div class="quiz-progress-bar">
+              <div class="quiz-progress-fill" id="quizProgressFill"></div>
+            </div>
+            <div class="quiz-scene-icon" id="quizSceneIcon">🚦</div>
+            <div class="quiz-question" id="quizQuestion">问题内容</div>
+            <div class="quiz-hint" id="quizHint">提示文字</div>
+            <div class="quiz-options" id="quizOptions">
+              <!-- JS生成选项 -->
+            </div>
+
+            <!-- 反馈 -->
+            <div class="quiz-feedback" id="quizFeedback">
+              <div class="feedback-icon" id="feedbackIcon">🎉</div>
+              <div class="feedback-text" id="feedbackText">回答正确！</div>
+              <button class="feedback-btn" id="feedbackBtn" onclick="nextQuestion()">下一题 →</button>
+            </div>
+          </div>
+
+          <!-- 结束页 -->
+          <div class="h5-result" id="h5Result">
+            <div class="result-trophy" id="resultTrophy">🏆</div>
+            <div class="result-score-circle">
+              <div class="num" id="resultScore">0</div>
+              <div class="label">分</div>
+            </div>
+            <div class="result-title" id="resultTitle">法治小达人！</div>
+            <div class="result-msg" id="resultMsg">恭喜你完成了所有题目！</div>
+            <div class="result-btns">
+              <button class="result-btn primary" onclick="restartQuiz()">🔄 再玩一次</button>
+              <button class="result-btn secondary" onclick="location.href='../index.html'">← 返回作品集</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- H5说明 -->
+      <div style="max-width:480px; margin:24px auto 0; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div class="desc-card" style="background:var(--bg-card); border-radius:var(--radius-md); padding:20px; box-shadow:var(--shadow-sm);">
+          <h4 style="font-size:15px; color:var(--primary-dark); margin-bottom:8px;">📱 H5说明</h4>
+          <p style="font-size:13px; color:var(--text-light); line-height:1.7;">
+            互动答题游戏，适合手机端浏览。点击开始，回答5道法治小知识题，获得分数和称号！
+          </p>
+        </div>
+        <div class="desc-card" style="background:var(--bg-card); border-radius:var(--radius-md); padding:20px; box-shadow:var(--shadow-sm);">
+          <h4 style="font-size:15px; color:var(--primary-dark); margin-bottom:8px;">🎯 投稿信息</h4>
+          <ul style="font-size:13px; color:var(--text-light); line-height:1.7; padding-left:16px;">
+            <li>类别：互联网类 · H5</li>
+            <li>形式：互动答题页面</li>
+            <li>主题：法治知识闯关</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ===== 题库 =====
+    const questions = [
+      {
+        icon: '🚦',
+        question: '红灯亮了，你应该怎么做？',
+        hint: '想一想交通规则哦～',
+        options: [
+          { text: '赶紧跑过去', correct: false },
+          { text: '停下来等绿灯', correct: true },
+          { text: '看看没车就过去', correct: false },
+        ],
+        feedback: {
+          correct: '太棒了！红灯停，绿灯行，安全第一记心里！',
+          wrong: '不对哦！红灯必须停下来等绿灯，安全最重要！'
+        }
+      },
+      {
+        icon: '👛',
+        question: '在公园捡到一个钱包，你应该？',
+        hint: '想想《民法典》怎么说～',
+        options: [
+          { text: '自己留着用', correct: false },
+          { text: '交给警察叔叔', correct: true },
+          { text: '扔到垃圾桶里', correct: false },
+        ],
+        feedback: {
+          correct: '真棒！拾金不昧是好品质，《民法典》也规定要归还失物哦！',
+          wrong: '不对哦！捡到东西应该交给警察叔叔，这叫拾金不昧！'
+        }
+      },
+      {
+        icon: '🏫',
+        question: '看到同学被欺负，你应该？',
+        hint: '想一想该怎么做才是对的～',
+        options: [
+          { text: '假装没看见', correct: false },
+          { text: '也去欺负他', correct: false },
+          { text: '告诉老师并帮助他', correct: true },
+        ],
+        feedback: {
+          correct: '你真是个好朋友！互相帮助，拒绝校园欺凌！',
+          wrong: '不对哦！我们应该帮助同学，告诉老师，不能让欺凌发生！'
+        }
+      },
+      {
+        icon: '👮',
+        question: '遇到困难或危险时，可以找谁帮忙？',
+        hint: '想想谁会保护我们～',
+        options: [
+          { text: '找警察叔叔', correct: true },
+          { text: '找陌生人帮忙', correct: false },
+          { text: '谁也不找', correct: false },
+        ],
+        feedback: {
+          correct: '答对了！警察叔叔会保护我们的安全，遇到困难可以找他们！',
+          wrong: '不对哦！遇到困难要找警察叔叔，他们专门保护我们的安全！'
+        }
+      },
+      {
+        icon: '⭐',
+        question: '在杭州，做一个好公民最重要的是？',
+        hint: '想一想我们活动的主题～',
+        options: [
+          { text: '遵守法律法规', correct: true },
+          { text: '只管自己开心', correct: false },
+          { text: '什么都不做', correct: false },
+        ],
+        feedback: {
+          correct: '完美！在浙里看见杭州法治，从小遵守规则，做守法好公民！',
+          wrong: '不对哦！遵守法律法规是最重要的，法治守护我们的每一天！'
+        }
+      }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let answered = false;
+
+    function startQuiz() {
+      currentQ = 0;
+      score = 0;
+      document.getElementById('h5Start').style.display = 'none';
+      document.getElementById('h5Result').classList.remove('active');
+      document.getElementById('h5Quiz').classList.add('active');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      answered = false;
+      const q = questions[currentQ];
+      document.getElementById('progressText').textContent = `第 ${currentQ + 1} 题 / 共 ${questions.length} 题`;
+      document.getElementById('scoreDisplay').textContent = `⭐ ${score} 分`;
+      document.getElementById('quizProgressFill').style.width = `${(currentQ / questions.length) * 100}%`;
+      document.getElementById('quizSceneIcon').textContent = q.icon;
+      document.getElementById('quizQuestion').textContent = q.question;
+      document.getElementById('quizHint').textContent = q.hint;
+
+      const optsContainer = document.getElementById('quizOptions');
+      optsContainer.innerHTML = '';
+      const letters = ['A', 'B', 'C'];
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt.text}</span>`;
+        btn.onclick = () => selectOption(i, btn, opt.correct);
+        optsContainer.appendChild(btn);
+      });
+
+      document.getElementById('quizFeedback').classList.remove('show');
+    }
+
+    function selectOption(idx, btn, isCorrect) {
+      if (answered) return;
+      answered = true;
+
+      const q = questions[currentQ];
+      const allOptions = document.querySelectorAll('.quiz-option');
+      allOptions.forEach(o => o.classList.add('disabled'));
+
+      const feedback = document.getElementById('quizFeedback');
+      const feedbackIcon = document.getElementById('feedbackIcon');
+      const feedbackText = document.getElementById('feedbackText');
+      const feedbackBtn = document.getElementById('feedbackBtn');
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        score += 20;
+        feedbackIcon.textContent = '🎉';
+        feedbackText.innerHTML = `<strong>回答正确！</strong><br>${q.feedback.correct}`;
+        createStars(btn);
+      } else {
+        btn.classList.add('wrong');
+        // 显示正确答案
+        allOptions.forEach((o, i) => {
+          if (q.options[i].correct) o.classList.add('correct');
+        });
+        feedbackIcon.textContent = '💡';
+        feedbackText.innerHTML = `<strong>没关系，再加油！</strong><br>${q.feedback.wrong}`;
+      }
+
+      // 更新分数
+      document.getElementById('scoreDisplay').textContent = `⭐ ${score} 分`;
+
+      // 显示反馈
+      setTimeout(() => {
+        feedback.classList.add('show');
+        feedbackBtn.textContent = currentQ < questions.length - 1 ? '下一题 →' : '查看成绩 →';
+      }, 600);
+    }
+
+    function nextQuestion() {
+      document.getElementById('quizFeedback').classList.remove('show');
+      if (currentQ < questions.length - 1) {
+        currentQ++;
+        setTimeout(showQuestion, 300);
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('h5Quiz').classList.remove('active');
+      document.getElementById('h5Result').classList.add('active');
+
+      document.getElementById('resultScore').textContent = score;
+
+      let title, msg, trophy;
+      if (score === 100) {
+        trophy = '🏆';
+        title = '法治小博士！';
+        msg = '太厉害了！全部答对！你是真正的法治小卫士！';
+      } else if (score >= 60) {
+        trophy = '⭐';
+        title = '法治小达人！';
+        msg = '不错哦！继续学习法治知识，你一定会更棒的！';
+      } else {
+        trophy = '🌱';
+        title = '法治小苗苗！';
+        msg = '没关系，多多学习法治知识，下次一定能做得更好！';
+      }
+
+      document.getElementById('resultTrophy').textContent = trophy;
+      document.getElementById('resultTitle').textContent = title;
+      document.getElementById('resultMsg').textContent = msg;
+    }
+
+    function restartQuiz() {
+      document.getElementById('h5Result').classList.remove('active');
+      document.getElementById('h5Start').style.display = 'flex';
+    }
+
+    function createStars(element) {
+      const rect = element.getBoundingClientRect();
+      const frame = document.getElementById('h5Frame');
+      const frameRect = frame.getBoundingClientRect();
+
+      for (let i = 0; i < 5; i++) {
+        const star = document.createElement('div');
+        star.className = 'star-particle';
+        star.textContent = '⭐';
+        star.style.left = (rect.left - frameRect.left + rect.width / 2 + (Math.random() - 0.5) * 60) + 'px';
+        star.style.top = (rect.top - frameRect.top + 20) + 'px';
+        star.style.animationDelay = (i * 0.1) + 's';
+        frame.appendChild(star);
+        setTimeout(() => star.remove(), 1200);
+      }
+    }
+  </script>
+
+</body>
+</html>

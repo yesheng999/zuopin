@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的法治成长日记 - AI创意类</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .ai-wrapper {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* AI标记 */
+    .ai-banner {
+      background: linear-gradient(135deg, #A18CD1, #FBC2EB);
+      border-radius: var(--radius-lg);
+      padding: 24px 32px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .ai-banner .ai-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .ai-banner .ai-text h3 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .ai-banner .ai-text p {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    /* 插画网格 */
+    .art-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 28px;
+      margin-bottom: 40px;
+    }
+
+    .art-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .art-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .art-image {
+      width: 100%;
+      aspect-ratio: 4/3;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .art-image svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .art-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      padding: 20px 16px 12px;
+      color: white;
+      transform: translateY(100%);
+      transition: var(--transition);
+    }
+
+    .art-card:hover .art-overlay {
+      transform: translateY(0);
+    }
+
+    .art-overlay .art-scene {
+      font-size: 13px;
+      opacity: 0.9;
+      line-height: 1.5;
+    }
+
+    .art-info {
+      padding: 20px;
+    }
+
+    .art-age-tag {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: var(--radius-xl);
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .age-5 { background: #FFE0E0; color: #E74C3C; }
+    .age-7 { background: #FFE8D0; color: #FF8C42; }
+    .age-8 { background: #E0F0FF; color: #2E86DE; }
+
+    .art-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .art-desc {
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* AI标签 */
+    .ai-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(161, 140, 209, 0.9);
+      color: white;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      z-index: 2;
+    }
+
+    /* 大图查看 */
+    .art-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 40px;
+    }
+
+    .art-modal.active {
+      display: flex;
+    }
+
+    .art-modal-content {
+      background: white;
+      border-radius: var(--radius-lg);
+      max-width: 700px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .art-modal-content svg {
+      width: 100%;
+      height: auto;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .art-modal-info {
+      padding: 24px 32px;
+    }
+
+    .art-modal-info h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .art-modal-info p {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.8;
+    }
+
+    .art-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-main);
+      z-index: 1001;
+    }
+
+    /* AI提示词展示 */
+    .prompt-section {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      margin-top: 32px;
+    }
+
+    .prompt-section h3 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .prompt-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .prompt-card {
+      background: linear-gradient(135deg, #F5F0FF, #F0E8FF);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      border-left: 4px solid #A18CD1;
+    }
+
+    .prompt-card .label {
+      font-size: 12px;
+      color: #9B59B6;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .prompt-card .text {
+      font-size: 13px;
+      color: var(--text-main);
+      line-height: 1.6;
+      font-family: 'Courier New', monospace;
+    }
+
+    @media (max-width: 768px) {
+      .art-grid { grid-template-columns: 1fr; }
+      .prompt-cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">⚖️</span>
+        <span>普法创意作品集</span>
+      </a>
+      <a href="../index.html" class="back-btn">← 返回首页</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container">
+      <div class="ai-wrapper">
+
+        <!-- 作品头部 -->
+        <div class="work-header">
+          <span class="work-badge badge-ai">AI创意类 · 数字插画</span>
+          <h1 class="work-title">我的法治成长日记</h1>
+          <p class="work-subtitle">在浙里·看见杭州法治——我与杭州法治20年</p>
+          <div class="author-info">
+            <span>👤 作者：二年级小朋友</span>
+            <span class="sep"></span>
+            <span>🎨 AI辅助创作</span>
+            <span class="sep"></span>
+            <span>📁 格式：PNG/SVG</span>
+            <span class="sep"></span>
+            <span>📐 ≥600×600px</span>
+          </div>
+        </div>
+
+        <!-- AI说明 -->
+        <div class="ai-banner">
+          <div class="ai-icon">🤖</div>
+          <div class="ai-text">
+            <h3>本作品使用AI工具辅助创作</h3>
+            <p>所有插画均在AI绘画工具辅助下完成，画面内容围绕「我与杭州法治」主题</p>
+          </div>
+        </div>
+
+        <!-- 插画网格 -->
+        <div class="art-grid">
+
+          <!-- 插画1: 5岁·第一次认识红绿灯 -->
+          <div class="art-card" onclick="openModal(0)">
+            <div class="ai-tag">🤖 AI创作</div>
+            <div class="art-image">
+              <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="sky-1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FFB347"/>
+                    <stop offset="50%" stop-color="#FFCC70"/>
+                    <stop offset="100%" stop-color="#FFF5E0"/>
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="300" fill="url(#sky-1)"/>
+                <!-- 云 -->
+                <g fill="white" opacity="0.7">
+                  <ellipse cx="80" cy="50" rx="30" ry="14"/>
+                  <ellipse cx="320" cy="60" rx="25" ry="12"/>
+                </g>
+                <!-- 道路 -->
+                <rect y="230" width="400" height="70" fill="#555"/>
+                <rect y="235" width="400" height="3" fill="#FFD93D"/>
+                <!-- 斑马线 -->
+                <g fill="white">
+                  <rect x="160" y="235" width="8" height="60"/>
+                  <rect x="175" y="235" width="8" height="60"/>
+                  <rect x="190" y="235" width="8" height="60"/>
+                  <rect x="205" y="235" width="8" height="60"/>
+                </g>
+                <!-- 红绿灯 -->
+                <rect x="275" y="80" width="6" height="150" fill="#333"/>
+                <rect x="263" y="70" width="30" height="65" rx="5" fill="#222"/>
+                <circle cx="278" cy="85" r="9" fill="#E74C3C">
+                  <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="278" cy="105" r="9" fill="#FFD93D" opacity="0.3"/>
+                <circle cx="278" cy="125" r="9" fill="#00B894" opacity="0.3"/>
+                <!-- 小朋友（背书包） -->
+                <g transform="translate(130, 170)">
+                  <circle cx="0" cy="0" r="18" fill="#FFD93D"/>
+                  <circle cx="-6" cy="-3" r="3" fill="#2D3436"/>
+                  <circle cx="6" cy="-3" r="3" fill="#2D3436"/>
+                  <path d="M-6 5 Q0 10 6 5" stroke="#2D3436" stroke-width="2" fill="none" stroke-linecap="round"/>
+                  <rect x="-15" y="15" width="30" height="22" rx="4" fill="#FF6B35"/>
+                  <rect x="-12" y="8" width="24" height="10" rx="3" fill="#E55A2B"/>
+                  <rect x="-8" y="37" width="6" height="15" fill="#2D3436"/>
+                  <rect x="2" y="37" width="6" height="15" fill="#2D3436"/>
+                </g>
+                <!-- 大人牵着小孩的手 -->
+                <g transform="translate(90, 155)">
+                  <circle cx="0" cy="0" r="22" fill="#FFD93D"/>
+                  <circle cx="-7" cy="-3" r="4" fill="#2D3436"/>
+                  <circle cx="7" cy="-3" r="4" fill="#2D3436"/>
+                  <path d="M-7 5 Q0 12 7 5" stroke="#2D3436" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <rect x="-18" y="18" width="36" height="30" rx="5" fill="#4FACFE"/>
+                  <rect x="-10" y="48" width="6" height="18" fill="#2D3436"/>
+                  <rect x="4" y="48" width="6" height="18" fill="#2D3436"/>
+                  <!-- 手臂牵着小孩 -->
+                  <ellipse cx="22" cy="25" rx="8" ry="14" fill="#4FACFE" transform="rotate(20 22 25)"/>
+                </g>
+                <!-- 装饰 -->
+                <text x="200" y="25" text-anchor="middle" font-size="14" fill="#FF6B35" font-weight="bold">5岁·第一次认识红绿灯</text>
+                <!-- 太阳 -->
+                <circle cx="350" cy="40" r="20" fill="#FFD93D" opacity="0.8"/>
+              </svg>
+              <div class="art-overlay">
+                <div class="art-scene">5岁时，妈妈第一次教我认识红绿灯，告诉我"红灯停，绿灯行"</div>
+              </div>
+            </div>
+            <div class="art-info">
+              <span class="art-age-tag age-5">5岁</span>
+              <div class="art-title">认识红绿灯</div>
+              <div class="art-desc">妈妈牵着我的手，教会我第一条规则</div>
+            </div>
+          </div>
+
+          <!-- 插画2: 7岁·拾金不昧 -->
+          <div class="art-card" onclick="openModal(1)">
+            <div class="ai-tag">🤖 AI创作</div>
+            <div class="art-image">
+              <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="bg-2" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#A8E6CF"/>
+                    <stop offset="100%" stop-color="#DCEDC8"/>
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="300" fill="url(#bg-2)"/>
+                <!-- 草地 -->
+                <rect y="220" width="400" height="80" fill="#81C784"/>
+                <!-- 树 -->
+                <g transform="translate(50, 160)">
+                  <rect x="-5" y="30" width="10" height="50" fill="#8B4513"/>
+                  <circle cx="0" cy="15" r="28" fill="#4CAF50"/>
+                </g>
+                <g transform="translate(350, 170)">
+                  <rect x="-5" y="20" width="10" height="40" fill="#8B4513"/>
+                  <circle cx="0" cy="5" r="22" fill="#4CAF50"/>
+                </g>
+                <!-- 长椅 -->
+                <g transform="translate(270, 200)">
+                  <rect x="0" y="0" width="80" height="6" fill="#DEB887"/>
+                  <rect x="5" y="6" width="6" height="22" fill="#DEB887"/>
+                  <rect x="69" y="6" width="6" height="22" fill="#DEB887"/>
+                </g>
+                <!-- 钱包（发光） -->
+                <g transform="translate(200, 210)">
+                  <rect x="-20" y="-12" width="40" height="24" rx="4" fill="#8B4513"/>
+                  <rect x="-20" y="-12" width="40" height="6" rx="2" fill="#A0522D"/>
+                  <circle cx="0" cy="-3" r="4" fill="#FFD700"/>
+                  <!-- 光芒 -->
+                  <g opacity="0.6">
+                    <line x1="-30" y1="-20" x2="-25" y2="-15" stroke="#FFD700" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="30" y1="-20" x2="25" y2="-15" stroke="#FFD700" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="-30" y1="0" x2="-25" y2="0" stroke="#FFD700" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="30" y1="0" x2="25" y2="0" stroke="#FFD700" stroke-width="2" stroke-linecap="round"/>
+                  </g>
+                </g>
+                <!-- 小朋友（惊讶发现） -->
+                <g transform="translate(140, 160)">
+                  <circle cx="0" cy="0" r="20" fill="#FFD93D"/>
+                  <circle cx="-7" cy="-3" r="4" fill="#2D3436"/>
+                  <circle cx="7" cy="-3" r="4" fill="#2D3436"/>
+                  <ellipse cx="0" cy="8" rx="4" ry="5" fill="#E74C3C"/>
+                  <rect x="-16" y="16" width="32" height="26" rx="5" fill="#FF8C42"/>
+                  <ellipse cx="18" cy="25" rx="7" ry="14" fill="#FF8C42" transform="rotate(-30 18 25)"/>
+                  <rect x="-8" y="42" width="6" height="16" fill="#2D3436"/>
+                  <rect x="2" y="42" width="6" height="16" fill="#2D3436"/>
+                </g>
+                <!-- 对话气泡 -->
+                <g transform="translate(140, 110)">
+                  <rect x="-40" y="-15" width="80" height="25" rx="8" fill="white"/>
+                  <polygon points="0,10 -5,20 5,10" fill="white"/>
+                  <text x="0" y="2" text-anchor="middle" font-size="11" fill="#FF6B35" font-weight="bold">钱包！</text>
+                </g>
+                <text x="200" y="25" text-anchor="middle" font-size="14" fill="#2E7D32" font-weight="bold">7岁·拾金不昧</text>
+              </svg>
+              <div class="art-overlay">
+                <div class="art-scene">7岁时在公园捡到钱包，妈妈说捡到东西要交给警察叔叔</div>
+              </div>
+            </div>
+            <div class="art-info">
+              <span class="art-age-tag age-7">7岁</span>
+              <div class="art-title">拾金不昧</div>
+              <div class="art-desc">在公园捡到钱包，学会了拾金不昧</div>
+            </div>
+          </div>
+
+          <!-- 插画3: 8岁·法治小卫士 -->
+          <div class="art-card" onclick="openModal(2)">
+            <div class="ai-tag">🤖 AI创作</div>
+            <div class="art-image">
+              <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="bg-3" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#667EEA"/>
+                    <stop offset="50%" stop-color="#764BA2"/>
+                    <stop offset="100%" stop-color="#F093FB"/>
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="300" fill="url(#bg-3)"/>
+                <!-- 星空 -->
+                <g fill="#FFD93D">
+                  <circle cx="60" cy="40" r="2">
+                    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle cx="150" cy="30" r="1.5">
+                    <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle cx="280" cy="50" r="2">
+                    <animate attributeName="opacity" values="0.3;1;0.3" dur="2.5s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle cx="340" cy="35" r="1.5">
+                    <animate attributeName="opacity" values="1;0.3;1" dur="1.8s" repeatCount="indefinite"/>
+                  </circle>
+                </g>
+                <!-- 月亮 -->
+                <circle cx="340" cy="60" r="18" fill="#FFD93D" opacity="0.9"/>
+                <!-- 城市天际线 -->
+                <g opacity="0.3" fill="#1a1a2e">
+                  <rect x="0" y="200" width="60" height="100"/>
+                  <rect x="65" y="180" width="50" height="120"/>
+                  <rect x="120" y="210" width="45" height="90"/>
+                  <rect x="240" y="190" width="55" height="110"/>
+                  <rect x="300" y="200" width="50" height="100"/>
+                  <rect x="355" y="180" width="45" height="120"/>
+                </g>
+                <!-- 窗户灯光 -->
+                <g fill="#FFD93D" opacity="0.6">
+                  <rect x="15" y="220" width="6" height="6"/>
+                  <rect x="30" y="240" width="6" height="6"/>
+                  <rect x="80" y="200" width="6" height="6"/>
+                  <rect x="95" y="220" width="6" height="6"/>
+                  <rect x="260" y="210" width="6" height="6"/>
+                  <rect x="275" y="230" width="6" height="6"/>
+                </g>
+                <!-- 中心人物：法治小卫士 -->
+                <g transform="translate(200, 130)">
+                  <!-- 光环 -->
+                  <ellipse cx="0" cy="0" rx="50" ry="60" fill="none" stroke="#FFD93D" stroke-width="2" opacity="0.4">
+                    <animate attributeName="rx" values="50;55;50" dur="2s" repeatCount="indefinite"/>
+                    <animate attributeName="ry" values="60;65;60" dur="2s" repeatCount="indefinite"/>
+                  </ellipse>
+                  <!-- 身体 -->
+                  <ellipse cx="0" cy="40" rx="28" ry="35" fill="#FF6B35"/>
+                  <!-- 头 -->
+                  <circle cx="0" cy="0" r="25" fill="#FFD93D"/>
+                  <circle cx="-9" cy="-3" r="5" fill="#2D3436"/>
+                  <circle cx="9" cy="-3" r="5" fill="#2D3436"/>
+                  <circle cx="-7" cy="-5" r="2" fill="white"/>
+                  <circle cx="11" cy="-5" r="2" fill="white"/>
+                  <path d="M-9 6 Q0 14 9 6" stroke="#2D3436" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <circle cx="-16" cy="4" r="5" fill="#FF8C42" opacity="0.6"/>
+                  <circle cx="16" cy="4" r="5" fill="#FF8C42" opacity="0.6"/>
+                  <!-- 法官帽 -->
+                  <rect x="-17" y="-28" width="34" height="11" rx="3" fill="#2D3436"/>
+                  <rect x="-20" y="-20" width="40" height="6" rx="2" fill="#2D3436"/>
+                  <!-- 披风 -->
+                  <path d="M-28 20 Q-50 50 -45 80 L-20 60 Z" fill="#E74C3C" opacity="0.8"/>
+                  <path d="M28 20 Q50 50 45 80 L20 60 Z" fill="#E74C3C" opacity="0.8"/>
+                  <!-- 腿 -->
+                  <rect x="-8" y="70" width="6" height="18" fill="#2D3436"/>
+                  <rect x="2" y="70" width="6" height="18" fill="#2D3436"/>
+                </g>
+                <!-- 标语 -->
+                <rect x="120" y="245" width="160" height="35" rx="17" fill="rgba(255,255,255,0.95)"/>
+                <text x="200" y="268" text-anchor="middle" font-size="16" fill="#FF6B35" font-weight="bold">我是法治小卫士！</text>
+                <text x="200" y="25" text-anchor="middle" font-size="14" fill="white" font-weight="bold">8岁·现在（二年级）</text>
+              </svg>
+              <div class="art-overlay">
+                <div class="art-scene">8岁的我，现在是二年级的法治小卫士啦！我要守护规则，守护身边每一个人！</div>
+              </div>
+            </div>
+            <div class="art-info">
+              <span class="art-age-tag age-8">8岁·现在</span>
+              <div class="art-title">法治小卫士</div>
+              <div class="art-desc">二年级的我，成为了法治小卫士！</div>
+            </div>
+          </div>
+
+          <!-- 插画4: 校园法治 -->
+          <div class="art-card" onclick="openModal(3)">
+            <div class="ai-tag">🤖 AI创作</div>
+            <div class="art-image">
+              <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="bg-4" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#87CEEB"/>
+                    <stop offset="100%" stop-color="#E0F0FF"/>
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="300" fill="url(#bg-4)"/>
+                <!-- 学校 -->
+                <g transform="translate(200, 100)">
+                  <rect x="-120" y="-20" width="240" height="100" rx="8" fill="#FF8C42"/>
+                  <rect x="-105" y="-5" width="210" height="80" rx="5" fill="#FFF8DC"/>
+                  <rect x="-20" y="30" width="40" height="45" rx="3" fill="#8B4513"/>
+                  <circle cx="-5" cy="52" r="2" fill="#FFD700"/>
+                  <g fill="#87CEEB" stroke="#FF8C42" stroke-width="1.5">
+                    <rect x="-90" y="5" width="30" height="25" rx="2"/>
+                    <rect x="-45" y="5" width="30" height="25" rx="2"/>
+                    <rect x="15" y="5" width="30" height="25" rx="2"/>
+                    <rect x="60" y="5" width="30" height="25" rx="2"/>
+                  </g>
+                  <rect x="-30" y="-40" width="60" height="20" rx="5" fill="white"/>
+                  <text x="0" y="-26" text-anchor="middle" font-size="10" fill="#FF6B35" font-weight="bold">杭州小学</text>
+                  <!-- 国旗 -->
+                  <line x1="100" y1="-50" x2="100" y2="30" stroke="#666" stroke-width="2"/>
+                  <rect x="88" y="-50" width="24" height="16" fill="#E74C3C"/>
+                </g>
+                <!-- 地面 -->
+                <rect y="200" width="400" height="100" fill="#DEB887"/>
+                <!-- 三个小朋友手拉手 -->
+                <g transform="translate(120, 150)">
+                  <circle cx="0" cy="0" r="18" fill="#FFD93D"/>
+                  <circle cx="-6" cy="-3" r="3.5" fill="#2D3436"/>
+                  <circle cx="6" cy="-3" r="3.5" fill="#2D3436"/>
+                  <path d="M-6 5 Q0 10 6 5" stroke="#2D3436" stroke-width="2" fill="none" stroke-linecap="round"/>
+                  <rect x="-14" y="14" width="28" height="22" rx="4" fill="#4FACFE"/>
+                  <rect x="-7" y="36" width="5" height="14" fill="#2D3436"/>
+                  <rect x="2" y="36" width="5" height="14" fill="#2D3436"/>
+                </g>
+                <g transform="translate(200, 145)">
+                  <circle cx="0" cy="0" r="20" fill="#FFD93D"/>
+                  <circle cx="-7" cy="-3" r="4" fill="#2D3436"/>
+                  <circle cx="7" cy="-3" r="4" fill="#2D3436"/>
+                  <path d="M-7 6 Q0 13 7 6" stroke="#2D3436" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <rect x="-16" y="16" width="32" height="25" rx="4" fill="#FF6B35"/>
+                  <rect x="-15" y="-22" width="30" height="10" rx="3" fill="#2D3436"/>
+                  <rect x="-18" y="-14" width="36" height="6" rx="2" fill="#2D3436"/>
+                  <rect x="-8" y="41" width="6" height="14" fill="#2D3436"/>
+                  <rect x="2" y="41" width="6" height="14" fill="#2D3436"/>
+                </g>
+                <g transform="translate(280, 150)">
+                  <circle cx="0" cy="0" r="18" fill="#FFD93D"/>
+                  <circle cx="-6" cy="-3" r="3.5" fill="#2D3436"/>
+                  <circle cx="6" cy="-3" r="3.5" fill="#2D3436"/>
+                  <path d="M-6 5 Q0 10 6 5" stroke="#2D3436" stroke-width="2" fill="none" stroke-linecap="round"/>
+                  <rect x="-14" y="14" width="28" height="22" rx="4" fill="#00B894"/>
+                  <rect x="-7" y="36" width="5" height="14" fill="#2D3436"/>
+                  <rect x="2" y="36" width="5" height="14" fill="#2D3436"/>
+                </g>
+                <!-- 爱心 -->
+                <g transform="translate(160, 130)">
+                  <path d="M0 4 C-6 -4 -12 0 -8 6 L0 14 L8 6 C12 0 6 -4 0 4" fill="#FF6B6B">
+                    <animateTransform attributeName="transform" type="scale" values="1;1.2;1" dur="1.5s" repeatCount="indefinite"/>
+                  </path>
+                </g>
+                <g transform="translate(240, 130)">
+                  <path d="M0 4 C-6 -4 -12 0 -8 6 L0 14 L8 6 C12 0 6 -4 0 4" fill="#FF6B6B">
+                    <animateTransform attributeName="transform" type="scale" values="1;1.2;1" dur="1.5s" begin="0.3s" repeatCount="indefinite"/>
+                  </path>
+                </g>
+                <text x="200" y="25" text-anchor="middle" font-size="14" fill="#2E86DE" font-weight="bold">校园·我们都是好朋友</text>
+              </svg>
+              <div class="art-overlay">
+                <div class="art-scene">在学校里，我们手拉手做朋友，互相帮助，拒绝欺凌</div>
+              </div>
+            </div>
+            <div class="art-info">
+              <span class="art-age-tag age-8">校园</span>
+              <div class="art-title">校园友爱</div>
+              <div class="art-desc">在学校手拉手，做守法好朋友</div>
+            </div>
+          </div>
+
+          <!-- 插画5: 杭州法治风景 -->
+          <div class="art-card" onclick="openModal(4)">
+            <div class="ai-tag">🤖 AI创作</div>
+            <div class="art-image">
+              <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="bg-5" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FFE0B2"/>
+                    <stop offset="50%" stop-color="#FFCC80"/>
+                    <stop offset="100%" stop-color="#A5D6A7"/>
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="300" fill="url(#bg-5)"/>
+                <!-- 西湖 -->
+                <ellipse cx="200" cy="220" rx="180" ry="50" fill="#42A5F5" opacity="0.7"/>
+                <!-- 水波 -->
+                <g stroke="#2196F3" stroke-width="1" opacity="0.3" fill="none">
+                  <path d="M80 210 Q120 205 160 210"/>
+                  <path d="M200 215 Q240 210 280 215"/>
+                  <path d="M100 225 Q140 220 180 225"/>
+                  <path d="M220 230 Q260 225 300 230"/>
+                </g>
+                <!-- 断桥 -->
+                <path d="M120 195 Q200 175 280 195" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <!-- 雷峰塔 -->
+                <g transform="translate(320, 140)">
+                  <rect x="-12" y="10" width="24" height="35" fill="#8D6E63"/>
+                  <rect x="-15" y="5" width="30" height="8" rx="2" fill="#8D6E63"/>
+                  <rect x="-18" y="-5" width="36" height="8" rx="2" fill="#8D6E63"/>
+                  <rect x="-21" y="-15" width="42" height="8" rx="2" fill="#8D6E63"/>
+                  <rect x="-24" y="-25" width="48" height="8" rx="2" fill="#8D6E63"/>
+                  <polygon points="0,-40 -5,-25 5,-25" fill="#8D6E63"/>
+                </g>
+                <!-- 柳树 -->
+                <g transform="translate(60, 130)">
+                  <rect x="-3" y="0" width="6" height="60" fill="#8B4513"/>
+                  <circle cx="0" cy="-5" r="22" fill="#66BB6A"/>
+                  <line x1="-10" y1="10" x2="-15" y2="35" stroke="#66BB6A" stroke-width="2"/>
+                  <line x1="0" y1="15" x2="-5" y2="40" stroke="#66BB6A" stroke-width="2"/>
+                  <line x1="10" y1="10" x2="15" y2="35" stroke="#66BB6A" stroke-width="2"/>
+                </g>
+                <!-- 太阳 -->
+                <circle cx="80" cy="50" r="25" fill="#FFD54F" opacity="0.8"/>
+                <g stroke="#FFD54F" stroke-width="2" opacity="0.5">
+                  <line x1="80" y1="15" x2="80" y2="5"/>
+                  <line x1="55" y1="35" x2="48" y2="28"/>
+                  <line x1="105" y1="35" x2="112" y2="28"/>
+                  <line x1="50" y1="50" x2="40" y2="50"/>
+                  <line x1="110" y1="50" x2="120" y2="50"/>
+                </g>
+                <!-- 小朋友看风景 -->
+                <g transform="translate(200, 170)">
+                  <circle cx="0" cy="0" r="16" fill="#FFD93D"/>
+                  <circle cx="-5" cy="-3" r="3" fill="#2D3436"/>
+                  <circle cx="5" cy="-3" r="3" fill="#2D3436"/>
+                  <path d="M-5 4 Q0 9 5 4" stroke="#2D3436" stroke-width="2" fill="none" stroke-linecap="round"/>
+                  <rect x="-12" y="12" width="24" height="20" rx="4" fill="#FF6B35"/>
+                  <rect x="-15" y="-18" width="30" height="9" rx="3" fill="#2D3436"/>
+                  <rect x="-18" y="-10" width="36" height="5" rx="2" fill="#2D3436"/>
+                </g>
+                <!-- 法治标语牌 -->
+                <g transform="translate(100, 100)">
+                  <rect x="-40" y="-12" width="80" height="24" rx="12" fill="white" opacity="0.9"/>
+                  <text x="0" y="4" text-anchor="middle" font-size="11" fill="#FF6B35" font-weight="bold">法治杭州</text>
+                </g>
+                <text x="200" y="285" text-anchor="middle" font-size="14" fill="#2E7D32" font-weight="bold">在浙里·看见杭州法治</text>
+              </svg>
+              <div class="art-overlay">
+                <div class="art-scene">美丽的杭州，法治像阳光一样温暖着每一个人</div>
+              </div>
+            </div>
+            <div class="art-info">
+              <span class="art-age-tag age-8">城市</span>
+              <div class="art-title">法治杭州</div>
+              <div class="art-desc">西湖边的法治风景，美丽又温暖</div>
+            </div>
+          </div>
+
+          <!-- 插画6: 法治梦想 -->
+          <div class="art-card" onclick="openModal(5)">
+            <div class="ai-tag">🤖 AI创作</div>
+            <div class="art-image">
+              <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="bg-6" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#1A1A2E"/>
+                    <stop offset="50%" stop-color="#16213E"/>
+                    <stop offset="100%" stop-color="#0F3460"/>
+                  </linearGradient>
+                  <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#FFD93D" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#FFD93D" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+                <rect width="400" height="300" fill="url(#bg-6)"/>
+                <!-- 光晕 -->
+                <ellipse cx="200" cy="150" rx="120" ry="100" fill="url(#glow)"/>
+                <!-- 星空 -->
+                <g fill="white">
+                  <circle cx="50" cy="30" r="1.5"><animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/></circle>
+                  <circle cx="120" cy="20" r="1"><animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/></circle>
+                  <circle cx="300" cy="25" r="1.5"><animate attributeName="opacity" values="0.3;1;0.3" dur="2.5s" repeatCount="indefinite"/></circle>
+                  <circle cx="360" cy="40" r="1"><animate attributeName="opacity" values="1;0.3;1" dur="1.8s" repeatCount="indefinite"/></circle>
+                  <circle cx="80" cy="60" r="1"><animate attributeName="opacity" values="0.3;1;0.3" dur="2.2s" repeatCount="indefinite"/></circle>
+                  <circle cx="340" cy="70" r="1.5"><animate attributeName="opacity" values="1;0.3;1" dur="1.7s" repeatCount="indefinite"/></circle>
+                </g>
+                <!-- 月亮 -->
+                <circle cx="350" cy="50" r="15" fill="#FFD93D" opacity="0.8"/>
+                <!-- 大星星 -->
+                <g transform="translate(200, 120)">
+                  <path d="M0 -30 L8 -10 L30 -8 L12 6 L18 28 L0 16 L-18 28 L-12 6 L-30 -8 L-8 -10 Z" fill="#FFD93D">
+                    <animateTransform attributeName="transform" type="rotate" values="0;360" dur="20s" repeatCount="indefinite"/>
+                  </path>
+                </g>
+                <!-- 小朋友仰望星空 -->
+                <g transform="translate(200, 200)">
+                  <circle cx="0" cy="0" r="20" fill="#FFD93D"/>
+                  <circle cx="-5" cy="-8" r="3.5" fill="#2D3436"/>
+                  <circle cx="5" cy="-8" r="3.5" fill="#2D3436"/>
+                  <path d="M-5 -2 Q0 2 5 -2" stroke="#2D3436" stroke-width="2" fill="none" stroke-linecap="round"/>
+                  <rect x="-16" y="16" width="32" height="28" rx="5" fill="#FF6B35"/>
+                  <rect x="-15" y="-22" width="30" height="10" rx="3" fill="#2D3436"/>
+                  <rect x="-18" y="-14" width="36" height="6" rx="2" fill="#2D3436"/>
+                  <rect x="-8" y="44" width="6" height="18" fill="#2D3436"/>
+                  <rect x="2" y="44" width="6" height="18" fill="#2D3436"/>
+                </g>
+                <!-- 梦想气泡 -->
+                <g transform="translate(130, 150)">
+                  <circle cx="0" cy="0" r="8" fill="white" opacity="0.6"/>
+                  <circle cx="-15" cy="-15" r="12" fill="white" opacity="0.7"/>
+                  <rect x="-50" y="-40" width="60" height="30" rx="10" fill="white" opacity="0.9"/>
+                  <text x="-20" y="-21" text-anchor="middle" font-size="10" fill="#FF6B35" font-weight="bold">长大也要</text>
+                  <text x="-20" y="-10" text-anchor="middle" font-size="10" fill="#FF6B35" font-weight="bold">守护法治！</text>
+                </g>
+                <text x="200" y="280" text-anchor="middle" font-size="14" fill="#FFD93D" font-weight="bold">我的法治梦想</text>
+              </svg>
+              <div class="art-overlay">
+                <div class="art-scene">仰望星空，我的梦想是长大后也要守护法治，守护杭州！</div>
+              </div>
+            </div>
+            <div class="art-info">
+              <span class="art-age-tag age-8">梦想</span>
+              <div class="art-title">法治梦想</div>
+              <div class="art-desc">仰望星空，许下法治梦想</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AI提示词展示 -->
+        <div class="prompt-section">
+          <h3>🤖 AI创作提示词</h3>
+          <p style="text-align:center; color:var(--text-light); font-size:14px; margin-bottom:24px;">
+            以下是辅助创作使用的AI提示词参考
+          </p>
+          <div class="prompt-cards">
+            <div class="prompt-card">
+              <div class="label">插画1 · 红绿灯</div>
+              <div class="text">Q版可爱风格，5岁小朋友牵着妈妈手过马路，红绿灯，斑马线，温暖橙色调，儿童插画，杭州街景</div>
+            </div>
+            <div class="prompt-card">
+              <div class="label">插画2 · 拾金不昧</div>
+              <div class="text">Q版风格，7岁小朋友在公园发现钱包，惊讶表情，绿色草地，阳光，发光钱包，儿童绘本风格</div>
+            </div>
+            <div class="prompt-card">
+              <div class="label">插画3 · 法治小卫士</div>
+              <div class="text">超级英雄风格，8岁小朋友戴法官帽穿披风，站在城市前，星空背景，发光效果，法治守护者</div>
+            </div>
+            <div class="prompt-card">
+              <div class="label">插画4 · 校园友爱</div>
+              <div class="text">Q版三个小朋友手拉手站在学校前，爱心，蓝天白云，杭州小学校园，友谊主题</div>
+            </div>
+            <div class="prompt-card">
+              <div class="label">插画5 · 法治杭州</div>
+              <div class="text">杭州西湖风景画，断桥，雷峰塔，柳树，法治标语牌，温暖色调，水彩画风格</div>
+            </div>
+            <div class="prompt-card">
+              <div class="label">插画6 · 法治梦想</div>
+              <div class="text">星空夜景，小朋友仰望星星，梦想气泡，法治主题，梦幻紫色色调，数字艺术风格</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 创作说明 -->
+        <div style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+          <div class="desc-card" style="background:var(--bg-card); border-radius:var(--radius-md); padding:24px; box-shadow:var(--shadow-sm);">
+            <h4 style="font-size:16px; color:var(--primary-dark); margin-bottom:12px;">🎨 创作说明</h4>
+            <p style="font-size:14px; color:var(--text-light); line-height:1.8;">
+              本系列插画以"我的法治成长日记"为主题，用AI绘画工具辅助创作了6幅数字插画。
+              从5岁认识红绿灯、7岁拾金不昧，到8岁成为法治小卫士，
+              记录了一个小朋友在杭州法治陪伴下成长的温馨故事。
+              所有AI生成内容均已标注。
+            </p>
+          </div>
+          <div class="desc-card" style="background:var(--bg-card); border-radius:var(--radius-md); padding:24px; box-shadow:var(--shadow-sm);">
+            <h4 style="font-size:16px; color:var(--primary-dark); margin-bottom:12px;">🎯 作品信息</h4>
+            <ul style="font-size:14px; color:var(--text-light); line-height:1.8; padding-left:20px;">
+              <li>作品类别：AI创意类 · 数字插画</li>
+              <li>数量：6幅插画</li>
+              <li>格式：PNG/SVG</li>
+              <li>分辨率：≥600×600px</li>
+              <li>已标注AI生成内容</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 大图查看弹窗 -->
+  <div class="art-modal" id="artModal" onclick="closeModal(event)">
+    <div class="art-modal-content" id="modalContent" onclick="event.stopPropagation()">
+      <button class="art-modal-close" onclick="closeModal()">✕</button>
+      <div id="modalSvg"></div>
+      <div class="art-modal-info">
+        <h3 id="modalTitle"></h3>
+        <p id="modalDesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const artworks = document.querySelectorAll('.art-card');
+
+    function openModal(idx) {
+      const card = artworks[idx];
+      const svg = card.querySelector('svg').cloneNode(true);
+      const title = card.querySelector('.art-title').textContent;
+      const desc = card.querySelector('.art-desc').textContent;
+
+      document.getElementById('modalSvg').innerHTML = '';
+      document.getElementById('modalSvg').appendChild(svg);
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalDesc').textContent = desc;
+
+      document.getElementById('artModal').classList.add('active');
+    }
+
+    function closeModal(event) {
+      if (event && event.target.id !== 'artModal' && event.target.className !== 'art-modal-close') return;
+      document.getElementById('artModal').classList.remove('active');
+    }
+  </script>
+
+</body>
+</html>

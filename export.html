@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>作品导出工具 - 普法创意作品集</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
+  <style>
+    .export-wrapper { max-width: 900px; margin: 0 auto; }
+
+    .export-intro {
+      background: linear-gradient(135deg, #667EEA, #764BA2);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      color: white;
+      text-align: center;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-lg);
+    }
+    .export-intro h2 { font-size: 24px; margin-bottom: 12px; }
+    .export-intro p { font-size: 14px; opacity: 0.85; line-height: 1.8; }
+
+    /* 导出卡片 */
+    .export-section {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+    }
+
+    .export-section.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .export-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px dashed var(--border);
+    }
+
+    .export-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .icon-video { background: #FFE0E0; }
+    .icon-music { background: #E0F0FF; }
+    .icon-talk { background: #E0FFE8; }
+    .icon-h5 { background: #F0E0FF; }
+    .icon-gif { background: #FFE0F0; }
+    .icon-ai { background: #FFF0E0; }
+
+    .export-header h3 { font-size: 18px; color: var(--text-main); }
+    .export-header .format {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .export-body { margin-bottom: 16px; }
+
+    .export-status {
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .export-status.show { display: block; }
+    .export-status.info { background: #E0F0FF; color: #2E86DE; }
+    .export-status.success { background: #E0FFE8; color: #00B894; }
+    .export-status.error { background: #FFE0E0; color: #E74C3C; }
+    .export-status.loading { background: #FFF8DC; color: #FF8C42; }
+
+    .export-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .export-btn {
+      padding: 12px 24px;
+      border-radius: var(--radius-md);
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .export-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+    .export-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-purple { background: linear-gradient(135deg, #667EEA, #764BA2); color: white; }
+    .btn-blue { background: linear-gradient(135deg, #4FACFE, #00C6FB); color: white; }
+    .btn-green { background: linear-gradient(135deg, #43E97B, #38F9D7); color: white; }
+    .btn-orange { background: linear-gradient(135deg, #FF9A56, #FF6B35); color: white; }
+    .btn-pink { background: linear-gradient(135deg, #F093FB, #F5576C); color: white; }
+
+    /* 预览区域 */
+    .export-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .preview-item {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      text-align: center;
+      background: var(--bg-warm);
+    }
+
+    .preview-item img {
+      width: 100%;
+      display: block;
+    }
+
+    .preview-item canvas {
+      width: 100%;
+      display: block;
+    }
+
+    .preview-item .name {
+      font-size: 12px;
+      padding: 8px;
+      color: var(--text-light);
+    }
+
+    .preview-item .download-link {
+      display: block;
+      padding: 8px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .preview-item .download-link:hover { background: var(--primary-dark); }
+
+    /* 隐藏的工作区域 */
+    .work-area { display: none; }
+
+    /* 进度条 */
+    .progress-container {
+      margin-top: 12px;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      display: none;
+    }
+    .progress-container.show { display: block; }
+    .progress-bar-inner {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 3px;
+    }
+
+    /* 说明 */
+    .export-tips {
+      background: #FFF8DC;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.8;
+    }
+
+    .export-tips strong { color: var(--primary-dark); }
+
+    @media (max-width: 768px) {
+      .export-actions { flex-direction: column; }
+      .export-btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">⚖️</span>
+        <span>普法创意作品集</span>
+      </a>
+      <a href="index.html" class="back-btn">← 返回首页</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container">
+      <div class="export-wrapper">
+
+        <div class="work-header">
+          <span class="work-badge badge-ai">📦 导出工具</span>
+          <h1 class="work-title">作品导出工具</h1>
+          <p class="work-subtitle">将网页作品转换为比赛要求的文件格式</p>
+        </div>
+
+        <div class="export-intro">
+          <h2>📁 如何使用</h2>
+          <p>每一类作品下方都有"导出"按钮，点击即可下载对应格式的文件。<br>
+          导出的文件会保存到浏览器默认下载文件夹中。</p>
+        </div>
+
+        <!-- 1. AI创意类：PNG图片导出 -->
+        <div class="export-section" id="section-ai">
+          <div class="export-header">
+            <div class="export-icon icon-ai">🎨</div>
+            <div>
+              <h3>AI创意类 · PNG图片导出</h3>
+              <div class="format">格式：PNG · 分辨率：800×600 · 单张≤600KB</div>
+            </div>
+          </div>
+          <div class="export-body">
+            <p style="font-size:14px; color:var(--text-light); margin-bottom:12px;">
+              导出6幅AI创意插画为PNG图片文件，每张自动压缩到600KB以内。
+            </p>
+            <div class="export-actions">
+              <button class="export-btn btn-purple" id="exportAIBtn" onclick="exportAIImages()">
+                🖼️ 导出全部PNG图片
+              </button>
+              <button class="export-btn btn-orange" onclick="exportAIImages(true)">
+                📐 导出高清版（1200×900）
+              </button>
+            </div>
+            <div class="progress-container" id="aiProgress">
+              <div class="progress-bar-inner" id="aiProgressBar"></div>
+            </div>
+            <div class="export-status" id="aiStatus"></div>
+            <div class="export-preview" id="aiPreview"></div>
+          </div>
+          <div class="export-tips">
+            <strong>说明：</strong>AI创意类要求图片格式为JPG/PNG，单张≤600KB。高清版适合打印A3尺寸。
+          </div>
+        </div>
+
+        <!-- 2. 视频类：动画录制 -->
+        <div class="export-section" id="section-video">
+          <div class="export-header">
+            <div class="export-icon icon-video">🎬</div>
+            <div>
+              <h3>视频类 · 动画录制</h3>
+              <div class="format">格式：WebM（可转MP4） · 分辨率：1280×720 · 时长约50秒</div>
+            </div>
+          </div>
+          <div class="export-body">
+            <p style="font-size:14px; color:var(--text-light); margin-bottom:12px;">
+              点击"开始录制"，动画会在画布上自动播放并录制为视频文件。
+            </p>
+            <div class="export-actions">
+              <button class="export-btn btn-purple" id="recordVideoBtn" onclick="startVideoRecording()">
+                ⏺️ 开始录制视频
+              </button>
+              <button class="export-btn btn-orange" onclick="stopVideoRecording()" id="stopVideoBtn" disabled>
+                ⏹️ 停止录制
+              </button>
+            </div>
+            <div class="progress-container" id="videoProgress">
+              <div class="progress-bar-inner" id="videoProgressBar"></div>
+            </div>
+            <div class="export-status" id="videoStatus"></div>
+            <div class="export-preview" id="videoPreview"></div>
+          </div>
+          <div class="export-tips">
+            <strong>说明：</strong>浏览器录制为WebM格式。比赛要求MP4，可使用"格式工厂"等工具转换。
+            也可直接用手机/电脑录屏软件录制动画页面。<br>
+            <strong>推荐：</strong>用手机录屏功能打开动画页面全屏播放录制，直接得到MP4。
+          </div>
+        </div>
+
+        <!-- 3. 音频类：音乐导出 -->
+        <div class="export-section" id="section-music">
+          <div class="export-header">
+            <div class="export-icon icon-music">🎵</div>
+            <div>
+              <h3>音频类 · 音乐WAV导出</h3>
+              <div class="format">格式：WAV · 时长约30秒 · 附歌词文稿</div>
+            </div>
+          </div>
+          <div class="export-body">
+            <p style="font-size:14px; color:var(--text-light); margin-bottom:12px;">
+              导出《法治小星星》旋律为WAV音频文件，附带歌词文稿下载。
+            </p>
+            <div class="export-actions">
+              <button class="export-btn btn-blue" onclick="exportMusic()">
+                🎶 导出音乐WAV文件
+              </button>
+              <button class="export-btn btn-green" onclick="downloadLyrics()">
+                📝 下载歌词文稿
+              </button>
+            </div>
+            <div class="export-status" id="musicStatus"></div>
+          </div>
+          <div class="export-tips">
+            <strong>说明：</strong>音频类要求≤120秒，附1份《参赛作品登记表》。
+            导出的WAV文件可使用音频编辑软件转换为MP3格式。
+          </div>
+        </div>
+
+        <!-- 4. 音频类：脱口秀导出 -->
+        <div class="export-section" id="section-talk">
+          <div class="export-header">
+            <div class="export-icon icon-talk">🎤</div>
+            <div>
+              <h3>音频类 · 脱口秀文稿导出</h3>
+              <div class="format">格式：TXT文稿 · 附朗读指导</div>
+            </div>
+          </div>
+          <div class="export-body">
+            <p style="font-size:14px; color:var(--text-light); margin-bottom:12px;">
+              下载完整脱口秀脚本文稿，可打印后由小朋友朗读录音。
+            </p>
+            <div class="export-actions">
+              <button class="export-btn btn-green" onclick="downloadTalkScript()">
+                📄 下载完整脚本文稿
+              </button>
+              <button class="export-btn btn-blue" onclick="downloadRegistration()">
+                📋 下载参赛登记表模板
+              </button>
+            </div>
+            <div class="export-status" id="talkStatus"></div>
+          </div>
+          <div class="export-tips">
+            <strong>说明：</strong>建议由小朋友对照文稿朗读，用手机"录音机"APP录制，导出为MP3/WAV格式。
+            录音环境要安静，语速适中，可适当加入动作表演。
+          </div>
+        </div>
+
+        <!-- 5. 互联网类：GIF导出 -->
+        <div class="export-section" id="section-gif">
+          <div class="export-header">
+            <div class="export-icon icon-gif">🎞️</div>
+            <div>
+              <h3>互联网类 · GIF动图导出</h3>
+              <div class="format">格式：GIF · 尺寸：300×300 · 6款表情</div>
+            </div>
+          </div>
+          <div class="export-body">
+            <p style="font-size:14px; color:var(--text-light); margin-bottom:12px;">
+              导出6款法治表情包为GIF动画文件。
+            </p>
+            <div class="export-actions">
+              <button class="export-btn btn-pink" id="exportGifBtn" onclick="exportGIFs()">
+                🎞️ 导出全部GIF动图
+              </button>
+            </div>
+            <div class="progress-container" id="gifProgress">
+              <div class="progress-bar-inner" id="gifProgressBar"></div>
+            </div>
+            <div class="export-status" id="gifStatus"></div>
+            <div class="export-preview" id="gifPreview"></div>
+          </div>
+          <div class="export-tips">
+            <strong>说明：</strong>互联网类GIF要求电子文档形式提交。每款GIF约300×300像素，适合微信/网页使用。
+          </div>
+        </div>
+
+        <!-- 6. 互联网类：H5二维码 -->
+        <div class="export-section" id="section-h5">
+          <div class="export-header">
+            <div class="export-icon icon-h5">📱</div>
+            <div>
+              <h3>互联网类 · H5页面二维码</h3>
+              <div class="format">格式：PNG二维码 · 含H5链接</div>
+            </div>
+          </div>
+          <div class="export-body">
+            <p style="font-size:14px; color:var(--text-light); margin-bottom:12px;">
+              生成H5互动页面的二维码图片，扫码即可打开答题游戏。
+            </p>
+            <div class="export-actions">
+              <button class="export-btn btn-purple" onclick="generateQRCode()">
+                📱 生成H5二维码
+              </button>
+            </div>
+            <div class="export-status" id="qrStatus"></div>
+            <div class="export-preview" id="qrPreview"></div>
+          </div>
+          <div class="export-tips">
+            <strong>说明：</strong>互联网类H5需以电子文档形式（含二维码/链接）提交。
+            将H5页面部署到服务器后，生成二维码图片即可提交。<br>
+            <strong>部署方法：</strong>可将整个作品文件夹上传到免费托管平台（如GitHub Pages、Vercel等）。
+          </div>
+        </div>
+
+        <!-- 投稿检查清单 -->
+        <div class="export-section">
+          <div class="export-header">
+            <div class="export-icon" style="background:#FFF3E0;">✅</div>
+            <div>
+              <h3>投稿前检查清单</h3>
+              <div class="format">确认每项都✓后再提交</div>
+            </div>
+          </div>
+          <div style="padding: 8px 0;">
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;cursor:pointer;">
+              <input type="checkbox" style="width:20px;height:20px;"> 视频类：MP4文件，分辨率≥1920×1080，≤60秒，注明"单位、作品名称、时长"
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;cursor:pointer;">
+              <input type="checkbox" style="width:20px;height:20px;"> 音频类（音乐）：音频文件≤120秒，附1份参赛登记表，写明"作品名称、作者"
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;cursor:pointer;">
+              <input type="checkbox" style="width:20px;height:20px;"> 音频类（脱口秀）：音频文件≤120秒，附1份参赛登记表，写明"作品名称、作者"
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;cursor:pointer;">
+              <input type="checkbox" style="width:20px;height:20px;"> 互联网类（H5）：电子文档含二维码/链接，注明"作者、作品名称、类别"
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;cursor:pointer;">
+              <input type="checkbox" style="width:20px;height:20px;"> 互联网类（GIF）：GIF格式文件，注明"作者、作品名称、类别"
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;cursor:pointer;">
+              <input type="checkbox" style="width:20px;height:20px;"> AI创意类：JPG/PNG图片，单张≤600KB，标注AI生成
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;cursor:pointer;">
+              <input type="checkbox" style="width:20px;height:20px;"> 所有作品紧扣主题"在浙里·看见杭州法治——我与杭州法治20年"
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 隐藏的工作画布 -->
+  <canvas class="work-area" id="workCanvas" width="800" height="600"></canvas>
+  <canvas class="work-area" id="recordCanvas" width="1280" height="720"></canvas>
+
+  <script>
+    // ===== 工具函数 =====
+    function showStatus(id, type, msg) {
+      const el = document.getElementById(id);
+      el.className = 'export-status show ' + type;
+      el.textContent = msg;
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function downloadText(text, filename) {
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      downloadBlob(blob, filename);
+    }
+
+    function svgToCanvas(svgEl, width, height) {
+      return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
+
+        const svgString = new XMLSerializer().serializeToString(svgEl);
+        const img = new Image();
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, width, height);
+          URL.revokeObjectURL(url);
+          resolve(canvas);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          resolve(canvas);
+        };
+        img.src = url;
+      });
+    }
+
+    function canvasToBlob(canvas, quality) {
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => resolve(blob), 'image/png', quality || 0.8);
+      });
+    }
+
+    // ===== 1. AI创意类：PNG导出 =====
+    async function exportAIImages(hd) {
+      const btn = document.getElementById('exportAIBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ 正在导出...';
+      showStatus('aiStatus', 'loading', '正在加载插画页面...');
+      document.getElementById('aiProgress').classList.add('show');
+
+      const w = hd ? 1200 : 800;
+      const h = hd ? 900 : 600;
+      const maxSize = hd ? 1200 : 600; // KB
+
+      try {
+        // 获取gallery页面
+        const resp = await fetch('ai-creative/gallery.html');
+        const html = await resp.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const svgs = doc.querySelectorAll('.art-image svg');
+
+        if (svgs.length === 0) {
+          showStatus('aiStatus', 'error', '未找到SVG插画，请确保gallery.html可访问');
+          return;
+        }
+
+        const preview = document.getElementById('aiPreview');
+        preview.innerHTML = '';
+        const names = ['认识红绿灯', '拾金不昧', '法治小卫士', '校园友爱', '法治杭州', '法治梦想'];
+
+        for (let i = 0; i < svgs.length; i++) {
+          document.getElementById('aiProgressBar').style.width = ((i + 1) / svgs.length * 100) + '%';
+          showStatus('aiStatus', 'loading', `正在导出第${i+1}/${svgs.length}张：${names[i]}...`);
+
+          const canvas = await svgToCanvas(svgs[i], w, h);
+          let blob = await canvasToBlob(canvas);
+
+          // 如果超过大小限制，用JPEG压缩
+          if (blob.size > maxSize * 1024) {
+            blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.7));
+          }
+
+          // 创建预览和下载链接
+          const url = URL.createObjectURL(blob);
+          const ext = blob.type.includes('jpeg') ? 'jpg' : 'png';
+          const filename = `AI创意_${names[i]}.${ext}`;
+
+          const item = document.createElement('div');
+          item.className = 'preview-item';
+          const img = document.createElement('img');
+          img.src = url;
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'name';
+          nameDiv.textContent = `${names[i]} (${(blob.size/1024).toFixed(0)}KB)`;
+          const link = document.createElement('a');
+          link.className = 'download-link';
+          link.href = url;
+          link.download = filename;
+          link.textContent = '⬇ 下载';
+          item.appendChild(img);
+          item.appendChild(nameDiv);
+          item.appendChild(link);
+          preview.appendChild(item);
+
+          await new Promise(r => setTimeout(r, 200));
+        }
+
+        showStatus('aiStatus', 'success', `✅ 成功导出${svgs.length}张图片！点击每张下方的"下载"按钮保存。`);
+        btn.disabled = false;
+        btn.textContent = '🖼️ 导出全部PNG图片';
+      } catch (e) {
+        showStatus('aiStatus', 'error', '导出失败：' + e.message);
+        btn.disabled = false;
+        btn.textContent = '🖼️ 导出全部PNG图片';
+      }
+    }
+
+    // ===== 2. 视频类：动画录制 =====
+    let mediaRecorder = null;
+    let videoChunks = [];
+    let videoAnimTimer = null;
+    let videoFrameIdx = 0;
+
+    async function startVideoRecording() {
+      const btn = document.getElementById('recordVideoBtn');
+      btn.disabled = true;
+      const stopBtn = document.getElementById('stopVideoBtn');
+      stopBtn.disabled = false;
+      document.getElementById('videoProgress').classList.add('show');
+      showStatus('videoStatus', 'loading', '正在加载动画...');
+
+      try {
+        // 获取动画页面
+        const resp = await fetch('video/dongman.html');
+        const html = await resp.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const scenes = doc.querySelectorAll('.scene svg');
+
+        if (scenes.length === 0) {
+          showStatus('videoStatus', 'error', '未找到动画场景');
+          return;
+        }
+
+        const canvas = document.getElementById('recordCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 设置录制
+        const stream = canvas.captureStream(30);
+        const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+          ? 'video/webm;codecs=vp9'
+          : 'video/webm';
+        mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 5000000 });
+        videoChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) videoChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(videoChunks, { type: 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          const preview = document.getElementById('videoPreview');
+          preview.innerHTML = '';
+          const item = document.createElement('div');
+          item.className = 'preview-item';
+          item.style.gridColumn = '1 / -1';
+          const video = document.createElement('video');
+          video.src = url;
+          video.controls = true;
+          video.style.width = '100%';
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'name';
+          nameDiv.textContent = `法治小卫士历险记.webm (${(blob.size/1024/1024).toFixed(1)}MB)`;
+          const link = document.createElement('a');
+          link.className = 'download-link';
+          link.href = url;
+          link.download = '法治小卫士历险记.webm';
+          link.textContent = '⬇ 下载视频';
+          item.appendChild(video);
+          item.appendChild(nameDiv);
+          item.appendChild(link);
+          preview.appendChild(item);
+
+          showStatus('videoStatus', 'success',
+            `✅ 视频录制完成！(${(blob.size/1024/1024).toFixed(1)}MB)\n` +
+            '点击"下载视频"保存WebM文件。\n' +
+            '比赛要求MP4格式，请用"格式工厂"或在线工具转换。');
+        };
+
+        mediaRecorder.start();
+        showStatus('videoStatus', 'loading', '⏺️ 正在录制动画...');
+
+        // 逐场景渲染到canvas
+        const sceneDurations = [6000, 10000, 10000, 10000, 8000, 6000];
+        const fps = 30;
+        let currentScene = 0;
+        let frameInScene = 0;
+
+        videoAnimTimer = setInterval(async () => {
+          if (currentScene >= scenes.length) {
+            stopVideoRecording();
+            return;
+          }
+
+          const svg = scenes[currentScene];
+          const svgString = new XMLSerializer().serializeToString(svg);
+          const img = new Image();
+          const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+          const url = URL.createObjectURL(svgBlob);
+          img.onload = () => {
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            URL.revokeObjectURL(url);
+          };
+          img.src = url;
+
+          frameInScene += 1000 / fps;
+          const pct = ((currentScene + frameInScene / sceneDurations[currentScene]) / scenes.length) * 100;
+          document.getElementById('videoProgressBar').style.width = Math.min(pct, 100) + '%';
+
+          if (frameInScene >= sceneDurations[currentScene] / (1000 / fps)) {
+            currentScene++;
+            frameInScene = 0;
+          }
+        }, 1000 / fps);
+
+      } catch (e) {
+        showStatus('videoStatus', 'error', '录制失败：' + e.message);
+        btn.disabled = false;
+        stopBtn.disabled = true;
+      }
+    }
+
+    function stopVideoRecording() {
+      if (videoAnimTimer) {
+        clearInterval(videoAnimTimer);
+        videoAnimTimer = null;
+      }
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      document.getElementById('recordVideoBtn').disabled = false;
+      document.getElementById('stopVideoBtn').disabled = true;
+    }
+
+    // ===== 3. 音频类：音乐WAV导出 =====
+    async function exportMusic() {
+      showStatus('musicStatus', 'loading', '正在生成音频...');
+
+      try {
+        const C4=261.63, D4=293.66, E4=329.63, F4=349.23, G4=392.00, A4=440.00;
+        const melody = [
+          {f:C4,d:0.5},{f:C4,d:0.5},{f:G4,d:0.5},{f:G4,d:0.5},
+          {f:A4,d:0.5},{f:A4,d:0.5},{f:G4,d:1.0},
+          {f:F4,d:0.5},{f:F4,d:0.5},{f:E4,d:0.5},{f:E4,d:0.5},
+          {f:D4,d:0.5},{f:D4,d:0.5},{f:C4,d:1.0},
+          {f:G4,d:0.5},{f:G4,d:0.5},{f:F4,d:0.5},{f:F4,d:0.5},
+          {f:E4,d:0.5},{f:E4,d:0.5},{f:D4,d:1.0},
+        ];
+
+        const sampleRate = 44100;
+        const beatDur = 0.4; // 秒
+        const totalDur = melody.reduce((s, n) => s + n.d * beatDur, 0);
+        const offlineCtx = new OfflineAudioContext(2, Math.ceil(sampleRate * (totalDur + 0.5)), sampleRate);
+
+        let time = 0;
+        for (const note of melody) {
+          const osc = offlineCtx.createOscillator();
+          const gain = offlineCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = note.f;
+          const dur = note.d * beatDur;
+
+          gain.gain.setValueAtTime(0, time);
+          gain.gain.linearRampToValueAtTime(0.3, time + 0.02);
+          gain.gain.linearRampToValueAtTime(0.2, time + dur * 0.7);
+          gain.gain.linearRampToValueAtTime(0, time + dur);
+
+          osc.connect(gain);
+          gain.connect(offlineCtx.destination);
+          osc.start(time);
+          osc.stop(time + dur);
+          time += dur;
+        }
+
+        const rendered = await offlineCtx.startRendering();
+        const wavBlob = audioBufferToWav(rendered);
+        downloadBlob(wavBlob, '法治小星星_旋律.wav');
+
+        showStatus('musicStatus', 'success',
+          '✅ 音乐WAV文件已下载！\n' +
+          '文件名：法治小星星_旋律.wav\n' +
+          '时长：约' + Math.round(totalDur) + '秒\n' +
+          '提示：可让小朋友配合旋律演唱，用手机录制人声版本。');
+      } catch (e) {
+        showStatus('musicStatus', 'error', '导出失败：' + e.message);
+      }
+    }
+
+    function audioBufferToWav(buffer) {
+      const numChannels = buffer.numberOfChannels;
+      const sampleRate = buffer.sampleRate;
+      const format = 1;
+      const bitDepth = 16;
+      const bytesPerSample = bitDepth / 8;
+      const blockAlign = numChannels * bytesPerSample;
+      const dataSize = buffer.length * blockAlign;
+      const bufferSize = 44 + dataSize;
+      const arr = new ArrayBuffer(bufferSize);
+      const view = new DataView(arr);
+
+      function writeStr(offset, str) {
+        for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+      }
+      writeStr(0, 'RIFF');
+      view.setUint32(4, 36 + dataSize, true);
+      writeStr(8, 'WAVE');
+      writeStr(12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, format, true);
+      view.setUint16(22, numChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * blockAlign, true);
+      view.setUint16(32, blockAlign, true);
+      view.setUint16(34, bitDepth, true);
+      writeStr(36, 'data');
+      view.setUint32(40, dataSize, true);
+
+      const channels = [];
+      for (let i = 0; i < numChannels; i++) channels.push(buffer.getChannelData(i));
+      let offset = 44;
+      for (let i = 0; i < buffer.length; i++) {
+        for (let c = 0; c < numChannels; c++) {
+          const s = Math.max(-1, Math.min(1, channels[c][i]));
+          view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+          offset += 2;
+        }
+      }
+      return new Blob([arr], { type: 'audio/wav' });
+    }
+
+    function downloadLyrics() {
+      const lyrics = `法治小星星
+词曲：二年级小朋友
+旋律参考：《小星星》
+主题：在浙里·看见杭州法治——我与杭州法治20年
+
+【第一段】
+红灯停呀绿灯行，
+过马路呀要小心。
+斑马线上慢慢走，
+安全第一记在心。
+
+【副歌】
+法治小星星，亮晶晶～
+守规则呀我最行！
+法治小卫士，就是我～
+杭州法治伴我行！
+
+【第二段】
+捡到东西交警察，
+拾金不昧好娃娃。
+同学之间要友爱，
+互相帮助笑哈哈。
+
+【副歌】
+法治小星星，亮晶晶～
+守规则呀我最行！
+法治小卫士，就是我～
+杭州法治伴我行！
+
+【结尾】
+在浙里呀看法治，
+美丽杭州是我家。
+从小做个好公民，
+法治阳光照大家！
+
+作品名称：法治小星星
+作者：二年级小朋友
+形式：音乐
+时长：约90秒
+`;
+      downloadText(lyrics, '法治小星星_歌词文稿.txt');
+      showStatus('musicStatus', 'success', '✅ 歌词文稿已下载！');
+    }
+
+    // ===== 4. 脱口秀文稿下载 =====
+    function downloadTalkScript() {
+      const script = `小小普法员开讲啦
+表演者：二年级小朋友
+形式：脱口秀
+时长：约100秒
+主题：在浙里·看见杭州法治——我与杭州法治20年
+
+========================================
+
+【开场】
+（走到舞台中央，拿起麦克风，对观众挥手）
+
+小小普法员：大家好！我是小小普法员！（鞠躬）
+今天我要给大家讲一个故事——
+一个关于"捡钱包"的故事！
+（神秘地压低声音）
+你们猜，我捡到钱包后做了什么？
+
+========================================
+
+【故事】
+（走到舞台左边，模仿走路的样子）
+
+小小普法员：上个周末呀，我和妈妈去公园玩。
+突然，我在草地上看到一个棕色的钱包！
+（瞪大眼睛，模仿惊讶的样子）
+我打开一看——哇！里面有好多好多钱！
+（伸出手比划）
+妈妈说："宝贝，这钱包不是我们的，怎么办呀？"
+我大声说："交给警察叔叔！"
+
+========================================
+
+【笑点】
+（走到舞台中央，做出夸张的表情）
+
+小小普法员：你们知道吗？我跑到警察叔叔面前说：
+"叔叔叔叔！我捡到了一个钱包！"
+警察叔叔说："小朋友，你叫什么名字呀？"
+我说："我叫拾金不昧！"
+（停顿，等观众笑）
+哈哈，其实我的名字不是"拾金不昧"，
+但妈妈说，做了好事的小朋友都叫"拾金不昧"！
+
+========================================
+
+【知识点】
+（拿出一个道具牌，上面写着"法律"）
+
+小小普法员：后来我才知道，捡到别人的东西要归还，
+这不只是一个好习惯，还是法律规定的哦！
+《民法典》里说啦：
+"拾得遗失物，应当返还权利人。"
+（竖起大拇指）
+也就是说，捡到东西不还，可是不对的！
+所以呀，做好事不仅开心，还守法律呢！
+
+========================================
+
+【结尾】
+（走到舞台中央，双手张开，笑容灿烂）
+
+小小普法员：在杭州这座美丽的城市里，
+法治就像太阳一样，温暖着我们每一个人。
+（指向上方）
+我虽然才二年级，但我知道——
+遵守规则，就是最好的成长！
+（举起小拳头）
+让我们一起做法治小卫士吧！
+谢谢大家！（鞠躬）
+
+========================================
+
+朗读指导：
+1. 语速适中，不要太快
+2. 到笑点时稍作停顿
+3. 语气活泼，带表情动作
+4. 录音环境要安静
+5. 可用手机"录音机"APP录制，导出为MP3
+
+作品名称：小小普法员开讲啦
+作者：二年级小朋友
+`;
+      downloadText(script, '小小普法员开讲啦_脚本.txt');
+      showStatus('talkStatus', 'success', '✅ 脱口秀脚本文稿已下载！可打印后由小朋友朗读录音。');
+    }
+
+    function downloadRegistration() {
+      const form = `参赛作品登记表
+
+活动名称：2026年杭州市阿普系列普法创意作品征集展播活动
+活动主题：在浙里·看见杭州法治——我与杭州法治20年
+
+┌─────────┬─────────────────────────┐
+│ 作品名称 │                         │
+├─────────┼─────────────────────────┤
+│ 作者姓名 │                         │
+├─────────┼─────────────────────────┤
+│ 年级班级 │     二年级（  ）班      │
+├─────────┼─────────────────────────┤
+│ 就读学校 │                         │
+├─────────┼─────────────────────────┤
+│ 联系电话 │                         │
+├─────────┼─────────────────────────┤
+│ 作品类别 │  □视频  □音频  □互联网  □AI创意 │
+├─────────┼─────────────────────────┤
+│ 作品形式 │                         │
+├─────────┼─────────────────────────┤
+│ 作品时长 │                         │
+├─────────┼─────────────────────────┤
+│ 作品简介 │                         │
+│         │                         │
+│         │                         │
+│         │                         │
+└─────────┴─────────────────────────┘
+
+作者签名：                    日期：    年   月   日
+`;
+      downloadText(form, '参赛作品登记表.txt');
+      showStatus('talkStatus', 'success', '✅ 参赛登记表模板已下载！请打印后填写。');
+    }
+
+    // ===== 5. GIF导出 =====
+    async function exportGIFs() {
+      const btn = document.getElementById('exportGifBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ 正在导出GIF...';
+      showStatus('gifStatus', 'loading', '正在加载表情包页面...');
+      document.getElementById('gifProgress').classList.add('show');
+
+      try {
+        const resp = await fetch('internet/gif.html');
+        const html = await resp.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const cards = doc.querySelectorAll('.gif-card');
+        const svgWrappers = doc.querySelectorAll('.gif-preview svg');
+
+        if (svgWrappers.length === 0) {
+          showStatus('gifStatus', 'error', '未找到GIF动画');
+          return;
+        }
+
+        const preview = document.getElementById('gifPreview');
+        preview.innerHTML = '';
+        const names = ['红灯停绿灯行', '打招呼', '爱心互助', '法治思考', '大点赞', '小星星'];
+
+        for (let i = 0; i < svgWrappers.length; i++) {
+          document.getElementById('gifProgressBar').style.width = ((i + 1) / svgWrappers.length * 100) + '%';
+          showStatus('gifStatus', 'loading', `正在制作第${i+1}/${svgWrappers.length}个GIF：${names[i]}...`);
+
+          // 用gif.js编码
+          const gifBlob = await createGifFromSvg(svgWrappers[i], 300, 300);
+          const url = URL.createObjectURL(gifBlob);
+
+          const item = document.createElement('div');
+          item.className = 'preview-item';
+          const img = document.createElement('img');
+          img.src = url;
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'name';
+          nameDiv.textContent = `${names[i]} (${(gifBlob.size/1024).toFixed(0)}KB)`;
+          const link = document.createElement('a');
+          link.className = 'download-link';
+          link.href = url;
+          link.download = `法治表情包_${names[i]}.gif`;
+          link.textContent = '⬇ 下载';
+          item.appendChild(img);
+          item.appendChild(nameDiv);
+          item.appendChild(link);
+          preview.appendChild(item);
+
+          await new Promise(r => setTimeout(r, 500));
+        }
+
+        showStatus('gifStatus', 'success', `✅ 成功导出${svgWrappers.length}个GIF动图！`);
+        btn.disabled = false;
+        btn.textContent = '🎞️ 导出全部GIF动图';
+      } catch (e) {
+        showStatus('gifStatus', 'error', '导出失败：' + e.message);
+        btn.disabled = false;
+        btn.textContent = '🎞️ 导出全部GIF动图';
+      }
+    }
+
+    function createGifFromSvg(svgEl, width, height) {
+      return new Promise((resolve, reject) => {
+        const svgString = new XMLSerializer().serializeToString(svgEl);
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const svgUrl = URL.createObjectURL(svgBlob);
+
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+
+          // 捕获多帧
+          const frames = 10;
+          const delay = 200; // 每帧200ms
+          const gif = new GIF({
+            workers: 2,
+            quality: 10,
+            width: width,
+            height: height,
+            workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js'
+          });
+
+          for (let f = 0; f < frames; f++) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, width, height);
+            // 轻微抖动效果模拟动画
+            const offsetY = Math.sin(f / frames * Math.PI * 2) * 3;
+            ctx.drawImage(img, 0, offsetY, width, height);
+            gif.addFrame(ctx, { copy: true, delay: delay });
+          }
+
+          gif.on('finished', (blob) => {
+            URL.revokeObjectURL(svgUrl);
+            resolve(blob);
+          });
+
+          gif.render();
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(svgUrl);
+          reject(new Error('SVG渲染失败'));
+        };
+        img.src = svgUrl;
+      });
+    }
+
+    // ===== 6. H5二维码生成 =====
+    async function generateQRCode() {
+      showStatus('qrStatus', 'loading', '正在生成二维码...');
+
+      try {
+        // H5页面URL（当前服务器地址 + internet/h5.html）
+        const baseUrl = window.location.origin + window.location.pathname.replace('export.html', '');
+        const h5Url = baseUrl + 'internet/h5.html';
+
+        // 使用API生成二维码
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(h5Url)}`;
+
+        const preview = document.getElementById('qrPreview');
+        preview.innerHTML = '';
+
+        // 下载二维码图片
+        const resp = await fetch(qrApiUrl);
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.style.gridColumn = '1 / -1';
+        item.style.maxWidth = '300px';
+        item.style.margin = '0 auto';
+
+        const img = document.createElement('img');
+        img.src = url;
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'name';
+        nameDiv.textContent = 'H5页面二维码';
+        const link = document.createElement('a');
+        link.className = 'download-link';
+        link.href = url;
+        link.download = 'H5法治知识大闯关_二维码.png';
+        link.textContent = '⬇ 下载二维码';
+        item.appendChild(img);
+        item.appendChild(nameDiv);
+        item.appendChild(link);
+        preview.appendChild(item);
+
+        showStatus('qrStatus', 'success',
+          `✅ 二维码已生成！\n` +
+          `H5链接：${h5Url}\n` +
+          '扫码即可打开互动答题页面。下载二维码图片用于投稿。');
+      } catch (e) {
+        showStatus('qrStatus', 'error', '生成失败：' + e.message + '。可手动使用在线二维码工具生成。');
+      }
+    }
+
+  </script>
+
+</body>
+</html>

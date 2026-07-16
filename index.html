@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026年杭州市阿普系列普法创意作品征集展播活动</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ===== 首页专用样式 ===== */
+    .hero {
+      position: relative;
+      padding: 60px 0 50px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-event-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      padding: 8px 28px;
+      border-radius: var(--radius-xl);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(255, 107, 53, 0.3);
+    }
+
+    .hero-title {
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.3;
+      margin-bottom: 16px;
+      letter-spacing: 3px;
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-theme {
+      font-size: 20px;
+      color: var(--text-light);
+      margin-bottom: 40px;
+      font-weight: 500;
+    }
+
+    .hero-theme .theme-tag {
+      display: inline-block;
+      background: #FFF3E0;
+      color: var(--primary-dark);
+      padding: 6px 20px;
+      border-radius: var(--radius-xl);
+      border: 2px dashed var(--primary-light);
+      margin: 0 4px;
+    }
+
+    /* 吉祥物区域 */
+    .mascot-row {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 50px;
+      flex-wrap: wrap;
+    }
+
+    .mascot-card {
+      width: 120px;
+      text-align: center;
+    }
+
+    .mascot-card svg {
+      width: 100px;
+      height: 100px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
+    }
+
+    .mascot-card .name {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    /* 作品网格 */
+    .works-section {
+      padding: 40px 0 60px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 15px;
+      margin-bottom: 40px;
+    }
+
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 28px;
+    }
+
+    .work-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      display: block;
+    }
+
+    .work-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .work-card-banner {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .work-card-banner svg {
+      width: 80px;
+      height: 80px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));
+      transition: var(--transition);
+    }
+
+    .work-card:hover .work-card-banner svg {
+      transform: scale(1.15) rotate(-5deg);
+    }
+
+    .banner-video { background: linear-gradient(135deg, #FF6B6B, #FF8E53); }
+    .banner-music { background: linear-gradient(135deg, #4FACFE, #00C6FB); }
+    .banner-talk { background: linear-gradient(135deg, #43E97B, #38F9D7); }
+    .banner-h5   { background: linear-gradient(135deg, #667EEA, #764BA2); }
+    .banner-gif  { background: linear-gradient(135deg, #F093FB, #F5576C); }
+    .banner-ai   { background: linear-gradient(135deg, #A18CD1, #FBC2EB); }
+
+    .work-card-body {
+      padding: 24px;
+    }
+
+    .work-card-category {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .work-card-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .work-card-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .work-card-arrow {
+      position: absolute;
+      bottom: 20px;
+      right: 24px;
+      width: 36px;
+      height: 36px;
+      background: var(--bg-warm);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--primary);
+      transition: var(--transition);
+    }
+
+    .work-card:hover .work-card-arrow {
+      background: var(--primary);
+      color: white;
+      transform: translateX(4px);
+    }
+
+    /* 投稿信息 */
+    .submit-info {
+      background: linear-gradient(135deg, #FFF8F0, #FFF0E0);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      margin-top: 50px;
+      border: 2px dashed var(--primary-light);
+      text-align: center;
+    }
+
+    .submit-info h3 {
+      font-size: 22px;
+      margin-bottom: 16px;
+      color: var(--primary-dark);
+    }
+
+    .submit-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+      text-align: left;
+    }
+
+    .submit-item {
+      background: white;
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .submit-item .label {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-bottom: 4px;
+    }
+
+    .submit-item .value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    @media (max-width: 768px) {
+      .hero-title { font-size: 28px; letter-spacing: 1px; }
+      .hero-theme { font-size: 16px; }
+      .works-grid { grid-template-columns: 1fr; }
+      .mascot-row { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== 顶部导航 ===== -->
+  <nav class="top-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">⚖️</span>
+        <span>普法创意作品集</span>
+      </a>
+      <a href="#works" class="back-btn">浏览作品 ↓</a>
+    </div>
+  </nav>
+
+  <!-- ===== Hero区域 ===== -->
+  <section class="hero">
+    <div class="decor-blob blob-orange"></div>
+    <div class="decor-blob blob-blue"></div>
+    <div class="container">
+      <div class="hero-event-tag">2026年杭州市阿普系列普法创意作品征集展播活动</div>
+      <h1 class="hero-title">
+        在浙里 · 看见<span class="highlight">杭州法治</span>
+      </h1>
+      <p class="hero-theme">
+        <span class="theme-tag">我与杭州法治20年</span>
+      </p>
+
+      <!-- 吉祥物 -->
+      <div class="mascot-row">
+        <div class="mascot-card animate-float" style="animation-delay: 0s;">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="42" r="28" fill="#FFD93D"/>
+            <circle cx="42" cy="38" r="4" fill="#2D3436"/>
+            <circle cx="58" cy="38" r="4" fill="#2D3436"/>
+            <path d="M40 50 Q50 58 60 50" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <rect x="38" y="65" width="24" height="20" rx="4" fill="#FF6B35"/>
+            <text x="50" y="80" text-anchor="middle" font-size="12" fill="white" font-weight="bold">法</text>
+          </svg>
+          <div class="name">阿普法官</div>
+        </div>
+        <div class="mascot-card animate-float" style="animation-delay: 0.5s;">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="40" r="25" fill="#FF8C42"/>
+            <circle cx="42" cy="36" r="3.5" fill="#2D3436"/>
+            <circle cx="58" cy="36" r="3.5" fill="#2D3436"/>
+            <path d="M40 48 Q50 56 60 48" stroke="#2D3436" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M50 55 L50 80" stroke="#FF8C42" stroke-width="6" stroke-linecap="round"/>
+            <path d="M35 65 L50 60 L65 65" stroke="#FF8C42" stroke-width="6" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="name">小法</div>
+        </div>
+        <div class="mascot-card animate-float" style="animation-delay: 1s;">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="40" r="25" fill="#2E86DE"/>
+            <circle cx="42" cy="36" r="3.5" fill="white"/>
+            <circle cx="58" cy="36" r="3.5" fill="white"/>
+            <path d="M40 48 Q50 56 60 48" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M50 55 L50 80" stroke="#2E86DE" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="50" cy="30" r="5" fill="#FFD93D"/>
+          </svg>
+          <div class="name">小治</div>
+        </div>
+        <div class="mascot-card animate-float" style="animation-delay: 1.5s;">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="40" r="25" fill="#00B894"/>
+            <circle cx="42" cy="36" r="3.5" fill="#2D3436"/>
+            <circle cx="58" cy="36" r="3.5" fill="#2D3436"/>
+            <path d="M40 48 Q50 56 60 48" stroke="#2D3436" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <rect x="35" y="58" width="30" height="25" rx="5" fill="#00B894"/>
+            <text x="50" y="76" text-anchor="middle" font-size="14" fill="white" font-weight="bold">★</text>
+          </svg>
+          <div class="name">小卫士</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 作品展示 ===== -->
+  <section class="works-section" id="works">
+    <div class="container">
+      <h2 class="section-title">我的普法创意作品</h2>
+      <p class="section-subtitle">围绕「在浙里·看见杭州法治——我与杭州法治20年」主题创作</p>
+
+      <div class="works-grid">
+
+        <!-- 视频类：动漫 -->
+        <a href="video/dongman.html" class="work-card animate-bounce-in" style="animation-delay: 0.1s;">
+          <div class="work-card-banner banner-video">
+            <svg viewBox="0 0 80 80">
+              <rect x="10" y="15" width="60" height="40" rx="6" fill="white" opacity="0.95"/>
+              <polygon points="35,25 35,45 52,35" fill="#FF6B6B"/>
+              <circle cx="40" cy="65" r="4" fill="white" opacity="0.8"/>
+              <circle cx="30" cy="68" r="3" fill="white" opacity="0.6"/>
+              <circle cx="50" cy="68" r="3" fill="white" opacity="0.6"/>
+            </svg>
+          </div>
+          <div class="work-card-body">
+            <div class="work-card-category" style="color: #E74C3C;">视频类 · 动漫</div>
+            <div class="work-card-title">法治小卫士历险记</div>
+            <div class="work-card-desc">小法官阿普带你看红绿灯的秘密，一起守护上学路的安全！</div>
+          </div>
+          <div class="work-card-arrow">→</div>
+        </a>
+
+        <!-- 音频类：音乐 -->
+        <a href="audio/music.html" class="work-card animate-bounce-in" style="animation-delay: 0.2s;">
+          <div class="work-card-banner banner-music">
+            <svg viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="30" fill="white" opacity="0.95"/>
+              <circle cx="40" cy="40" r="20" fill="none" stroke="#4FACFE" stroke-width="3"/>
+              <circle cx="40" cy="40" r="8" fill="#4FACFE"/>
+              <circle cx="40" cy="40" r="3" fill="white"/>
+            </svg>
+          </div>
+          <div class="work-card-body">
+            <div class="work-card-category" style="color: #2E86DE;">音频类 · 音乐</div>
+            <div class="work-card-title">法治小星星</div>
+            <div class="work-card-desc">一首朗朗上口的儿歌，唱出法治小卫士的快乐心声！</div>
+          </div>
+          <div class="work-card-arrow">→</div>
+        </a>
+
+        <!-- 音频类：脱口秀 -->
+        <a href="audio/talkshow.html" class="work-card animate-bounce-in" style="animation-delay: 0.3s;">
+          <div class="work-card-banner banner-talk">
+            <svg viewBox="0 0 80 80">
+              <rect x="18" y="20" width="44" height="35" rx="6" fill="white" opacity="0.95"/>
+              <path d="M30 55 L30 65 L50 55" fill="white" opacity="0.95"/>
+              <circle cx="30" cy="35" r="3" fill="#43E97B"/>
+              <circle cx="40" cy="35" r="3" fill="#43E97B"/>
+              <circle cx="50" cy="35" r="3" fill="#43E97B"/>
+              <circle cx="35" cy="42" r="3" fill="#43E97B"/>
+              <circle cx="45" cy="42" r="3" fill="#43E97B"/>
+            </svg>
+          </div>
+          <div class="work-card-body">
+            <div class="work-card-category" style="color: #00B894;">音频类 · 脱口秀</div>
+            <div class="work-card-title">小小普法员开讲啦</div>
+            <div class="work-card-desc">听我讲一个捡钱包的小故事，拾金不昧原来这么酷！</div>
+          </div>
+          <div class="work-card-arrow">→</div>
+        </a>
+
+        <!-- 互联网：H5 -->
+        <a href="internet/h5.html" class="work-card animate-bounce-in" style="animation-delay: 0.4s;">
+          <div class="work-card-banner banner-h5">
+            <svg viewBox="0 0 80 80">
+              <rect x="22" y="10" width="36" height="60" rx="8" fill="white" opacity="0.95"/>
+              <rect x="26" y="18" width="28" height="40" rx="3" fill="#667EEA"/>
+              <circle cx="40" cy="64" r="3" fill="#667EEA"/>
+              <text x="40" y="42" text-anchor="middle" font-size="20" fill="white" font-weight="bold">闯</text>
+            </svg>
+          </div>
+          <div class="work-card-body">
+            <div class="work-card-category" style="color: #764BA2;">互联网类 · H5</div>
+            <div class="work-card-title">法治知识大闯关</div>
+            <div class="work-card-desc">互动答题小游戏，边玩边学法治知识，看你能闯几关！</div>
+          </div>
+          <div class="work-card-arrow">→</div>
+        </a>
+
+        <!-- 互联网：GIF -->
+        <a href="internet/gif.html" class="work-card animate-bounce-in" style="animation-delay: 0.5s;">
+          <div class="work-card-banner banner-gif">
+            <svg viewBox="0 0 80 80">
+              <rect x="15" y="15" width="50" height="50" rx="10" fill="white" opacity="0.95"/>
+              <text x="40" y="48" text-anchor="middle" font-size="24" fill="#F5576C" font-weight="bold">GIF</text>
+              <circle cx="22" cy="22" r="3" fill="#F093FB"/>
+              <circle cx="58" cy="22" r="3" fill="#F093FB"/>
+              <circle cx="22" cy="58" r="3" fill="#F093FB"/>
+              <circle cx="58" cy="58" r="3" fill="#F093FB"/>
+            </svg>
+          </div>
+          <div class="work-card-body">
+            <div class="work-card-category" style="color: #F5576C;">互联网类 · GIF</div>
+            <div class="work-card-title">法治表情包</div>
+            <div class="work-card-desc">超萌法治小卫士表情包，红绿灯、过马路全都有！</div>
+          </div>
+          <div class="work-card-arrow">→</div>
+        </a>
+
+        <!-- AI创意类 -->
+        <a href="ai-creative/gallery.html" class="work-card animate-bounce-in" style="animation-delay: 0.6s;">
+          <div class="work-card-banner banner-ai">
+            <svg viewBox="0 0 80 80">
+              <rect x="15" y="15" width="50" height="50" rx="10" fill="white" opacity="0.95"/>
+              <circle cx="35" cy="35" r="12" fill="none" stroke="#A18CD1" stroke-width="3"/>
+              <circle cx="35" cy="35" r="5" fill="#A18CD1"/>
+              <path d="M35 18 L35 12 M35 58 L35 64 M18 35 L12 35 M58 35 L64 35" stroke="#A18CD1" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M48 48 L60 60" stroke="#FBC2EB" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="62" cy="62" r="4" fill="#FBC2EB"/>
+            </svg>
+          </div>
+          <div class="work-card-body">
+            <div class="work-card-category" style="color: #9B59B6;">AI创意类 · 数字插画</div>
+            <div class="work-card-title">我的法治成长日记</div>
+            <div class="work-card-desc">AI创作的数字插画，记录我从小到大和法治的故事！</div>
+          </div>
+          <div class="work-card-arrow">→</div>
+        </a>
+
+      </div>
+
+      <!-- 导出工具入口 -->
+      <div style="text-align:center; margin-top:40px;">
+        <a href="export.html" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#667EEA,#764BA2);color:white;padding:18px 40px;border-radius:32px;text-decoration:none;font-size:18px;font-weight:700;box-shadow:0 6px 24px rgba(102,126,234,0.4);transition:all 0.3s;">
+          <span style="font-size:24px;">📦</span>
+          <span>前往导出工具 · 生成投稿文件</span>
+          <span style="font-size:20px;">→</span>
+        </a>
+        <p style="margin-top:12px;color:var(--text-light);font-size:13px;">点击导出工具，将网页作品转换为比赛要求的文件格式（MP4/WAV/PNG/GIF等）</p>
+      </div>
+
+      <!-- 投稿信息 -->
+      <div class="submit-info">
+        <h3>📋 作品投稿信息</h3>
+        <p style="color: var(--text-light); font-size: 14px;">所有作品均围绕「在浙里·看见杭州法治——我与杭州法治20年」主题创作</p>
+        <div class="submit-info-grid">
+          <div class="submit-item">
+            <div class="label">作者姓名</div>
+            <div class="value">二年级 小朋友</div>
+          </div>
+          <div class="submit-item">
+            <div class="label">活动主题</div>
+            <div class="value">我与杭州法治20年</div>
+          </div>
+          <div class="submit-item">
+            <div class="label">作品类别</div>
+            <div class="value">视频/音频/互联网/AI创意</div>
+          </div>
+          <div class="submit-item">
+            <div class="label">投稿方式</div>
+            <div class="value">电子文档报送</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer style="text-align: center; padding: 40px 0; color: var(--text-light); font-size: 13px;">
+    <p>2026年杭州市阿普系列普法创意作品征集展播活动 · 二年级创意作品集</p>
+    <p style="margin-top: 8px;">在浙里 · 看见杭州法治——我与杭州法治20年</p>
+  </footer>
+
+</body>
+</html>

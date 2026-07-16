@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小小普法员开讲啦 - 音频类·脱口秀</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .talk-wrapper {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* 舞台预览 */
+    .stage-preview {
+      background: linear-gradient(135deg, #43E97B, #38F9D7);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    .stage-preview::before {
+      content: '聚光灯';
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 300px;
+      background: radial-gradient(ellipse at center top, rgba(255,255,255,0.3), transparent 70%);
+      pointer-events: none;
+    }
+
+    .spotlight {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 150px solid transparent;
+      border-right: 150px solid transparent;
+      border-top: 400px solid rgba(255,255,255,0.08);
+      pointer-events: none;
+    }
+
+    /* 角色舞台 */
+    .stage-characters {
+      display: flex;
+      justify-content: center;
+      align-items: end;
+      gap: 40px;
+      min-height: 200px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stage-char {
+      text-align: center;
+      position: relative;
+    }
+
+    .stage-char svg {
+      width: 90px;
+      height: 90px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+    }
+
+    .stage-char.main svg {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .stage-char .mic {
+      position: absolute;
+      top: -10px;
+      right: -15px;
+      font-size: 24px;
+    }
+
+    .stage-char .char-name {
+      font-size: 13px;
+      color: white;
+      font-weight: 600;
+      margin-top: 4px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    /* 麦克风 */
+    .mic-icon {
+      display: inline-block;
+      font-size: 48px;
+      margin-bottom: 8px;
+      animation: mic-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes mic-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .stage-title {
+      color: white;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .stage-subtitle {
+      color: rgba(255,255,255,0.85);
+      font-size: 14px;
+    }
+
+    /* 脱口秀脚本 */
+    .script-container {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .script-header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 2px dashed var(--border);
+    }
+
+    .script-header h2 {
+      font-size: 24px;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .script-header p {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    /* 脚本段落 */
+    .script-segment {
+      margin-bottom: 28px;
+      padding: 20px 24px;
+      border-radius: var(--radius-md);
+      transition: var(--transition);
+    }
+
+    .script-segment:hover {
+      box-shadow: var(--shadow-sm);
+    }
+
+    .seg-intro {
+      background: linear-gradient(135deg, #E0F8E0, #D0F0D0);
+      border-left: 4px solid #00B894;
+    }
+
+    .seg-story {
+      background: linear-gradient(135deg, #FFF8DC, #FFF0C0);
+      border-left: 4px solid #FFD93D;
+    }
+
+    .seg-joke {
+      background: linear-gradient(135deg, #FFE0E0, #FFD0D0);
+      border-left: 4px solid #FF6B6B;
+    }
+
+    .seg-conclusion {
+      background: linear-gradient(135deg, #E0F0FF, #D0E8FF);
+      border-left: 4px solid #2E86DE;
+    }
+
+    .seg-label {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: var(--radius-xl);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .seg-intro .seg-label { background: #00B894; color: white; }
+    .seg-story .seg-label { background: #FFD93D; color: #8B6914; }
+    .seg-joke .seg-label { background: #FF6B6B; color: white; }
+    .seg-conclusion .seg-label { background: #2E86DE; color: white; }
+
+    .stage-direction {
+      font-size: 13px;
+      color: var(--text-light);
+      font-style: italic;
+      margin-bottom: 12px;
+      padding-left: 16px;
+      border-left: 2px solid rgba(0,0,0,0.1);
+    }
+
+    .dialogue {
+      font-size: 17px;
+      line-height: 2;
+      color: var(--text-main);
+    }
+
+    .dialogue .speaker {
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .dialogue .action {
+      color: var(--text-light);
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    .dialogue .emphasis {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* 知识点卡 */
+    .knowledge-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .know-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .know-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .know-card .icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .know-card h4 {
+      font-size: 15px;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .know-card p {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    /* 播放控制 */
+    .read-controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+
+    .read-btn {
+      background: linear-gradient(135deg, #43E97B, #38F9D7);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: var(--radius-xl);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 16px rgba(67, 233, 123, 0.3);
+      font-family: inherit;
+    }
+
+    .read-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(67, 233, 123, 0.4);
+    }
+
+    .read-btn.active {
+      background: linear-gradient(135deg, #E74C3C, #FF6B6B);
+      box-shadow: 0 4px 16px rgba(231, 76, 60, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .dialogue { font-size: 15px; }
+      .stage-characters { gap: 20px; }
+      .stage-char svg { width: 70px; height: 70px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">⚖️</span>
+        <span>普法创意作品集</span>
+      </a>
+      <a href="../index.html" class="back-btn">← 返回首页</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container">
+      <div class="talk-wrapper">
+
+        <!-- 作品头部 -->
+        <div class="work-header">
+          <span class="work-badge badge-audio">音频类 · 脱口秀</span>
+          <h1 class="work-title">小小普法员开讲啦</h1>
+          <p class="work-subtitle">在浙里·看见杭州法治——我与杭州法治20年</p>
+          <div class="author-info">
+            <span>👤 表演者：二年级小朋友</span>
+            <span class="sep"></span>
+            <span>⏱ 时长：约100秒</span>
+            <span class="sep"></span>
+            <span>📝 附文稿一份</span>
+            <span class="sep"></span>
+            <span>🎤 形式：脱口秀</span>
+          </div>
+        </div>
+
+        <!-- 舞台预览 -->
+        <div class="stage-preview">
+          <div class="spotlight"></div>
+          <div class="mic-icon">🎤</div>
+          <div class="stage-title">小小普法员开讲啦！</div>
+          <div class="stage-subtitle">嘘——节目马上开始啦！</div>
+
+          <div class="stage-characters" style="margin-top:24px;">
+            <!-- 主持人 -->
+            <div class="stage-char main">
+              <div class="mic">🎙️</div>
+              <svg viewBox="0 0 100 100">
+                <ellipse cx="50" cy="65" rx="28" ry="35" fill="#FF6B35"/>
+                <circle cx="50" cy="30" r="28" fill="#FFD93D"/>
+                <circle cx="42" cy="26" r="5" fill="#2D3436"/>
+                <circle cx="58" cy="26" r="5" fill="#2D3436"/>
+                <circle cx="43" cy="24" r="2" fill="white"/>
+                <circle cx="59" cy="24" r="2" fill="white"/>
+                <path d="M40 36 Q50 46 60 36" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <circle cx="35" cy="34" r="6" fill="#FF8C42" opacity="0.6"/>
+                <circle cx="65" cy="34" r="6" fill="#FF8C42" opacity="0.6"/>
+                <rect x="28" y="4" width="44" height="14" rx="3" fill="#2D3436"/>
+                <rect x="24" y="12" width="52" height="8" rx="2" fill="#2D3436"/>
+              </svg>
+              <div class="char-name">小小普法员</div>
+            </div>
+            <!-- 观众1 -->
+            <div class="stage-char">
+              <svg viewBox="0 0 100 100">
+                <ellipse cx="50" cy="65" rx="25" ry="32" fill="#4FACFE"/>
+                <circle cx="50" cy="32" r="25" fill="#FFD93D"/>
+                <circle cx="42" cy="28" r="4" fill="#2D3436"/>
+                <circle cx="58" cy="28" r="4" fill="#2D3436"/>
+                <path d="M40 38 Q50 46 60 38" stroke="#2D3436" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div class="char-name">小朋友A</div>
+            </div>
+            <!-- 观众2 -->
+            <div class="stage-char">
+              <svg viewBox="0 0 100 100">
+                <ellipse cx="50" cy="65" rx="25" ry="32" fill="#00B894"/>
+                <circle cx="50" cy="32" r="25" fill="#FFD93D"/>
+                <circle cx="42" cy="28" r="4" fill="#2D3436"/>
+                <circle cx="58" cy="28" r="4" fill="#2D3436"/>
+                <path d="M40 38 Q50 46 60 38" stroke="#2D3436" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div class="char-name">小朋友B</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 播放控制 -->
+        <div class="read-controls">
+          <button class="read-btn" id="readBtn" onclick="toggleRead()">▶ 朗读脚本</button>
+          <button class="read-btn" id="resetBtn" onclick="resetRead()" style="background:linear-gradient(135deg, #667EEA, #764BA2);">↺ 重新开始</button>
+        </div>
+
+        <!-- 脚本 -->
+        <div class="script-container">
+
+          <div class="script-header">
+            <h2>📝 脱口秀脚本</h2>
+            <p>《小小普法员开讲啦》| 时长约100秒 | 附文稿</p>
+          </div>
+
+          <!-- 开场 -->
+          <div class="script-segment seg-intro" id="seg-0">
+            <span class="seg-label">🎬 开场</span>
+            <div class="stage-direction">（走到舞台中央，拿起麦克风，对观众挥手）</div>
+            <div class="dialogue">
+              <span class="speaker">小小普法员：</span>
+              大家好！我是小小普法员！<span class="action">（鞠躬）</span><br>
+              今天我要给大家讲一个故事——<br>
+              一个关于<span class="emphasis">"捡钱包"</span>的故事！<br>
+              <span class="action">（神秘地压低声音）</span>
+              你们猜，我捡到钱包后做了什么？
+            </div>
+          </div>
+
+          <!-- 故事 -->
+          <div class="script-segment seg-story" id="seg-1">
+            <span class="seg-label">📖 故事</span>
+            <div class="stage-direction">（走到舞台左边，模仿走路的样子）</div>
+            <div class="dialogue">
+              <span class="speaker">小小普法员：</span>
+              上个周末呀，我和妈妈去公园玩。<br>
+              突然，我在草地上看到一个<span class="emphasis">棕色的钱包</span>！<br>
+              <span class="action">（瞪大眼睛，模仿惊讶的样子）</span><br>
+              我打开一看——哇！里面有好多好多钱！<br>
+              <span class="action">（伸出手比划）</span><br>
+              妈妈说："宝贝，这钱包不是我们的，怎么办呀？"<br>
+              我大声说：<span class="emphasis">"交给警察叔叔！"</span>
+            </div>
+          </div>
+
+          <!-- 笑点 -->
+          <div class="script-segment seg-joke" id="seg-2">
+            <span class="seg-label">😂 笑点</span>
+            <div class="stage-direction">（走到舞台中央，做出夸张的表情）</div>
+            <div class="dialogue">
+              <span class="speaker">小小普法员：</span>
+              你们知道吗？我跑到警察叔叔面前说：<br>
+              "叔叔叔叔！我捡到了一个钱包！"<br>
+              警察叔叔说："小朋友，你叫什么名字呀？"<br>
+              我说：<span class="emphasis">"我叫拾金不昧！"</span><br>
+              <span class="action">（停顿，等观众笑）</span><br>
+              哈哈，其实我的名字不是"拾金不昧"，<br>
+              但妈妈说，做了好事的小朋友都叫"拾金不昧"！
+            </div>
+          </div>
+
+          <!-- 知识点 -->
+          <div class="script-segment seg-story" id="seg-3">
+            <span class="seg-label">💡 知识点</span>
+            <div class="stage-direction">（拿出一个道具牌，上面写着"法律"）</div>
+            <div class="dialogue">
+              <span class="speaker">小小普法员：</span>
+              后来我才知道，<span class="emphasis">捡到别人的东西要归还</span>，<br>
+              这不只是一个好习惯，还是<span class="emphasis">法律</span>规定的哦！<br>
+              《民法典》里说啦：<br>
+              "拾得遗失物，应当返还权利人。"<br>
+              <span class="action">（竖起大拇指）</span><br>
+              也就是说，捡到东西不还，可是<span class="emphasis">不对的</span>！<br>
+              所以呀，做好事不仅开心，还守法律呢！
+            </div>
+          </div>
+
+          <!-- 结尾 -->
+          <div class="script-segment seg-conclusion" id="seg-4">
+            <span class="seg-label">🌟 结尾</span>
+            <div class="stage-direction">（走到舞台中央，双手张开，笑容灿烂）</div>
+            <div class="dialogue">
+              <span class="speaker">小小普法员：</span>
+              在杭州这座美丽的城市里，<br>
+              法治就像太阳一样，<span class="emphasis">温暖着我们每一个人</span>。<br>
+              <span class="action">（指向上方）</span><br>
+              我虽然才二年级，但我知道——<br>
+              <span class="emphasis">遵守规则，就是最好的成长！</span><br>
+              <span class="action">（举起小拳头）</span><br>
+              让我们一起做<span class="emphasis">法治小卫士</span>吧！<br>
+              谢谢大家！<span class="action">（鞠躬）</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 知识点卡片 -->
+        <div class="knowledge-cards">
+          <div class="know-card">
+            <div class="icon">👛</div>
+            <h4>拾金不昧</h4>
+            <p>捡到东西要归还失主或交给警察</p>
+          </div>
+          <div class="know-card">
+            <div class="icon">📜</div>
+            <h4>民法典</h4>
+            <p>拾得遗失物应当返还权利人</p>
+          </div>
+          <div class="know-card">
+            <div class="icon">👮</div>
+            <h4>找警察叔叔</h4>
+            <p>遇到困难可以找警察帮忙</p>
+          </div>
+          <div class="know-card">
+            <div class="icon">⭐</div>
+            <h4>法治小卫士</h4>
+            <p>从小遵守规则，做守法好公民</p>
+          </div>
+        </div>
+
+        <!-- 创作说明 -->
+        <div class="work-desc" style="margin-top:32px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+          <div class="desc-card" style="background:var(--bg-card); border-radius:var(--radius-md); padding:24px; box-shadow:var(--shadow-sm);">
+            <h4 style="font-size:16px; color:var(--primary-dark); margin-bottom:12px;">📝 创作说明</h4>
+            <p style="font-size:14px; color:var(--text-light); line-height:1.8;">
+              以二年级小朋友的口吻讲述一个真实生活故事——在公园捡到钱包并交给警察叔叔。
+              用童言童语和幽默笑点，引出"拾金不昧"的法律知识。
+              语言生动活泼，符合儿童表达习惯。
+            </p>
+          </div>
+          <div class="desc-card" style="background:var(--bg-card); border-radius:var(--radius-md); padding:24px; box-shadow:var(--shadow-sm);">
+            <h4 style="font-size:16px; color:var(--primary-dark); margin-bottom:12px;">🎯 作品信息</h4>
+            <ul style="font-size:14px; color:var(--text-light); line-height:1.8; padding-left:20px;">
+              <li>作品类别：音频类 · 脱口秀</li>
+              <li>题目：小小普法员开讲啦</li>
+              <li>时长：约100秒（≤120秒）</li>
+              <li>附：完整文稿一份</li>
+              <li>主题：拾金不昧与法治</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== 朗读功能 =====
+    const segments = document.querySelectorAll('.script-segment');
+    const readBtn = document.getElementById('readBtn');
+    let isReading = false;
+    let currentSeg = 0;
+    let speechTimer = null;
+
+    function toggleRead() {
+      if (isReading) {
+        stopRead();
+      } else {
+        startRead();
+      }
+    }
+
+    function startRead() {
+      isReading = true;
+      currentSeg = 0;
+      readBtn.textContent = '⏸ 暂停朗读';
+      readBtn.classList.add('active');
+      readSegment(0);
+    }
+
+    function stopRead() {
+      isReading = false;
+      readBtn.textContent = '▶ 朗读脚本';
+      readBtn.classList.remove('active');
+      if (speechTimer) clearTimeout(speechTimer);
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
+      segments.forEach(s => s.style.opacity = '0.5');
+    }
+
+    function resetRead() {
+      stopRead();
+      segments.forEach(s => {
+        s.style.opacity = '1';
+        s.style.transform = 'none';
+      });
+    }
+
+    function readSegment(idx) {
+      if (idx >= segments.length || !isReading) {
+        stopRead();
+        segments.forEach(s => { s.style.opacity = '1'; });
+        return;
+      }
+
+      // 高亮当前段落
+      segments.forEach((s, i) => {
+        s.style.opacity = i === idx ? '1' : '0.4';
+        s.style.transform = i === idx ? 'scale(1.02)' : 'scale(1)';
+      });
+
+      // 滚动到当前段落
+      segments[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // 朗读
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+        const text = segments[idx].textContent.replace(/\s+/g, ' ').trim();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'zh-CN';
+        utter.rate = 0.9;
+        utter.pitch = 1.2;
+        speechSynthesis.speak(utter);
+      }
+
+      // 下一段
+      const duration = 8000 + idx * 2000;
+      speechTimer = setTimeout(() => {
+        if (isReading) readSegment(idx + 1);
+      }, duration);
+    }
+  </script>
+
+</body>
+</html>

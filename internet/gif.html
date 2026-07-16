@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>法治表情包 - 互联网类·GIF</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .gif-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* GIF网格 */
+    .gif-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .gif-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .gif-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .gif-preview {
+      width: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gif-preview svg {
+      width: 80%;
+      height: 80%;
+    }
+
+    .gif-info {
+      padding: 16px;
+      text-align: center;
+    }
+
+    .gif-info .gif-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .gif-info .gif-desc {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    /* GIF动画样式 */
+    .bg-1 { background: linear-gradient(135deg, #FF6B6B, #FF8E53); }
+    .bg-2 { background: linear-gradient(135deg, #4FACFE, #00C6FB); }
+    .bg-3 { background: linear-gradient(135deg, #43E97B, #38F9D7); }
+    .bg-4 { background: linear-gradient(135deg, #F093FB, #F5576C); }
+    .bg-5 { background: linear-gradient(135deg, #FFD93D, #FF8C42); }
+    .bg-6 { background: linear-gradient(135deg, #A18CD1, #FBC2EB); }
+
+    /* GIF 1: 红灯停绿灯行 */
+    @keyframes traffic-light {
+      0%, 33% { opacity: 1; }
+      34%, 100% { opacity: 0.2; }
+    }
+    @keyframes traffic-green {
+      0%, 33% { opacity: 0.2; }
+      34%, 66% { opacity: 1; }
+      67%, 100% { opacity: 0.2; }
+    }
+    @keyframes walk {
+      0%, 33% { transform: translateX(-30px); }
+      34%, 100% { transform: translateX(30px); }
+    }
+
+    /* GIF 2: 挥手法治小卫士 */
+    @keyframes wave-hand {
+      0%, 100% { transform: rotate(-20deg); }
+      50% { transform: rotate(20deg); }
+    }
+
+    /* GIF 3: 爱心跳动 */
+    @keyframes heart-beat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.15); }
+      50% { transform: scale(1); }
+      75% { transform: scale(1.1); }
+    }
+
+    /* GIF 4: 思考气泡 */
+    @keyframes think-bubble {
+      0% { opacity: 0; transform: translateY(10px) scale(0.5); }
+      50% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-10px) scale(0.8); }
+    }
+
+    /* GIF 5: 大拇指点赞 */
+    @keyframes thumbs-up {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.2) rotate(-10deg); }
+    }
+
+    /* GIF 6: 闪烁星星 */
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* GIF预览标签 */
+    .gif-tag {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+    }
+
+    /* 下载按钮 */
+    .gif-actions {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 16px;
+      justify-content: center;
+    }
+
+    .gif-dl-btn {
+      flex: 1;
+      background: var(--bg-warm);
+      border: 1px solid var(--border);
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+      font-family: inherit;
+    }
+
+    .gif-dl-btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* 使用说明 */
+    .usage-section {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      margin-top: 32px;
+    }
+
+    .usage-section h3 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .usage-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .usage-step {
+      text-align: center;
+    }
+
+    .usage-step .step-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+    }
+
+    .usage-step h4 {
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .usage-step p {
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .gif-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">⚖️</span>
+        <span>普法创意作品集</span>
+      </a>
+      <a href="../index.html" class="back-btn">← 返回首页</a>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container">
+      <div class="gif-wrapper">
+
+        <!-- 作品头部 -->
+        <div class="work-header">
+          <span class="work-badge badge-internet">互联网类 · GIF</span>
+          <h1 class="work-title">法治表情包</h1>
+          <p class="work-subtitle">在浙里·看见杭州法治——我与杭州法治20年</p>
+          <div class="author-info">
+            <span>👤 作者：二年级小朋友</span>
+            <span class="sep"></span>
+            <span>🎨 6款动态表情</span>
+            <span class="sep"></span>
+            <span>📁 格式：GIF动图</span>
+          </div>
+        </div>
+
+        <!-- GIF网格 -->
+        <div class="gif-grid">
+
+          <!-- GIF 1: 红灯停绿灯行 -->
+          <div class="gif-card">
+            <div class="gif-preview bg-1">
+              <span class="gif-tag">GIF</span>
+              <svg viewBox="0 0 200 200">
+                <!-- 红绿灯柱 -->
+                <rect x="95" y="40" width="10" height="120" fill="#444"/>
+                <rect x="80" y="20" width="40" height="80" rx="8" fill="#333"/>
+                <!-- 红灯 -->
+                <circle cx="100" cy="40" r="12" fill="#E74C3C" style="animation: traffic-light 3s infinite;"/>
+                <!-- 绿灯 -->
+                <circle cx="100" cy="70" r="12" fill="#00B894" style="animation: traffic-green 3s infinite;"/>
+                <!-- 小人走路 -->
+                <g style="animation: walk 3s infinite; transform-origin: center;">
+                  <circle cx="100" cy="115" r="8" fill="#FFD93D"/>
+                  <rect x="96" y="123" width="8" height="15" fill="#FF6B35"/>
+                  <rect x="96" y="138" width="3" height="10" fill="#2D3436"/>
+                  <rect x="101" y="138" width="3" height="10" fill="#2D3436"/>
+                </g>
+                <!-- 文字 -->
+                <text x="100" y="175" text-anchor="middle" font-size="14" fill="white" font-weight="bold">红灯停 绿灯行</text>
+              </svg>
+            </div>
+            <div class="gif-info">
+              <div class="gif-name">红灯停绿灯行</div>
+              <div class="gif-desc">过马路看信号灯</div>
+            </div>
+            <div class="gif-actions">
+              <button class="gif-dl-btn" onclick="copyGif(0)">复制使用</button>
+            </div>
+          </div>
+
+          <!-- GIF 2: 法治小卫士挥手 -->
+          <div class="gif-card">
+            <div class="gif-preview bg-2">
+              <span class="gif-tag">GIF</span>
+              <svg viewBox="0 0 200 200">
+                <g transform="translate(100, 100)">
+                  <!-- 身体 -->
+                  <ellipse cx="0" cy="30" rx="30" ry="35" fill="#FF6B35"/>
+                  <!-- 头 -->
+                  <circle cx="0" cy="-20" r="28" fill="#FFD93D"/>
+                  <!-- 眼睛 -->
+                  <circle cx="-10" cy="-25" r="5" fill="#2D3436"/>
+                  <circle cx="10" cy="-25" r="5" fill="#2D3436"/>
+                  <circle cx="-8" cy="-27" r="2" fill="white"/>
+                  <circle cx="12" cy="-27" r="2" fill="white"/>
+                  <!-- 笑脸 -->
+                  <path d="M-10 -15 Q0 -5 10 -15" stroke="#2D3436" stroke-width="3" fill="none" stroke-linecap="round"/>
+                  <!-- 腮红 -->
+                  <circle cx="-18" cy="-17" r="5" fill="#FF8C42" opacity="0.6"/>
+                  <circle cx="18" cy="-17" r="5" fill="#FF8C42" opacity="0.6"/>
+                  <!-- 法官帽 -->
+                  <rect x="-18" y="-50" width="36" height="12" rx="3" fill="#2D3436"/>
+                  <rect x="-22" y="-42" width="44" height="6" rx="2" fill="#2D3436"/>
+                  <!-- 挥手 -->
+                  <g style="animation: wave-hand 0.6s infinite; transform-origin: 30px 10px;">
+                    <ellipse cx="30" cy="10" rx="10" ry="20" fill="#FF6B35" transform="rotate(-30 30 10)"/>
+                    <circle cx="35" cy="-10" r="8" fill="#FFD93D"/>
+                  </g>
+                  <!-- 另一只手 -->
+                  <ellipse cx="-28" cy="20" rx="10" ry="18" fill="#FF6B35"/>
+                </g>
+                <text x="100" y="180" text-anchor="middle" font-size="14" fill="white" font-weight="bold">你好呀！</text>
+              </svg>
+            </div>
+            <div class="gif-info">
+              <div class="gif-name">法治小卫士打招呼</div>
+              <div class="gif-desc">嗨！我是法治小卫士</div>
+            </div>
+            <div class="gif-actions">
+              <button class="gif-dl-btn" onclick="copyGif(1)">复制使用</button>
+            </div>
+          </div>
+
+          <!-- GIF 3: 爱心互助 -->
+          <div class="gif-card">
+            <div class="gif-preview bg-3">
+              <span class="gif-tag">GIF</span>
+              <svg viewBox="0 0 200 200">
+                <g transform="translate(100, 90)">
+                  <!-- 大爱心 -->
+                  <path d="M0 20 C-20 -10 -35 5 -25 25 L0 55 L25 25 C35 5 20 -10 0 20" fill="#FF6B6B" style="animation: heart-beat 1s infinite; transform-origin: center;"/>
+                  <!-- 小爱心1 -->
+                  <path d="M-40 -20 C-48 -32 -55 -25 -50 -18 L-40 -5 L-30 -18 C-25 -25 -32 -32 -40 -20" fill="#FF9999" style="animation: heart-beat 1s infinite 0.2s; transform-origin: center;"/>
+                  <!-- 小爱心2 -->
+                  <path d="M40 -20 C32 -32 25 -25 30 -18 L40 -5 L50 -18 C55 -25 48 -32 40 -20" fill="#FF9999" style="animation: heart-beat 1s infinite 0.4s; transform-origin: center;"/>
+                </g>
+                <text x="100" y="170" text-anchor="middle" font-size="14" fill="white" font-weight="bold">互相帮助</text>
+              </svg>
+            </div>
+            <div class="gif-info">
+              <div class="gif-name">爱心互助</div>
+              <div class="gif-desc">同学之间要友爱</div>
+            </div>
+            <div class="gif-actions">
+              <button class="gif-dl-btn" onclick="copyGif(2)">复制使用</button>
+            </div>
+          </div>
+
+          <!-- GIF 4: 法治小思考 -->
+          <div class="gif-card">
+            <div class="gif-preview bg-4">
+              <span class="gif-tag">GIF</span>
+              <svg viewBox="0 0 200 200">
+                <g transform="translate(100, 120)">
+                  <!-- 身体 -->
+                  <ellipse cx="0" cy="20" rx="25" ry="30" fill="#9B59B6"/>
+                  <!-- 头 -->
+                  <circle cx="0" cy="-20" r="24" fill="#FFD93D"/>
+                  <!-- 思考表情 -->
+                  <circle cx="-8" cy="-22" r="4" fill="#2D3436"/>
+                  <circle cx="8" cy="-22" r="4" fill="#2D3436"/>
+                  <ellipse cx="0" cy="-10" rx="3" ry="4" fill="#2D3436"/>
+                  <!-- 手摸下巴 -->
+                  <ellipse cx="15" cy="-5" rx="8" ry="12" fill="#9B59B6" transform="rotate(30 15 -5)"/>
+                  <!-- 思考气泡 -->
+                  <g style="animation: think-bubble 2s infinite;">
+                    <circle cx="-30" cy="-50" r="6" fill="white" opacity="0.8"/>
+                    <circle cx="-42" cy="-62" r="9" fill="white" opacity="0.8"/>
+                    <rect x="-60" y="-82" width="50" height="30" rx="10" fill="white" opacity="0.9"/>
+                    <text x="-35" y="-63" text-anchor="middle" font-size="12" fill="#9B59B6" font-weight="bold">??</text>
+                  </g>
+                </g>
+                <text x="100" y="180" text-anchor="middle" font-size="13" fill="white" font-weight="bold">这是法律规定的吗？</text>
+              </svg>
+            </div>
+            <div class="gif-info">
+              <div class="gif-name">法治小思考</div>
+              <div class="gif-desc">想一想对不对</div>
+            </div>
+            <div class="gif-actions">
+              <button class="gif-dl-btn" onclick="copyGif(3)">复制使用</button>
+            </div>
+          </div>
+
+          <!-- GIF 5: 点赞 -->
+          <div class="gif-card">
+            <div class="gif-preview bg-5">
+              <span class="gif-tag">GIF</span>
+              <svg viewBox="0 0 200 200">
+                <g transform="translate(100, 100)">
+                  <!-- 大拇指 -->
+                  <g style="animation: thumbs-up 0.8s infinite; transform-origin: center;">
+                    <path d="M-15 -30 C-20 -40 -10 -50 0 -45 L0 -15 L30 -15 C35 -15 35 -10 35 -5 L30 30 C28 35 25 35 20 35 L-15 35 Z" fill="#FFD93D" stroke="#FF8C42" stroke-width="3"/>
+                    <rect x="-25" y="-15" width="15" height="50" rx="3" fill="#FFD93D" stroke="#FF8C42" stroke-width="3"/>
+                  </g>
+                  <!-- 星星装饰 -->
+                  <g fill="#FF8C42">
+                    <circle cx="-40" cy="-40" r="3" style="animation: twinkle 1s infinite;"/>
+                    <circle cx="40" cy="-35" r="3" style="animation: twinkle 1s infinite 0.3s;"/>
+                    <circle cx="-35" cy="20" r="2" style="animation: twinkle 1s infinite 0.5s;"/>
+                    <circle cx="45" cy="25" r="2" style="animation: twinkle 1s infinite 0.7s;"/>
+                  </g>
+                </g>
+                <text x="100" y="175" text-anchor="middle" font-size="14" fill="white" font-weight="bold">做得好！</text>
+              </svg>
+            </div>
+            <div class="gif-info">
+              <div class="gif-name">法治大点赞</div>
+              <div class="gif-desc">你真棒！点赞！</div>
+            </div>
+            <div class="gif-actions">
+              <button class="gif-dl-btn" onclick="copyGif(4)">复制使用</button>
+            </div>
+          </div>
+
+          <!-- GIF 6: 星星闪耀 -->
+          <div class="gif-card">
+            <div class="gif-preview bg-6">
+              <span class="gif-tag">GIF</span>
+              <svg viewBox="0 0 200 200">
+                <g transform="translate(100, 100)">
+                  <!-- 中心星星 -->
+                  <g style="animation: twinkle 1.5s infinite; transform-origin: center;">
+                    <path d="M0 -40 L10 -12 L40 -10 L16 8 L24 36 L0 20 L-24 36 L-16 8 L-40 -10 L-10 -12 Z" fill="#FFD93D" stroke="#FF8C42" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="8" fill="white"/>
+                  </g>
+                  <!-- 小星星 -->
+                  <g fill="#FBC2EB">
+                    <circle cx="-50" cy="-30" r="4" style="animation: twinkle 1s infinite;"/>
+                    <circle cx="50" cy="-30" r="4" style="animation: twinkle 1s infinite 0.3s;"/>
+                    <circle cx="-50" cy="30" r="3" style="animation: twinkle 1s infinite 0.5s;"/>
+                    <circle cx="50" cy="30" r="3" style="animation: twinkle 1s infinite 0.7s;"/>
+                    <circle cx="0" cy="-60" r="3" style="animation: twinkle 1.2s infinite;"/>
+                    <circle cx="0" cy="60" r="3" style="animation: twinkle 1.2s infinite 0.4s;"/>
+                  </g>
+                </g>
+                <text x="100" y="180" text-anchor="middle" font-size="14" fill="white" font-weight="bold">法治小星星</text>
+              </svg>
+            </div>
+            <div class="gif-info">
+              <div class="gif-name">法治小星星</div>
+              <div class="gif-desc">闪闪发光！</div>
+            </div>
+            <div class="gif-actions">
+              <button class="gif-dl-btn" onclick="copyGif(5)">复制使用</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="usage-section">
+          <h3>📌 表情包使用说明</h3>
+          <div class="usage-steps">
+            <div class="usage-step">
+              <div class="step-num">1</div>
+              <h4>选择喜欢的</h4>
+              <p>从上方6款表情中选一个你喜欢的</p>
+            </div>
+            <div class="usage-step">
+              <div class="step-num">2</div>
+              <h4>点击复制</h4>
+              <p>点击"复制使用"按钮保存表情</p>
+            </div>
+            <div class="usage-step">
+              <div class="step-num">3</div>
+              <h4>分享给好友</h4>
+              <p>发送给朋友，一起学法治知识</p>
+            </div>
+            <div class="usage-step">
+              <div class="step-num">4</div>
+              <h4>投稿使用</h4>
+              <p>可作为GIF动图作品提交参赛</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 创作说明 -->
+        <div style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+          <div class="desc-card" style="background:var(--bg-card); border-radius:var(--radius-md); padding:24px; box-shadow:var(--shadow-sm);">
+            <h4 style="font-size:16px; color:var(--primary-dark); margin-bottom:12px;">🎨 创作说明</h4>
+            <p style="font-size:14px; color:var(--text-light); line-height:1.8;">
+              以"法治小卫士"卡通形象为主角，设计6款动态表情包。每款表情都有不同的法治主题：
+              红绿灯、打招呼、爱心互助、法治思考、点赞鼓励、星星闪耀。画面活泼可爱，适合儿童使用。
+            </p>
+          </div>
+          <div class="desc-card" style="background:var(--bg-card); border-radius:var(--radius-md); padding:24px; box-shadow:var(--shadow-sm);">
+            <h4 style="font-size:16px; color:var(--primary-dark); margin-bottom:12px;">🎯 作品信息</h4>
+            <ul style="font-size:14px; color:var(--text-light); line-height:1.8; padding-left:20px;">
+              <li>作品类别：互联网类 · GIF</li>
+              <li>数量：6款动态表情</li>
+              <li>格式：GIF动图 / SVG动画</li>
+              <li>主题：法治知识表情包</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const gifNames = [
+      '红灯停绿灯行', '法治小卫士打招呼', '爱心互助',
+      '法治小思考', '法治大点赞', '法治小星星'
+    ];
+
+    function copyGif(idx) {
+      // 创建一个提示
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+        background: var(--primary); color: white; padding: 12px 32px;
+        border-radius: 24px; font-size: 14px; font-weight: 600;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 9999;
+        animation: bounce-in 0.3s ease;
+      `;
+      toast.textContent = `已收藏「${gifNames[idx]}」表情！`;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>
