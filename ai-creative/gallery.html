@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>我的法治成长日记 - AI创意类</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
@@ -261,6 +261,13 @@
     @media (max-width: 768px) {
       .art-grid { grid-template-columns: 1fr; }
       .prompt-cards { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .art-grid { gap: 16px; }
+      .prompt-cards { gap: 12px; }
+    }
+    @media (max-width: 360px) {
+      .art-grid { gap: 12px; }
     }
   </style>
 </head>

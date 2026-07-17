@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>法治知识大闯关 - 互联网类·H5</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
@@ -402,7 +402,10 @@
     }
 
     @media (max-width: 520px) {
-      .h5-wrapper { border-radius: 0; min-height: calc(100vh - 60px); }
+      .h5-wrapper { border-radius: 0; min-height: calc(100vh - 60px); max-width: 100%; }
+    }
+    @media (max-width: 360px) {
+      .h5-wrapper { min-height: 100vh; }
     }
   </style>
 </head>

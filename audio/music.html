@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>法治小星星 - 音频类·音乐</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
@@ -334,6 +334,21 @@
       .score-staff { gap: 2px; padding: 12px; }
       .note-block { min-width: 36px; }
       .note-symbol { font-size: 22px; }
+      .music-player { padding: 28px 20px; }
+    }
+    @media (max-width: 480px) {
+      .lyric-line { font-size: 14px; }
+      .vinyl { width: 110px; height: 110px; }
+      .note-block { min-width: 28px; }
+      .note-symbol { font-size: 18px; }
+      .music-player { padding: 20px 14px; }
+      .music-wrapper { max-width: 100%; }
+    }
+    @media (max-width: 360px) {
+      .vinyl { width: 90px; height: 90px; }
+      .note-block { min-width: 24px; }
+      .note-symbol { font-size: 14px; }
+      .lyric-line { font-size: 13px; }
     }
   </style>
 </head>

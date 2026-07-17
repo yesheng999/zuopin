@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>小小普法员开讲啦 - 音频类·脱口秀</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
@@ -293,6 +293,16 @@
       .dialogue { font-size: 15px; }
       .stage-characters { gap: 20px; }
       .stage-char svg { width: 70px; height: 70px; }
+    }
+    @media (max-width: 480px) {
+      .dialogue { font-size: 13px; }
+      .stage-characters { gap: 12px; }
+      .stage-char svg { width: 56px; height: 56px; }
+    }
+    @media (max-width: 360px) {
+      .dialogue { font-size: 12px; }
+      .stage-char svg { width: 44px; height: 44px; }
+      .stage-characters { gap: 8px; }
     }
   </style>
 </head>

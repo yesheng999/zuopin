@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>法治表情包 - 互联网类·GIF</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
@@ -215,6 +215,12 @@
 
     @media (max-width: 768px) {
       .gif-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    }
+    @media (max-width: 480px) {
+      .gif-grid { grid-template-columns: 1fr; gap: 12px; }
+    }
+    @media (max-width: 360px) {
+      .gif-grid { gap: 10px; }
     }
   </style>
 </head>

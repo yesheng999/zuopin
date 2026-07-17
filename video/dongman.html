@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>法治小卫士历险记 - 视频类·动漫</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
@@ -262,6 +262,17 @@
     @media (max-width: 768px) {
       .work-desc { grid-template-columns: 1fr; }
       .scene-caption { font-size: 16px; }
+      .player-wrapper { max-width: 100%; }
+    }
+    @media (max-width: 480px) {
+      .scene-caption { font-size: 14px; }
+      .desc-card { padding: 14px; }
+      .work-desc { gap: 16px; }
+      .music-player { padding: 24px 16px; }
+    }
+    @media (max-width: 360px) {
+      .scene-caption { font-size: 12px; }
+      .player { border-radius: 12px; }
     }
 
     /* ========== 自然风景装饰层 ========== */

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>2026年杭州市阿普系列普法创意作品征集展播活动</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -251,6 +251,17 @@
       .hero-theme { font-size: 16px; }
       .works-grid { grid-template-columns: 1fr; }
       .mascot-row { gap: 16px; }
+    }
+    @media (max-width: 480px) {
+      .hero-title { font-size: 22px; letter-spacing: 0.5px; }
+      .hero-theme { font-size: 14px; }
+      .mascot-row { gap: 10px; }
+      .mascot-row img { width: 60px; height: 60px; }
+      .submit-info { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 360px) {
+      .hero-title { font-size: 19px; }
+      .works-grid { gap: 16px; }
     }
   </style>
 </head>
