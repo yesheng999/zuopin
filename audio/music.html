@@ -375,13 +375,16 @@
             <button class="play-circle" id="playBtn" title="播放/暂停" style="width:80px;height:80px;font-size:32px;">▶</button>
             <button class="play-circle" id="stopBtn" title="停止">■</button>
           </div>
+          <div style="margin-top:12px;">
+            <button id="vocalToggle" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:white; padding:6px 18px; border-radius:var(--radius-xl); font-size:12px; cursor:pointer; font-family:inherit;">🎤 童声：开</button>
+          </div>
 
           <div class="music-progress">
             <div class="music-progress-fill" id="musicProgress"></div>
           </div>
           <div class="music-time">
             <span id="currentTime">00:00</span>
-            <span id="totalTime">00:30</span>
+            <span id="totalTime">01:30</span>
           </div>
         </div>
 
@@ -398,12 +401,44 @@
               <div class="lyric-line">斑马线上慢慢走，</div>
               <div class="lyric-line">安全第一记在心。</div>
             </div>
+
+            <div class="lyric-verse lyric-chorus">
+              <h4>【副歌】</h4>
+              <div class="lyric-line highlight">法治小星星，亮晶晶～</div>
+              <div class="lyric-line highlight">守规则呀我最行！</div>
+              <div class="lyric-line highlight">法治小卫士，就是我～</div>
+              <div class="lyric-line highlight">杭州法治伴我行！</div>
+            </div>
+
+            <div class="lyric-verse">
+              <h4>【第二段】</h4>
+              <div class="lyric-line">捡到东西交警察，</div>
+              <div class="lyric-line">拾金不昧好娃娃。</div>
+              <div class="lyric-line">同学之间要友爱，</div>
+              <div class="lyric-line">互相帮助笑哈哈。</div>
+            </div>
+
+            <div class="lyric-verse lyric-chorus">
+              <h4>【副歌】</h4>
+              <div class="lyric-line highlight">法治小星星，亮晶晶～</div>
+              <div class="lyric-line highlight">守规则呀我最行！</div>
+              <div class="lyric-line highlight">法治小卫士，就是我～</div>
+              <div class="lyric-line highlight">杭州法治伴我行！</div>
+            </div>
+
+            <div class="lyric-verse">
+              <h4>【结尾】</h4>
+              <div class="lyric-line">在浙里呀看法治，</div>
+              <div class="lyric-line">美丽杭州是我家。</div>
+              <div class="lyric-line">从小做个好公民，</div>
+              <div class="lyric-line">法治阳光照大家！☀️</div>
+            </div>
           </div>
         </div>
 
         <!-- 简谱展示 -->
         <div class="score-section">
-          <h3>🎼 简谱</h3>
+          <h3>🎼 简谱（完整版）</h3>
           <p style="text-align:center; color:var(--text-light); font-size:13px; margin-bottom:16px;">
             点击音符可单独试听，点击播放按钮演奏整首曲子
           </p>
@@ -418,7 +453,7 @@
             <h4 style="font-size:16px; color:var(--primary-dark); margin-bottom:12px;">📝 歌词创作说明</h4>
             <p style="font-size:14px; color:var(--text-light); line-height:1.8;">
               歌词以二年级小朋友的视角，用简单押韵的语言讲述了日常生活中遇到的法治场景：
-              红绿灯规则、安全过马路等。旋律改编自大家熟悉的《小星星》，
+              红绿灯规则、拾金不昧、同学友爱等。旋律改编自大家熟悉的《小星星》，
               易学易唱，朗朗上口。
             </p>
           </div>
@@ -440,7 +475,7 @@
             <div style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(46,134,222,0.05) 0%, transparent 50%); animation:spin-slow 20s linear infinite; pointer-events:none;"></div>
             <h4 style="font-size:16px; color:var(--secondary); margin-bottom:16px; position:relative;">📱 扫码访问《法治小星星》</h4>
             <div style="display:inline-block; padding:12px; background:white; border-radius:var(--radius-md); box-shadow:0 2px 12px rgba(0,0,0,0.08); position:relative;">
-              <img id="musicQR" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/audio/music.html"
+              <img id="musicQR" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/audio/music.html" 
                 alt="扫码访问" width="180" height="180" style="display:block; border-radius:8px;" />
             </div>
             <p style="font-size:13px; color:var(--text-light); margin-top:14px; position:relative;">手机扫码即可听歌🎵</p>
@@ -466,10 +501,11 @@
     let melodyTimer = null;
     let noteIdx = 0;
 
-    // 旋律数据（第一段），参考《小星星》改编
+    // 旋律数据（完整版：第一段+副歌+第二段+副歌+结尾），参考《小星星》改编
     // 音名 + 频率(Hz) + 歌词 + 时长(拍)
     const C4 = 261.63, D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, B4 = 493.88;
     const C5 = 523.25;
+    const REST = 0; // 休止符
 
     const melody = [
       // ===== 第一段 =====
@@ -491,6 +527,64 @@
       { freq: G4, lyric: '第', dur: 0.5 }, { freq: G4, lyric: '一', dur: 0.5 },
       { freq: A4, lyric: '记', dur: 0.5 }, { freq: A4, lyric: '在', dur: 0.5 },
       { freq: G4, lyric: '心', dur: 1.0 },
+      // ===== 副歌1 =====
+      { freq: G4, lyric: '法', dur: 0.5 }, { freq: G4, lyric: '治', dur: 0.5 },
+      { freq: F4, lyric: '小', dur: 0.5 }, { freq: F4, lyric: '星', dur: 0.5 },
+      { freq: E4, lyric: '星', dur: 0.5 }, { freq: E4, lyric: '亮', dur: 0.5 },
+      { freq: D4, lyric: '晶', dur: 1.0 },
+      { freq: C4, lyric: '守', dur: 0.5 }, { freq: C4, lyric: '规', dur: 0.5 },
+      { freq: D4, lyric: '则', dur: 0.5 }, { freq: D4, lyric: '呀', dur: 0.5 },
+      { freq: E4, lyric: '我', dur: 0.5 }, { freq: E4, lyric: '最', dur: 0.5 },
+      { freq: D4, lyric: '行', dur: 1.0 },
+      { freq: REST, lyric: '｜', dur: 0.3 },
+      // ===== 第二段 =====
+      { freq: C4, lyric: '捡', dur: 0.5 }, { freq: C4, lyric: '到', dur: 0.5 },
+      { freq: G4, lyric: '东', dur: 0.5 }, { freq: G4, lyric: '西', dur: 0.5 },
+      { freq: A4, lyric: '交', dur: 0.5 }, { freq: A4, lyric: '警', dur: 0.5 },
+      { freq: G4, lyric: '察', dur: 1.0 },
+      { freq: F4, lyric: '拾', dur: 0.5 }, { freq: F4, lyric: '金', dur: 0.5 },
+      { freq: E4, lyric: '不', dur: 0.5 }, { freq: E4, lyric: '昧', dur: 0.5 },
+      { freq: D4, lyric: '好', dur: 0.5 }, { freq: D4, lyric: '娃', dur: 0.5 },
+      { freq: C4, lyric: '娃', dur: 1.0 },
+      // 同学之间要友爱
+      { freq: G4, lyric: '同', dur: 0.5 }, { freq: G4, lyric: '学', dur: 0.5 },
+      { freq: F4, lyric: '之', dur: 0.5 }, { freq: F4, lyric: '间', dur: 0.5 },
+      { freq: E4, lyric: '要', dur: 0.5 }, { freq: E4, lyric: '友', dur: 0.5 },
+      { freq: D4, lyric: '爱', dur: 1.0 },
+      // 互相帮助笑哈哈
+      { freq: C4, lyric: '互', dur: 0.5 }, { freq: C4, lyric: '相', dur: 0.5 },
+      { freq: G4, lyric: '帮', dur: 0.5 }, { freq: G4, lyric: '助', dur: 0.5 },
+      { freq: A4, lyric: '笑', dur: 0.5 }, { freq: A4, lyric: '哈', dur: 0.5 },
+      { freq: G4, lyric: '哈', dur: 1.0 },
+      // ===== 副歌2 =====
+      { freq: G4, lyric: '法', dur: 0.5 }, { freq: G4, lyric: '治', dur: 0.5 },
+      { freq: F4, lyric: '小', dur: 0.5 }, { freq: F4, lyric: '星', dur: 0.5 },
+      { freq: E4, lyric: '星', dur: 0.5 }, { freq: E4, lyric: '亮', dur: 0.5 },
+      { freq: D4, lyric: '晶', dur: 1.0 },
+      { freq: C4, lyric: '守', dur: 0.5 }, { freq: C4, lyric: '规', dur: 0.5 },
+      { freq: D4, lyric: '则', dur: 0.5 }, { freq: D4, lyric: '呀', dur: 0.5 },
+      { freq: E4, lyric: '我', dur: 0.5 }, { freq: E4, lyric: '最', dur: 0.5 },
+      { freq: D4, lyric: '行', dur: 1.0 },
+      { freq: REST, lyric: '｜', dur: 0.3 },
+      // ===== 结尾 =====
+      { freq: C4, lyric: '在', dur: 0.5 }, { freq: C4, lyric: '浙', dur: 0.5 },
+      { freq: G4, lyric: '里', dur: 0.5 }, { freq: G4, lyric: '呀', dur: 0.5 },
+      { freq: A4, lyric: '看', dur: 0.5 }, { freq: A4, lyric: '法', dur: 0.5 },
+      { freq: G4, lyric: '治', dur: 1.0 },
+      { freq: F4, lyric: '美', dur: 0.5 }, { freq: F4, lyric: '丽', dur: 0.5 },
+      { freq: E4, lyric: '杭', dur: 0.5 }, { freq: E4, lyric: '州', dur: 0.5 },
+      { freq: D4, lyric: '是', dur: 0.5 }, { freq: D4, lyric: '我', dur: 0.5 },
+      { freq: C4, lyric: '家', dur: 1.0 },
+      // 从小做个好公民
+      { freq: G4, lyric: '从', dur: 0.5 }, { freq: G4, lyric: '小', dur: 0.5 },
+      { freq: F4, lyric: '做', dur: 0.5 }, { freq: F4, lyric: '个', dur: 0.5 },
+      { freq: E4, lyric: '好', dur: 0.5 }, { freq: E4, lyric: '公', dur: 0.5 },
+      { freq: D4, lyric: '民', dur: 1.0 },
+      // 法治阳光照大家
+      { freq: C4, lyric: '法', dur: 0.5 }, { freq: G4, lyric: '治', dur: 0.5 },
+      { freq: A4, lyric: '阳', dur: 0.5 }, { freq: G4, lyric: '光', dur: 0.5 },
+      { freq: F4, lyric: '照', dur: 0.5 }, { freq: E4, lyric: '大', dur: 0.5 },
+      { freq: D4, lyric: '家', dur: 1.5 },
     ];
 
     // 音符符号
@@ -520,7 +614,17 @@
       return audioCtx;
     }
 
-    // 童声音色：钟琴合成 + 童声吟唱（默认开启，无开关）
+    // 婴幼儿音色：八音盒/钟琴合成 + 童声吟唱
+    let vocalEnabled = true; // 是否启用童声吟唱
+    const vocalToggle = document.getElementById('vocalToggle');
+    if (vocalToggle) {
+      vocalToggle.addEventListener('click', function() {
+        vocalEnabled = !vocalEnabled;
+        this.textContent = vocalEnabled ? '🎤 童声：开' : '🎤 童声：关';
+        this.style.opacity = vocalEnabled ? '1' : '0.5';
+      });
+    }
+
     function playTone(freq, duration) {
       const ctx = ensureAudio();
       const now = ctx.currentTime;
@@ -586,8 +690,8 @@
     }
 
     function speakLyric(text) {
-      if (!('speechSynthesis' in window)) return;
-      if (!text) return;
+      if (!vocalEnabled || !('speechSynthesis' in window)) return;
+      if (!text || text === '｜') return;
       speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'zh-CN';
