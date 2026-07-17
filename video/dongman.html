@@ -594,7 +594,7 @@
                   </g>
                   <!-- 校牌 -->
                   <rect x="-40" y="-70" width="80" height="25" rx="5" fill="white"/>
-                  <text x="0" y="-53" text-anchor="middle" font-size="12" fill="#FF6B35" font-weight="bold">杭州小学</text>
+                  <text x="0" y="-53" text-anchor="middle" font-size="10" fill="#FF6B35" font-weight="bold">杭州市翠苑第二小学</text>
                   <!-- 国旗杆 -->
                   <line x1="170" y1="-80" x2="170" y2="50" stroke="#666" stroke-width="3"/>
                   <rect x="155" y="-80" width="30" height="20" fill="#E74C3C"/>
@@ -940,22 +940,50 @@
       '谢谢观看！'
     ];
 
-    // 女幼童可爱语音解说 - 速率与文字入场同步
+    // 女幼童可爱语音解说 - 分段播报模拟幼童说话节奏
+    let childVoiceCache = null;
+    function loadChildVoice() {
+      if (!("speechSynthesis" in window)) return null;
+      const voices = window.speechSynthesis.getVoices();
+      // 第一优先：名字含 yaoyao/kid/child/girl 的声音
+      let v = voices.find(v => /yaoyao|kid|child|girl/i.test(v.name));
+      // 第二优先：Google中文女声（音调较高更接近幼童）
+      if (!v) v = voices.find(v => v.lang.includes("zh") && /google/i.test(v.name) && /female|yao/i.test(v.name));
+      // 第三优先：Yaoyao 或 HuiHui（微软女声）
+      if (!v) v = voices.find(v => /yaoyao/i.test(v.name));
+      if (!v) v = voices.find(v => /huihui/i.test(v.name));
+      // 第四优先：任意中文女声
+      if (!v) v = voices.find(v => v.lang.includes("zh") && /female|女|yao/i.test(v.name));
+      // 最后：任意中文声
+      if (!v) v = voices.find(v => v.lang.includes("zh"));
+      return v;
+    }
+    if ("speechSynthesis" in window) {
+      childVoiceCache = loadChildVoice();
+      window.speechSynthesis.onvoiceschanged = () => { childVoiceCache = loadChildVoice(); };
+    }
+
     function speakCaption(text, rate) {
       if (!("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = "zh-CN";
-      utter.rate = (rate || 1.0) * 0.85;  // 适度减速，更接近幼童语速
-      utter.pitch = 2.0;   // 最高音调，模拟女幼童可爱音色
-      utter.volume = 1;
-      // 优先选择幼童/年轻女声（如Yaoyao），其次中文女声，最后任意中文声
-      const voices = window.speechSynthesis.getVoices();
-      const childVoice = voices.find(v => v.lang.includes("zh") && /yaoyao|kid|child|girl/i.test(v.name))
-                     || voices.find(v => v.lang.includes("zh") && /female|女|yao|hui/i.test(v.name))
-                     || voices.find(v => v.lang.includes("zh"));
-      if (childVoice) utter.voice = childVoice;
-      window.speechSynthesis.speak(utter);
+      // 分段：在逗号/句号/感叹号处断句，每段单独播报，中间微停顿
+      const segments = text.split(/([，。！？])/).filter(s => s.length > 0);
+      let delay = 0;
+      segments.forEach(seg => {
+        if (/^[，。！？]$/.test(seg)) { delay += 150; return; }
+        const u = new SpeechSynthesisUtterance(seg);
+        u.lang = "zh-CN";
+        u.pitch = 2.0;    // 最高音调
+        u.rate = 0.75;    // 大幅减速，模拟幼童说话节奏
+        u.volume = 1;
+        if (childVoiceCache) u.voice = childVoiceCache;
+        if (delay > 0) {
+          setTimeout(() => window.speechSynthesis.speak(u), delay);
+        } else {
+          window.speechSynthesis.speak(u);
+        }
+        delay += seg.length * 350;  // 估算这段话的时长，安排下一段的延迟
+      });
     }
 
     // 文字逐字跳动入场
@@ -971,12 +999,6 @@
         span.style.animationDelay = (i * charDelay) + "s";
         caption.appendChild(span);
       });
-    }
-
-    // 预加载语音引擎
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.getVoices();
-      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
     }
 
     // 从HTML字幕元素读取文案，确保语音与显示完全一致
