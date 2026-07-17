@@ -466,6 +466,26 @@
           </div>
         </div>
 
+        <!-- 扫码访问 -->
+        <div style="margin-top:32px; display:flex; justify-content:center;">
+          <div style="background:var(--bg-card); border-radius:var(--radius-lg); padding:28px 36px; box-shadow:var(--shadow-md); text-align:center; position:relative; overflow:hidden;">
+            <div style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(46,134,222,0.05) 0%, transparent 50%); animation:spin-slow 20s linear infinite; pointer-events:none;"></div>
+            <h4 style="font-size:16px; color:var(--secondary); margin-bottom:16px; position:relative;">📱 扫码访问《法治小星星》</h4>
+            <div style="display:inline-block; padding:12px; background:white; border-radius:var(--radius-md); box-shadow:0 2px 12px rgba(0,0,0,0.08); position:relative;">
+              <img id="musicQR" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/audio/music.html" 
+                alt="扫码访问" width="180" height="180" style="display:block; border-radius:8px;" />
+            </div>
+            <p style="font-size:13px; color:var(--text-light); margin-top:14px; position:relative;">手机扫码即可听歌🎵</p>
+            <a id="downloadQR" href="#" download="法治小星星_二维码.png" 
+              style="display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:8px 24px; 
+              background:linear-gradient(135deg, var(--secondary), var(--secondary-light)); color:white; 
+              text-decoration:none; border-radius:var(--radius-xl); font-size:13px; font-weight:600; 
+              box-shadow:0 3px 12px rgba(46,134,222,0.3); transition:all 0.3s; position:relative;">
+              ⬇ 下载二维码
+            </a>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -643,6 +663,30 @@
         document.getElementById('playBtn').textContent = '⏸';
         document.getElementById('vinyl').classList.add('spinning');
       }, 200);
+    });
+  </script>
+
+  <script>
+    // 二维码下载功能
+    document.getElementById('downloadQR').addEventListener('click', function(e) {
+      e.preventDefault();
+      const qrImg = document.getElementById('musicQR');
+      fetch(qrImg.src)
+        .then(res => res.blob())
+        .then(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = '法治小星星_二维码.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        })
+        .catch(() => {
+          // 备用方案：直接在新窗口打开
+          window.open(qrImg.src, '_blank');
+        });
     });
   </script>
 
