@@ -261,7 +261,7 @@
 
     // ========== 辅助函数 ==========
     function fetchQRBlob(url, size) {
-      return fetch('https://quickchart.io/qr?text=' + encodeURIComponent(url) + '&size=' + size)
+      return fetch('https://quickchart.io/qr?text=' + url + '&size=' + size)
         .then(function (res) { return res.blob(); });
     }
 
@@ -328,7 +328,7 @@
           p.textContent = url;
           this.parentNode.appendChild(p);
         };
-        this.src = 'https://quickchart.io/qr?text=' + encodeURIComponent(url) + '&size=180';
+        this.src = 'https://quickchart.io/qr?text=' + url + '&size=180';
       };
     });
   });
@@ -350,9 +350,9 @@
         textEl.style.display = 'block';
         textEl.textContent = '扫码访问链接：\n' + _currentUrl;
       };
-      imgEl.src = 'https://quickchart.io/qr?text=' + encodeURIComponent(url) + '&size=' + size;
+      imgEl.src = 'https://quickchart.io/qr?text=' + url + '&size=' + size;
     };
-    imgEl.src = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + encodeURIComponent(url);
+    imgEl.src = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + url;
   }
 
   // ========== 暴露全局函数 ==========
@@ -391,7 +391,7 @@
         p.textContent = url;
         this.parentNode.appendChild(p);
       };
-      this.src = 'https://quickchart.io/qr?text=' + encodeURIComponent(url) + '&size=180';
+      this.src = 'https://quickchart.io/qr?text=' + url + '&size=180';
     };
   };
 })();
