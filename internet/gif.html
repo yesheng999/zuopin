@@ -218,17 +218,9 @@
     }
   </style>
 </head>
-<body>
+<body class="gradient-bg">
 
-  <nav class="top-nav">
-    <div class="nav-inner">
-      <a href="../index.html" class="logo">
-        <span class="logo-icon">⚖️</span>
-        <span>普法创意作品集</span>
-      </a>
-      <a href="../index.html" class="back-btn">← 返回首页</a>
-    </div>
-  </nav>
+  <div class="particle-bg" id="particleBg"></div>
 
   <div class="page-wrapper">
     <div class="container">
@@ -279,7 +271,7 @@
               <div class="gif-desc">过马路看信号灯</div>
             </div>
             <div class="gif-actions">
-              <button class="gif-dl-btn" onclick="copyGif(0)">复制使用</button>
+              <button class="gif-dl-btn" onclick="downloadGif(0)">⬇ 下载GIF</button>
             </div>
           </div>
 
@@ -322,7 +314,7 @@
               <div class="gif-desc">嗨！我是法治小卫士</div>
             </div>
             <div class="gif-actions">
-              <button class="gif-dl-btn" onclick="copyGif(1)">复制使用</button>
+              <button class="gif-dl-btn" onclick="downloadGif(1)">⬇ 下载GIF</button>
             </div>
           </div>
 
@@ -347,7 +339,7 @@
               <div class="gif-desc">同学之间要友爱</div>
             </div>
             <div class="gif-actions">
-              <button class="gif-dl-btn" onclick="copyGif(2)">复制使用</button>
+              <button class="gif-dl-btn" onclick="downloadGif(2)">⬇ 下载GIF</button>
             </div>
           </div>
 
@@ -383,7 +375,7 @@
               <div class="gif-desc">想一想对不对</div>
             </div>
             <div class="gif-actions">
-              <button class="gif-dl-btn" onclick="copyGif(3)">复制使用</button>
+              <button class="gif-dl-btn" onclick="downloadGif(3)">⬇ 下载GIF</button>
             </div>
           </div>
 
@@ -414,7 +406,7 @@
               <div class="gif-desc">你真棒！点赞！</div>
             </div>
             <div class="gif-actions">
-              <button class="gif-dl-btn" onclick="copyGif(4)">复制使用</button>
+              <button class="gif-dl-btn" onclick="downloadGif(4)">⬇ 下载GIF</button>
             </div>
           </div>
 
@@ -447,7 +439,7 @@
               <div class="gif-desc">闪闪发光！</div>
             </div>
             <div class="gif-actions">
-              <button class="gif-dl-btn" onclick="copyGif(5)">复制使用</button>
+              <button class="gif-dl-btn" onclick="downloadGif(5)">⬇ 下载GIF</button>
             </div>
           </div>
 
@@ -464,8 +456,8 @@
             </div>
             <div class="usage-step">
               <div class="step-num">2</div>
-              <h4>点击复制</h4>
-              <p>点击"复制使用"按钮保存表情</p>
+              <h4>点击下载</h4>
+              <p>点击"下载GIF"按钮保存动图</p>
             </div>
             <div class="usage-step">
               <div class="step-num">3</div>
@@ -504,29 +496,117 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
   <script>
     const gifNames = [
       '红灯停绿灯行', '法治小卫士打招呼', '爱心互助',
       '法治小思考', '法治大点赞', '法治小星星'
     ];
 
-    function copyGif(idx) {
-      // 创建一个提示
-      const toast = document.createElement('div');
-      toast.style.cssText = `
-        position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
-        background: var(--primary); color: white; padding: 12px 32px;
-        border-radius: 24px; font-size: 14px; font-weight: 600;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 9999;
-        animation: bounce-in 0.3s ease;
-      `;
-      toast.textContent = `已收藏「${gifNames[idx]}」表情！`;
-      document.body.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s';
-        setTimeout(() => toast.remove(), 300);
-      }, 2000);
+    function downloadGif(idx) {
+      const cards = document.querySelectorAll('.gif-card');
+      const card = cards[idx];
+      const svg = card.querySelector('svg');
+      const btn = card.querySelector('.gif-dl-btn');
+      const originalText = btn.textContent;
+      btn.textContent = '⏳ 生成中...';
+      btn.disabled = true;
+
+      // 序列化SVG
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+
+      const img = new Image();
+      img.onload = function() {
+        const size = 240;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+
+        // 创建GIF
+        const gif = new GIF({
+          workers: 2,
+          quality: 10,
+          width: size,
+          height: size,
+          workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js'
+        });
+
+        // 生成12帧动画 - 模拟弹跳浮动效果
+        for (let i = 0; i < 12; i++) {
+          ctx.clearRect(0, 0, size, size);
+          // 背景色
+          ctx.fillStyle = '#FFF8F0';
+          ctx.fillRect(0, 0, size, size);
+
+          const phase = i / 12 * Math.PI * 2;
+          const offsetY = Math.sin(phase) * 10;
+          const scale = 1 + Math.sin(phase) * 0.06;
+          const rotation = Math.sin(phase * 0.5) * 0.04;
+
+          ctx.save();
+          ctx.translate(size / 2, size / 2 + offsetY);
+          ctx.rotate(rotation);
+          ctx.scale(scale, scale);
+          ctx.translate(-size / 2, -size / 2);
+          ctx.drawImage(img, 0, 0, size, size);
+          ctx.restore();
+
+          gif.addFrame(ctx, { copy: true, delay: 80 });
+        }
+
+        gif.on('progress', function(p) {
+          btn.textContent = '⏳ ' + Math.round(p * 100) + '%';
+        });
+
+        gif.on('finished', function(blob) {
+          const downloadUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = downloadUrl;
+          a.download = gifNames[idx] + '.gif';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(downloadUrl);
+          URL.revokeObjectURL(url);
+
+          btn.textContent = '✅ 已下载';
+          setTimeout(() => {
+            btn.textContent = originalText;
+            btn.disabled = false;
+          }, 2000);
+        });
+
+        gif.render();
+      };
+      img.onerror = function() {
+        btn.textContent = '❌ 失败';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }, 2000);
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    }
+  </script>
+
+  <script>
+    // 普法粒子背景
+    const particles = ['⚖️', '⭐', '🛡️', '📜', '✨', '🎨'];
+    const bg = document.getElementById('particleBg');
+    for (let i = 0; i < 12; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = particles[i % particles.length];
+      p.style.left = Math.random() * 100 + '%';
+      p.style.bottom = '-50px';
+      p.style.fontSize = (14 + Math.random() * 18) + 'px';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      bg.appendChild(p);
     }
   </script>
 

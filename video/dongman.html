@@ -249,17 +249,9 @@
     }
   </style>
 </head>
-<body>
+<body class="gradient-bg">
 
-  <nav class="top-nav">
-    <div class="nav-inner">
-      <a href="../index.html" class="logo">
-        <span class="logo-icon">⚖️</span>
-        <span>普法创意作品集</span>
-      </a>
-      <a href="../index.html" class="back-btn">← 返回首页</a>
-    </div>
-  </nav>
+  <div class="particle-bg" id="particleBg"></div>
 
   <div class="page-wrapper">
     <div class="container">
@@ -270,8 +262,6 @@
         <p class="work-subtitle">在浙里·看见杭州法治——我与杭州法治20年</p>
         <div class="author-info">
           <span>👤 作者：杭州市翠苑第二小学102班岳沐宸</span>
-          <span class="sep"></span>
-          <span>⏱ 时长：约60秒</span>
           <span class="sep"></span>
           <span>📐 分辨率：1920×1080</span>
           <span class="sep"></span>
@@ -886,7 +876,6 @@
           <ul>
             <li>作品形式：动漫动画</li>
             <li>画面比例：16:9（1920×1080）</li>
-            <li>时长：约60秒</li>
             <li>色彩：明亮温暖的橙黄色调</li>
             <li>角色：法治小卫士、小朋友、警察叔叔</li>
             <li>主题：法治守护每一天</li>
@@ -1004,6 +993,23 @@
         if (!isPlaying) startPlayback();
       });
     });
+  </script>
+
+  <script>
+    // 普法粒子背景
+    const particles = ['⚖️', '⭐', '🛡️', '📜', '✨', '🌟'];
+    const bg = document.getElementById('particleBg');
+    for (let i = 0; i < 15; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = particles[i % particles.length];
+      p.style.left = Math.random() * 100 + '%';
+      p.style.bottom = '-50px';
+      p.style.fontSize = (14 + Math.random() * 18) + 'px';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      bg.appendChild(p);
+    }
   </script>
 
 </body>

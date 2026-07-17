@@ -406,17 +406,9 @@
     }
   </style>
 </head>
-<body>
+<body class="gradient-bg">
 
-  <nav class="top-nav">
-    <div class="nav-inner">
-      <a href="../index.html" class="logo">
-        <span class="logo-icon">⚖️</span>
-        <span>普法创意作品集</span>
-      </a>
-      <a href="../index.html" class="back-btn">← 返回首页</a>
-    </div>
-  </nav>
+  <div class="particle-bg" id="particleBg"></div>
 
   <div class="page-wrapper" style="padding: 20px 0;">
     <div class="container">
@@ -499,7 +491,7 @@
             <div class="result-msg" id="resultMsg">恭喜你完成了所有题目！</div>
             <div class="result-btns">
               <button class="result-btn primary" onclick="restartQuiz()">🔄 再玩一次</button>
-              <button class="result-btn secondary" onclick="location.href='../index.html'">← 返回作品集</button>
+
             </div>
           </div>
 
@@ -734,6 +726,23 @@
         frame.appendChild(star);
         setTimeout(() => star.remove(), 1200);
       }
+    }
+  </script>
+
+  <script>
+    // 普法粒子背景
+    const particles = ['⚖️', '⭐', '🛡️', '📜', '✨', '🎮'];
+    const bg = document.getElementById('particleBg');
+    for (let i = 0; i < 12; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = particles[i % particles.length];
+      p.style.left = Math.random() * 100 + '%';
+      p.style.bottom = '-50px';
+      p.style.fontSize = (14 + Math.random() * 18) + 'px';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      bg.appendChild(p);
     }
   </script>
 

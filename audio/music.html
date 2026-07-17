@@ -337,17 +337,9 @@
     }
   </style>
 </head>
-<body>
+<body class="gradient-bg">
 
-  <nav class="top-nav">
-    <div class="nav-inner">
-      <a href="../index.html" class="logo">
-        <span class="logo-icon">⚖️</span>
-        <span>普法创意作品集</span>
-      </a>
-      <a href="../index.html" class="back-btn">← 返回首页</a>
-    </div>
-  </nav>
+  <div class="particle-bg" id="particleBg"></div>
 
   <div class="page-wrapper">
     <div class="container">
@@ -360,8 +352,6 @@
           <p class="work-subtitle">在浙里·看见杭州法治——我与杭州法治20年</p>
           <div class="author-info">
             <span>👤 作者：杭州市翠苑第二小学102班岳沐宸</span>
-            <span class="sep"></span>
-            <span>⏱ 时长：约90秒</span>
             <span class="sep"></span>
             <span>🎵 形式：原创儿歌</span>
             <span class="sep"></span>
@@ -469,7 +459,7 @@
             <ul style="font-size:14px; color:var(--text-light); line-height:1.8; padding-left:20px;">
               <li>作品类别：音频类 · 音乐</li>
               <li>曲名：法治小星星</li>
-              <li>时长：约90秒（≤120秒）</li>
+              
               <li>附：歌词文稿一份</li>
               <li>主题：法治守护每一天</li>
             </ul>
@@ -654,6 +644,23 @@
         document.getElementById('vinyl').classList.add('spinning');
       }, 200);
     });
+  </script>
+
+  <script>
+    // 普法粒子背景
+    const particles = ['⚖️', '⭐', '🛡️', '📜', '✨', '🎵'];
+    const bg = document.getElementById('particleBg');
+    for (let i = 0; i < 12; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = particles[i % particles.length];
+      p.style.left = Math.random() * 100 + '%';
+      p.style.bottom = '-50px';
+      p.style.fontSize = (14 + Math.random() * 18) + 'px';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      bg.appendChild(p);
+    }
   </script>
 
 </body>

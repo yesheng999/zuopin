@@ -296,17 +296,9 @@
     }
   </style>
 </head>
-<body>
+<body class="gradient-bg">
 
-  <nav class="top-nav">
-    <div class="nav-inner">
-      <a href="../index.html" class="logo">
-        <span class="logo-icon">⚖️</span>
-        <span>普法创意作品集</span>
-      </a>
-      <a href="../index.html" class="back-btn">← 返回首页</a>
-    </div>
-  </nav>
+  <div class="particle-bg" id="particleBg"></div>
 
   <div class="page-wrapper">
     <div class="container">
@@ -319,8 +311,6 @@
           <p class="work-subtitle">在浙里·看见杭州法治——我与杭州法治20年</p>
           <div class="author-info">
             <span>👤 表演者：杭州市翠苑第二小学102班岳沐宸</span>
-            <span class="sep"></span>
-            <span>⏱ 时长：约100秒</span>
             <span class="sep"></span>
             <span>📝 附文稿一份</span>
             <span class="sep"></span>
@@ -390,7 +380,7 @@
 
           <div class="script-header">
             <h2>📝 脱口秀脚本</h2>
-            <p>《小小普法员开讲啦》| 时长约100秒 | 附文稿</p>
+            <p>《小小普法员开讲啦》| 附文稿</p>
           </div>
 
           <!-- 开场 -->
@@ -513,7 +503,7 @@
             <ul style="font-size:14px; color:var(--text-light); line-height:1.8; padding-left:20px;">
               <li>作品类别：音频类 · 脱口秀</li>
               <li>题目：小小普法员开讲啦</li>
-              <li>时长：约100秒（≤120秒）</li>
+              
               <li>附：完整文稿一份</li>
               <li>主题：拾金不昧与法治</li>
             </ul>
@@ -597,6 +587,23 @@
       speechTimer = setTimeout(() => {
         if (isReading) readSegment(idx + 1);
       }, duration);
+    }
+  </script>
+
+  <script>
+    // 普法粒子背景
+    const particles = ['⚖️', '⭐', '🛡️', '📜', '✨', '🎤'];
+    const bg = document.getElementById('particleBg');
+    for (let i = 0; i < 12; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = particles[i % particles.length];
+      p.style.left = Math.random() * 100 + '%';
+      p.style.bottom = '-50px';
+      p.style.fontSize = (14 + Math.random() * 18) + 'px';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      bg.appendChild(p);
     }
   </script>
 
