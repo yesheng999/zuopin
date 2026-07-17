@@ -85,14 +85,36 @@
   }
 
   // ========== 显示分享指引（微信/QQ内置浏览器专用） ==========
-  function showShareGuide() {
+  function showShareGuide(mode) {
     var browser = detectBrowser();
     var tip = '';
 
-    if (browser.isWeChat) {
+    if (mode === 'clipboard') {
+      // 图片已复制到剪贴板
+      tip = '<div style="font-size:28px;margin-bottom:12px;">\u2705</div>' +
+        '<h3 style="font-size:16px;color:#333;margin:0 0 16px;">二维码已复制到剪贴板！</h3>' +
+        '<div style="text-align:left;font-size:14px;color:#666;line-height:2.2;">' +
+        '请打开微信或QQ聊天窗口：<br>' +
+        '1. 点击输入框<br>' +
+        '2. <b>长按</b>选择"<b>粘贴</b>"<br>' +
+        '3. 二维码图片会直接显示在聊天中<br>' +
+        '4. 好友<b>长按图片</b>即可扫码访问' +
+        '</div>';
+    } else if (mode === 'saved') {
+      // 图片已保存到相册
+      tip = '<div style="font-size:28px;margin-bottom:12px;">\u2705</div>' +
+        '<h3 style="font-size:16px;color:#333;margin:0 0 16px;">二维码已保存到相册！</h3>' +
+        '<div style="text-align:left;font-size:14px;color:#666;line-height:2.2;">' +
+        '请打开微信或QQ聊天窗口：<br>' +
+        '1. 点击"<b>+"</b>号<br>' +
+        '2. 选择"<b>相册</b>"<br>' +
+        '3. 选择刚保存的二维码图片<br>' +
+        '4. 好友收到后<b>长按图片</b>即可扫码访问' +
+        '</div>';
+    } else if (browser.isWeChat) {
       tip = '<div style="font-size:22px;margin-bottom:16px;">\uD83D\uDC4B</div>' +
         '<h3 style="font-size:16px;color:#333;margin:0 0 16px;">微信内分享方法</h3>' +
-        '<div style="text-align:left;font-size:14px;color:#666;line-height:2;">' +
+        '<div style="text-align:left;font-size:14px;color:#666;line-height:2.2;">' +
         '<b>方法一（推荐）：</b><br>' +
         '1. 长按上方二维码图片<br>' +
         '2. 选择"保存图片"到手机相册<br>' +
@@ -105,7 +127,7 @@
     } else if (browser.isQQ) {
       tip = '<div style="font-size:22px;margin-bottom:16px;">\uD83D\uDC4B</div>' +
         '<h3 style="font-size:16px;color:#333;margin:0 0 16px;">QQ内分享方法</h3>' +
-        '<div style="text-align:left;font-size:14px;color:#666;line-height:2;">' +
+        '<div style="text-align:left;font-size:14px;color:#666;line-height:2.2;">' +
         '<b>方法一：</b><br>' +
         '1. 长按上方二维码图片<br>' +
         '2. 选择"保存图片"到手机<br>' +
@@ -117,7 +139,7 @@
     } else {
       tip = '<div style="font-size:22px;margin-bottom:16px;">\uD83D\uDC4B</div>' +
         '<h3 style="font-size:16px;color:#333;margin:0 0 16px;">分享方法</h3>' +
-        '<div style="text-align:left;font-size:14px;color:#666;line-height:2;">' +
+        '<div style="text-align:left;font-size:14px;color:#666;line-height:2.2;">' +
         '1. 长按上方二维码图片保存到相册<br>' +
         '2. 打开微信或QQ聊天窗口<br>' +
         '3. 点击"+"选择图片发送给好友' +
@@ -165,42 +187,38 @@
       var browser = detectBrowser();
       var shareText = '扫码访问《' + _currentTitle + '》';
 
-      // 微信/QQ内置浏览器：navigator.share不可用，显示指引
+      // 微信/QQ内置浏览器：无法复制图片到剪贴板，直接显示指引
       if (browser.isWeChat || browser.isQQ) {
         showShareGuide();
         return;
       }
 
-      // 非微信/QQ浏览器：尝试系统分享
-      shareBtn.textContent = '\u23F3 正在准备...';
+      // 非微信/QQ浏览器：复制二维码图片到剪贴板
+      shareBtn.textContent = '\u23F3 正在复制二维码...';
       shareBtn.style.opacity = '0.7';
 
-      // 从quickchart.io获取二维码图片（支持CORS，可转为File对象）
       fetchQRBlob(_currentUrl, 400)
         .then(function (blob) {
-          var file = new File([blob], _currentTitle + '_二维码.png', { type: 'image/png' });
-
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            // 手机Chrome/Safari：通过系统分享面板发送二维码图片
-            // 分享面板会显示微信、QQ等已安装的聊天app
-            navigator.share({
-              title: _currentTitle,
-              text: shareText,
-              files: [file]
-            }).catch(function () {
-              // 用户取消分享，静默处理
-            });
-          } else if (navigator.share) {
-            // 不支持文件分享但支持URL/文字分享
-            navigator.share({
-              title: _currentTitle,
-              text: shareText,
-              url: _currentUrl
-            }).catch(function () {});
+          // 方案1：复制图片到剪贴板（好友可直接粘贴看到图片，非文件附件）
+          if (navigator.clipboard && navigator.clipboard.write && typeof ClipboardItem !== 'undefined') {
+            try {
+              var item = new ClipboardItem({ 'image/png': blob });
+              navigator.clipboard.write([item]).then(function () {
+                showShareGuide('clipboard');
+              }).catch(function () {
+                // 剪贴板写入失败，回退到保存图片
+                saveImageToDevice(blob, _currentTitle + '_二维码.png');
+                showShareGuide('saved');
+              });
+            } catch (e) {
+              // ClipboardItem不支持，回退到保存图片
+              saveImageToDevice(blob, _currentTitle + '_二维码.png');
+              showShareGuide('saved');
+            }
           } else {
-            // 不支持系统分享：保存图片 + 显示指引
+            // 不支持剪贴板API：保存图片到相册 + 显示指引
             saveImageToDevice(blob, _currentTitle + '_二维码.png');
-            showShareGuide();
+            showShareGuide('saved');
           }
         })
         .catch(function () {
@@ -208,7 +226,7 @@
           var modalImg = document.getElementById('qrModalImg');
           if (modalImg.src) {
             downloadImageDirect(modalImg.src, _currentTitle + '_二维码.png');
-            showShareGuide();
+            showShareGuide('saved');
           } else {
             copyUrlToClipboard();
           }
