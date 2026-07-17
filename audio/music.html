@@ -375,9 +375,6 @@
             <button class="play-circle" id="playBtn" title="播放/暂停" style="width:80px;height:80px;font-size:32px;">▶</button>
             <button class="play-circle" id="stopBtn" title="停止">■</button>
           </div>
-          <div style="margin-top:12px;">
-            <button id="vocalToggle" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:white; padding:6px 18px; border-radius:var(--radius-xl); font-size:12px; cursor:pointer; font-family:inherit;">🎤 童声：开</button>
-          </div>
 
           <div class="music-progress">
             <div class="music-progress-fill" id="musicProgress"></div>
@@ -475,7 +472,7 @@
             <div style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(46,134,222,0.05) 0%, transparent 50%); animation:spin-slow 20s linear infinite; pointer-events:none;"></div>
             <h4 style="font-size:16px; color:var(--secondary); margin-bottom:16px; position:relative;">📱 扫码访问《法治小星星》</h4>
             <div style="display:inline-block; padding:12px; background:white; border-radius:var(--radius-md); box-shadow:0 2px 12px rgba(0,0,0,0.08); position:relative;">
-              <img id="musicQR" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/audio/music.html" 
+              <img id="musicQR" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/audio/music.html"
                 alt="扫码访问" width="180" height="180" style="display:block; border-radius:8px;" />
             </div>
             <p style="font-size:13px; color:var(--text-light); margin-top:14px; position:relative;">手机扫码即可听歌🎵</p>
@@ -501,11 +498,10 @@
     let melodyTimer = null;
     let noteIdx = 0;
 
-    // 旋律数据（完整版：第一段+副歌+第二段+副歌+结尾），参考《小星星》改编
+    // 旋律数据（第一段+第二段+结尾，取消副歌），参考《小星星》改编
     // 音名 + 频率(Hz) + 歌词 + 时长(拍)
     const C4 = 261.63, D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, B4 = 493.88;
     const C5 = 523.25;
-    const REST = 0; // 休止符
 
     const melody = [
       // ===== 第一段 =====
@@ -527,16 +523,6 @@
       { freq: G4, lyric: '第', dur: 0.5 }, { freq: G4, lyric: '一', dur: 0.5 },
       { freq: A4, lyric: '记', dur: 0.5 }, { freq: A4, lyric: '在', dur: 0.5 },
       { freq: G4, lyric: '心', dur: 1.0 },
-      // ===== 副歌1 =====
-      { freq: G4, lyric: '法', dur: 0.5 }, { freq: G4, lyric: '治', dur: 0.5 },
-      { freq: F4, lyric: '小', dur: 0.5 }, { freq: F4, lyric: '星', dur: 0.5 },
-      { freq: E4, lyric: '星', dur: 0.5 }, { freq: E4, lyric: '亮', dur: 0.5 },
-      { freq: D4, lyric: '晶', dur: 1.0 },
-      { freq: C4, lyric: '守', dur: 0.5 }, { freq: C4, lyric: '规', dur: 0.5 },
-      { freq: D4, lyric: '则', dur: 0.5 }, { freq: D4, lyric: '呀', dur: 0.5 },
-      { freq: E4, lyric: '我', dur: 0.5 }, { freq: E4, lyric: '最', dur: 0.5 },
-      { freq: D4, lyric: '行', dur: 1.0 },
-      { freq: REST, lyric: '｜', dur: 0.3 },
       // ===== 第二段 =====
       { freq: C4, lyric: '捡', dur: 0.5 }, { freq: C4, lyric: '到', dur: 0.5 },
       { freq: G4, lyric: '东', dur: 0.5 }, { freq: G4, lyric: '西', dur: 0.5 },
@@ -556,16 +542,6 @@
       { freq: G4, lyric: '帮', dur: 0.5 }, { freq: G4, lyric: '助', dur: 0.5 },
       { freq: A4, lyric: '笑', dur: 0.5 }, { freq: A4, lyric: '哈', dur: 0.5 },
       { freq: G4, lyric: '哈', dur: 1.0 },
-      // ===== 副歌2 =====
-      { freq: G4, lyric: '法', dur: 0.5 }, { freq: G4, lyric: '治', dur: 0.5 },
-      { freq: F4, lyric: '小', dur: 0.5 }, { freq: F4, lyric: '星', dur: 0.5 },
-      { freq: E4, lyric: '星', dur: 0.5 }, { freq: E4, lyric: '亮', dur: 0.5 },
-      { freq: D4, lyric: '晶', dur: 1.0 },
-      { freq: C4, lyric: '守', dur: 0.5 }, { freq: C4, lyric: '规', dur: 0.5 },
-      { freq: D4, lyric: '则', dur: 0.5 }, { freq: D4, lyric: '呀', dur: 0.5 },
-      { freq: E4, lyric: '我', dur: 0.5 }, { freq: E4, lyric: '最', dur: 0.5 },
-      { freq: D4, lyric: '行', dur: 1.0 },
-      { freq: REST, lyric: '｜', dur: 0.3 },
       // ===== 结尾 =====
       { freq: C4, lyric: '在', dur: 0.5 }, { freq: C4, lyric: '浙', dur: 0.5 },
       { freq: G4, lyric: '里', dur: 0.5 }, { freq: G4, lyric: '呀', dur: 0.5 },
@@ -614,99 +590,34 @@
       return audioCtx;
     }
 
-    // 婴幼儿音色：八音盒/钟琴合成 + 童声吟唱
-    let vocalEnabled = true; // 是否启用童声吟唱
-    const vocalToggle = document.getElementById('vocalToggle');
-    if (vocalToggle) {
-      vocalToggle.addEventListener('click', function() {
-        vocalEnabled = !vocalEnabled;
-        this.textContent = vocalEnabled ? '🎤 童声：开' : '🎤 童声：关';
-        this.style.opacity = vocalEnabled ? '1' : '0.5';
-      });
-    }
-
+    // 干净音色：三角波 + 平滑包络（无TTS童声，无噪音）
     function playTone(freq, duration) {
       const ctx = ensureAudio();
       const now = ctx.currentTime;
       const masterGain = ctx.createGain();
       masterGain.connect(ctx.destination);
 
-      // === 主振荡器：正弦波（柔和钟琴音色） ===
-      const osc1 = ctx.createOscillator();
-      osc1.type = 'sine';
-      osc1.frequency.value = freq;
-      const gain1 = ctx.createGain();
-      gain1.gain.setValueAtTime(0, now);
-      gain1.gain.linearRampToValueAtTime(0.25, now + 0.02);
-      gain1.gain.exponentialRampToValueAtTime(0.001, now + duration);
-      osc1.connect(gain1); gain1.connect(masterGain);
+      // 单个三角波振荡器（干净柔和的音色）
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
 
-      // === 谐波1：2倍频（明亮泛音，模拟钟琴） ===
-      const osc2 = ctx.createOscillator();
-      osc2.type = 'sine';
-      osc2.frequency.value = freq * 2;
-      const gain2 = ctx.createGain();
-      gain2.gain.setValueAtTime(0, now);
-      gain2.gain.linearRampToValueAtTime(0.12, now + 0.02);
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.6);
-      osc2.connect(gain2); gain2.connect(masterGain);
+      // 平滑包络：快速起音 + 自然衰减（避免点击噪音）
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.3, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
-      // === 谐波2：3倍频（高亮泛音，增加童趣感） ===
-      const osc3 = ctx.createOscillator();
-      osc3.type = 'sine';
-      osc3.frequency.value = freq * 3;
-      const gain3 = ctx.createGain();
-      gain3.gain.setValueAtTime(0, now);
-      gain3.gain.linearRampToValueAtTime(0.06, now + 0.01);
-      gain3.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.4);
-      osc3.connect(gain3); gain3.connect(masterGain);
-
-      // === 轻微颤音（vibrato，增加温暖感） ===
-      const vibrato = ctx.createOscillator();
-      vibrato.frequency.value = 5; // 5Hz颤音
-      const vibratoGain = ctx.createGain();
-      vibratoGain.gain.value = freq * 0.008;
-      vibrato.connect(vibratoGain);
-      vibratoGain.connect(osc1.frequency);
-
-      osc1.start(now); osc1.stop(now + duration);
-      osc2.start(now); osc2.stop(now + duration * 0.7);
-      osc3.start(now); osc3.stop(now + duration * 0.5);
-      vibrato.start(now); vibrato.stop(now + duration);
-    }
-
-    // 童声吟唱：用高pitch的TTS逐字唱歌词
-    let speechVoice = null;
-    function pickChildVoice() {
-      if (!('speechSynthesis' in window)) return null;
-      const voices = speechSynthesis.getVoices();
-      // 优先选择中文女声
-      const cnVoices = voices.filter(v => v.lang.startsWith('zh'));
-      return cnVoices.find(v => /female|女|童|child/i.test(v.name)) || cnVoices[0] || null;
-    }
-    if ('speechSynthesis' in window) {
-      speechSynthesis.onvoiceschanged = () => { speechVoice = pickChildVoice(); };
-      speechVoice = pickChildVoice();
-    }
-
-    function speakLyric(text) {
-      if (!vocalEnabled || !('speechSynthesis' in window)) return;
-      if (!text || text === '｜') return;
-      speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'zh-CN';
-      utter.pitch = 2.0;  // 最高pitch，模拟婴幼儿
-      utter.rate = 0.7;   // 稍慢，模拟幼儿说话
-      utter.volume = 0.6;
-      if (speechVoice) utter.voice = speechVoice;
-      speechSynthesis.speak(utter);
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(now);
+      osc.stop(now + duration);
     }
 
     function playSingleNote(idx) {
       const n = melody[idx];
       if (n.freq > 0) {
         playTone(n.freq, n.dur * 0.4);
-        speakLyric(n.lyric); // 童声吟唱
       }
       // 高亮音符
       const blocks = staff.querySelectorAll('.note-block');
@@ -733,7 +644,6 @@
         const n = melody[noteIdx];
         if (n.freq > 0) {
           playTone(n.freq, n.dur * 0.35);
-          speakLyric(n.lyric); // 童声吟唱歌词
         }
 
         // 高亮
@@ -761,7 +671,6 @@
     function stopMelody() {
       isPlaying = false;
       clearTimeout(melodyTimer);
-      if ('speechSynthesis' in window) speechSynthesis.cancel();
       document.getElementById('playBtn').textContent = '▶';
       document.getElementById('vinyl').classList.remove('spinning');
       document.querySelectorAll('.note-block').forEach(b => b.classList.remove('playing'));
@@ -789,7 +698,6 @@
       if (isPlaying) {
         isPlaying = false;
         clearTimeout(melodyTimer);
-        if ('speechSynthesis' in window) speechSynthesis.cancel();
         this.textContent = '▶';
         document.getElementById('vinyl').classList.remove('spinning');
       } else {
