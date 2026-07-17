@@ -121,16 +121,11 @@
       bottom: 40px;
       left: 50%;
       transform: translateX(-50%);
-      background: linear-gradient(135deg, rgba(255,107,53,0.08), rgba(255,217,61,0.08), rgba(46,134,222,0.08));
-      backdrop-filter: blur(6px);
-      padding: 12px 32px;
-      border-radius: var(--radius-xl);
+      padding: 0;
       font-size: 20px;
       font-weight: 800;
       white-space: nowrap;
       z-index: 5;
-      border: 2px solid rgba(255,255,255,0.5);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
 
     .scene-caption .char {
@@ -266,7 +261,7 @@
 
     @media (max-width: 768px) {
       .work-desc { grid-template-columns: 1fr; }
-      .scene-caption { font-size: 16px; padding: 8px 20px; }
+      .scene-caption { font-size: 16px; }
     }
   </style>
 </head>
@@ -946,13 +941,13 @@
       '谢谢观看！'
     ];
 
-    // 小朋友甜美语音解说
-    function speakCaption(text) {
+    // 小朋友甜美语音解说 - 速率与文字入场同步
+    function speakCaption(text, rate) {
       if (!("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = "zh-CN";
-      utter.rate = 0.9;
+      utter.rate = rate || 1.0;
       utter.pitch = 1.6;   // 高音调模拟小朋友声音
       utter.volume = 1;
       // 尝试选择中文女声
@@ -964,7 +959,7 @@
     }
 
     // 文字逐字跳动入场
-    function animateCaption(scene) {
+    function animateCaption(scene, charDelay) {
       const caption = scene.querySelector(".scene-caption");
       if (!caption) return;
       const text = caption.textContent;
@@ -973,7 +968,7 @@
         const span = document.createElement("span");
         span.className = "char";
         span.textContent = ch;
-        span.style.animationDelay = (i * 0.08) + "s";
+        span.style.animationDelay = (i * charDelay) + "s";
         caption.appendChild(span);
       });
     }
@@ -984,10 +979,17 @@
       thumbs.forEach((t, i) => t.classList.toggle("active", i === idx));
       currentScene = idx;
       sceneElapsed = 0;
+      // 计算文字入场与语音同步参数
+      const text = sceneCaptions[idx];
+      const charCount = text.length;
+      const charDelay = 0.12; // 每字入场间隔
+      const animDuration = (charCount - 1) * charDelay + 0.6; // 总入场时间
+      // 中文TTS约每字0.22秒(rate=1.0)，调整速率使语音时长≈入场时长
+      const targetRate = Math.min(Math.max((charCount * 0.22) / animDuration, 0.7), 1.5);
       // 文字跳动入场
-      animateCaption(scenes[idx]);
-      // 语音解说（延迟等文字动画完成）
-      setTimeout(() => speakCaption(sceneCaptions[idx]), 600);
+      animateCaption(scenes[idx], charDelay);
+      // 语音同步播放
+      speakCaption(text, targetRate);
     }
 
     function playNext() {
