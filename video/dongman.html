@@ -263,6 +263,136 @@
       .work-desc { grid-template-columns: 1fr; }
       .scene-caption { font-size: 16px; }
     }
+
+    /* ========== 自然风景装饰层 ========== */
+    .nature-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+      overflow: hidden;
+    }
+
+    /* 小鸟飞行 */
+    .bird-fly {
+      position: absolute;
+      animation: bird-fly-across 12s linear infinite;
+    }
+    .bird-fly:nth-child(2) { animation-delay: -4s; animation-duration: 15s; }
+    .bird-fly:nth-child(3) { animation-delay: -8s; animation-duration: 10s; }
+    @keyframes bird-fly-across {
+      0%   { left: -60px; top: 12%; transform: scale(0.7); }
+      50%  { top: 8%; }
+      100% { left: 105%; top: 15%; transform: scale(0.5); }
+    }
+    .bird-wing { animation: bird-flap 0.3s ease-in-out infinite; transform-origin: center; }
+    @keyframes bird-flap {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.5); }
+    }
+
+    /* 柳树摇曳 */
+    .willow-tree {
+      position: absolute;
+      bottom: 0;
+      pointer-events: none;
+    }
+    .willow-left { left: -20px; }
+    .willow-right { right: -20px; transform: scaleX(-1); }
+    .willow-branch {
+      animation: willow-sway 3s ease-in-out infinite;
+      transform-origin: top center;
+    }
+    .willow-branch:nth-child(2) { animation-delay: -1s; }
+    .willow-branch:nth-child(3) { animation-delay: -2s; }
+    @keyframes willow-sway {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+    .willow-leaf {
+      animation: willow-leaf-sway 4s ease-in-out infinite;
+      transform-origin: top;
+    }
+    @keyframes willow-leaf-sway {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      50% { transform: translateX(3px) rotate(2deg); }
+    }
+
+    /* 花草 */
+    .grass-flower {
+      position: absolute;
+      bottom: 0;
+      pointer-events: none;
+    }
+    .grass-left { left: 0; width: 200px; }
+    .grass-right { right: 0; width: 200px; }
+    .flower-sway {
+      animation: flower-sway 2.5s ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+    .flower-sway:nth-child(2) { animation-delay: -0.5s; }
+    .flower-sway:nth-child(3) { animation-delay: -1s; }
+    .flower-sway:nth-child(4) { animation-delay: -1.5s; }
+    @keyframes flower-sway {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(2deg); }
+    }
+
+    /* 蝴蝶飞舞 */
+    .butterfly {
+      position: absolute;
+      animation: butterfly-fly 8s ease-in-out infinite;
+    }
+    .butterfly:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
+    .butterfly-wing-l { animation: butterfly-flap 0.25s ease-in-out infinite; transform-origin: right center; }
+    .butterfly-wing-r { animation: butterfly-flap 0.25s ease-in-out infinite; transform-origin: left center; }
+    @keyframes butterfly-fly {
+      0%   { left: 5%; bottom: 22%; transform: scale(0.8); }
+      25%  { left: 20%; bottom: 30%; transform: scale(1); }
+      50%  { left: 15%; bottom: 25%; transform: scale(0.9); }
+      75%  { left: 30%; bottom: 28%; transform: scale(0.8); }
+      100% { left: 5%; bottom: 22%; transform: scale(0.8); }
+    }
+    @keyframes butterfly-flap {
+      0%, 100% { transform: scaleX(1); }
+      50% { transform: scaleX(0.3); }
+    }
+
+    /* 蜜蜂飞舞 */
+    .bee {
+      position: absolute;
+      animation: bee-fly 6s ease-in-out infinite;
+    }
+    .bee:nth-child(2) { animation-delay: -2s; animation-duration: 8s; }
+    .bee-wing { animation: bee-flap 0.1s ease-in-out infinite; transform-origin: center; }
+    @keyframes bee-fly {
+      0%   { right: 8%; bottom: 18%; transform: scale(0.7); }
+      25%  { right: 18%; bottom: 25%; }
+      50%  { right: 12%; bottom: 30%; transform: scale(0.6); }
+      75%  { right: 22%; bottom: 20%; }
+      100% { right: 8%; bottom: 18%; transform: scale(0.7); }
+    }
+    @keyframes bee-flap {
+      0%, 100% { transform: scaleY(1); opacity: 0.8; }
+      50% { transform: scaleY(0.3); opacity: 0.4; }
+    }
+
+    /* 飘落花瓣/树叶（微风效果） */
+    .floating-petal {
+      position: absolute;
+      animation: petal-fall 8s linear infinite;
+      opacity: 0.7;
+    }
+    .floating-petal:nth-child(1) { animation-delay: 0s; left: 20%; }
+    .floating-petal:nth-child(2) { animation-delay: -2s; left: 50%; }
+    .floating-petal:nth-child(3) { animation-delay: -4s; left: 70%; }
+    .floating-petal:nth-child(4) { animation-delay: -6s; left: 35%; }
+    @keyframes petal-fall {
+      0%   { top: -20px; transform: rotate(0deg) translateX(0); opacity: 0; }
+      10%  { opacity: 0.7; }
+      50%  { transform: rotate(180deg) translateX(30px); }
+      100% { top: 110%; transform: rotate(360deg) translateX(-20px); opacity: 0; }
+    }
   </style>
 </head>
 <body class="gradient-bg">
@@ -291,7 +421,7 @@
           <div class="player-screen">
 
             <!-- 场景1：标题 -->
-            <div class="scene active" data-scene="0" data-duration="6000">
+            <div class="scene active" data-scene="0" data-duration="9000">
               <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
                 <defs>
                   <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1">
@@ -374,7 +504,7 @@
             </div>
 
             <!-- 场景2：红绿灯 -->
-            <div class="scene" data-scene="1" data-duration="10000">
+            <div class="scene" data-scene="1" data-duration="14000">
               <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
                 <defs>
                   <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
@@ -455,7 +585,7 @@
             </div>
 
             <!-- 场景3：拾金不昧 -->
-            <div class="scene" data-scene="2" data-duration="10000">
+            <div class="scene" data-scene="2" data-duration="16000">
               <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
                 <defs>
                   <linearGradient id="bg3" x1="0" y1="0" x2="0" y2="1">
@@ -569,7 +699,7 @@
             </div>
 
             <!-- 场景4：校园反欺凌 -->
-            <div class="scene" data-scene="3" data-duration="10000">
+            <div class="scene" data-scene="3" data-duration="14000">
               <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
                 <defs>
                   <linearGradient id="bg4" x1="0" y1="0" x2="0" y2="1">
@@ -669,7 +799,7 @@
             </div>
 
             <!-- 场景5：大合照 -->
-            <div class="scene" data-scene="4" data-duration="8000">
+            <div class="scene" data-scene="4" data-duration="10000">
               <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
                 <defs>
                   <linearGradient id="bg5" x1="0" y1="0" x2="0" y2="1">
@@ -773,7 +903,7 @@
             </div>
 
             <!-- 场景6：结尾 -->
-            <div class="scene" data-scene="5" data-duration="6000">
+            <div class="scene" data-scene="5" data-duration="7000">
               <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
                 <defs>
                   <linearGradient id="bg6" x1="0" y1="0" x2="0" y2="1">
@@ -829,6 +959,182 @@
               <div class="scene-caption">谢谢观看！</div>
             </div>
 
+          </div>
+
+          <!-- 自然风景装饰层（覆盖在所有场景之上） -->
+          <div class="nature-overlay">
+            <!-- 小鸟飞过 -->
+            <div class="bird-fly">
+              <svg width="30" height="20" viewBox="0 0 30 20">
+                <g class="bird-wing">
+                  <path d="M2 10 Q8 2 15 10 Q22 2 28 10" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+                </g>
+              </svg>
+            </div>
+            <div class="bird-fly">
+              <svg width="24" height="16" viewBox="0 0 30 20">
+                <g class="bird-wing">
+                  <path d="M2 10 Q8 4 15 10 Q22 4 28 10" stroke="#555" stroke-width="2" fill="none" stroke-linecap="round"/>
+                </g>
+              </svg>
+            </div>
+            <div class="bird-fly">
+              <svg width="20" height="14" viewBox="0 0 30 20">
+                <g class="bird-wing">
+                  <path d="M2 10 Q8 6 15 10 Q22 6 28 10" stroke="#666" stroke-width="2" fill="none" stroke-linecap="round"/>
+                </g>
+              </svg>
+            </div>
+
+            <!-- 左侧柳树 -->
+            <svg class="willow-tree willow-left" width="180" height="320" viewBox="0 0 180 320">
+              <!-- 树干 -->
+              <path d="M50 320 Q45 250 40 180 Q38 140 42 100" stroke="#5d4037" stroke-width="8" fill="none" stroke-linecap="round"/>
+              <!-- 树枝主干 -->
+              <path d="M42 100 Q35 85 30 70" stroke="#4e342e" stroke-width="4" fill="none"/>
+              <path d="M42 100 Q50 85 55 70" stroke="#4e342e" stroke-width="4" fill="none"/>
+              <!-- 柳枝下垂 -->
+              <g class="willow-branch">
+                <path d="M30 70 Q25 100 20 150 Q18 180 22 220" stroke="#558b2f" stroke-width="2" fill="none"/>
+                <ellipse cx="22" cy="160" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="19" cy="190" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="24" cy="210" rx="2" ry="5" fill="#9ccc65" class="willow-leaf"/>
+              </g>
+              <g class="willow-branch">
+                <path d="M42 68 Q38 100 35 160 Q33 200 36 250" stroke="#558b2f" stroke-width="2" fill="none"/>
+                <ellipse cx="35" cy="170" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="33" cy="200" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="37" cy="230" rx="2" ry="5" fill="#9ccc65" class="willow-leaf"/>
+              </g>
+              <g class="willow-branch">
+                <path d="M55 70 Q58 100 60 150 Q62 190 58 230" stroke="#558b2f" stroke-width="2" fill="none"/>
+                <ellipse cx="60" cy="160" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="62" cy="190" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="59" cy="215" rx="2" ry="5" fill="#9ccc65" class="willow-leaf"/>
+              </g>
+            </svg>
+
+            <!-- 右侧柳树 -->
+            <svg class="willow-tree willow-right" width="180" height="320" viewBox="0 0 180 320">
+              <path d="M50 320 Q45 250 40 180 Q38 140 42 100" stroke="#5d4037" stroke-width="8" fill="none" stroke-linecap="round"/>
+              <path d="M42 100 Q35 85 30 70" stroke="#4e342e" stroke-width="4" fill="none"/>
+              <path d="M42 100 Q50 85 55 70" stroke="#4e342e" stroke-width="4" fill="none"/>
+              <g class="willow-branch">
+                <path d="M30 70 Q25 100 20 150 Q18 180 22 220" stroke="#558b2f" stroke-width="2" fill="none"/>
+                <ellipse cx="22" cy="160" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="19" cy="190" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="24" cy="210" rx="2" ry="5" fill="#9ccc65" class="willow-leaf"/>
+              </g>
+              <g class="willow-branch">
+                <path d="M42 68 Q38 100 35 160 Q33 200 36 250" stroke="#558b2f" stroke-width="2" fill="none"/>
+                <ellipse cx="35" cy="170" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="33" cy="200" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="37" cy="230" rx="2" ry="5" fill="#9ccc65" class="willow-leaf"/>
+              </g>
+              <g class="willow-branch">
+                <path d="M55 70 Q58 100 60 150 Q62 190 58 230" stroke="#558b2f" stroke-width="2" fill="none"/>
+                <ellipse cx="60" cy="160" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="62" cy="190" rx="3" ry="6" fill="#7cb342" class="willow-leaf"/>
+                <ellipse cx="59" cy="215" rx="2" ry="5" fill="#9ccc65" class="willow-leaf"/>
+              </g>
+            </svg>
+
+            <!-- 左侧花草 -->
+            <svg class="grass-flower grass-left" width="200" height="100" viewBox="0 0 200 100">
+              <!-- 草丛 -->
+              <path d="M0 100 L5 70 L10 100 M10 100 L15 65 L20 100 M20 100 L25 72 L30 100" stroke="#558b2f" stroke-width="2" fill="none"/>
+              <path d="M30 100 L35 60 L40 100 M40 100 L45 68 L50 100 M50 100 L55 62 L60 100" stroke="#558b2f" stroke-width="2" fill="none"/>
+              <!-- 花朵1 -->
+              <g class="flower-sway">
+                <line x1="15" y1="100" x2="15" y2="55" stroke="#388e3c" stroke-width="2"/>
+                <circle cx="15" cy="50" r="6" fill="#e91e63"/>
+                <circle cx="15" cy="50" r="2.5" fill="#fff176"/>
+              </g>
+              <!-- 花朵2 -->
+              <g class="flower-sway">
+                <line x1="45" y1="100" x2="45" y2="50" stroke="#388e3c" stroke-width="2"/>
+                <circle cx="45" cy="45" r="5" fill="#9c27b0"/>
+                <circle cx="45" cy="45" r="2" fill="#fff176"/>
+              </g>
+              <!-- 花朵3 -->
+              <g class="flower-sway">
+                <line x1="75" y1="100" x2="75" y2="60" stroke="#388e3c" stroke-width="2"/>
+                <circle cx="75" cy="55" r="5.5" fill="#ff5722"/>
+                <circle cx="75" cy="55" r="2" fill="#fff176"/>
+              </g>
+              <!-- 花朵4 -->
+              <g class="flower-sway">
+                <line x1="105" y1="100" x2="105" y2="55" stroke="#388e3c" stroke-width="2"/>
+                <circle cx="105" cy="50" r="4.5" fill="#3f51b5"/>
+                <circle cx="105" cy="50" r="2" fill="#fff176"/>
+              </g>
+            </svg>
+
+            <!-- 右侧花草 -->
+            <svg class="grass-flower grass-right" width="200" height="100" viewBox="0 0 200 100">
+              <path d="M140 100 L145 60 L150 100 M150 100 L155 68 L160 100 M160 100 L165 62 L170 100 M170 100 L175 65 L180 100 M180 100 L185 70 L190 100" stroke="#558b2f" stroke-width="2" fill="none"/>
+              <!-- 花朵 -->
+              <g class="flower-sway">
+                <line x1="125" y1="100" x2="125" y2="55" stroke="#388e3c" stroke-width="2"/>
+                <circle cx="125" cy="50" r="5" fill="#e91e63"/>
+                <circle cx="125" cy="50" r="2" fill="#fff176"/>
+              </g>
+              <g class="flower-sway">
+                <line x1="155" y1="100" x2="155" y2="50" stroke="#388e3c" stroke-width="2"/>
+                <circle cx="155" cy="45" r="5" fill="#ff9800"/>
+                <circle cx="155" cy="45" r="2" fill="#fff176"/>
+              </g>
+              <g class="flower-sway">
+                <line x1="185" y1="100" x2="185" y2="58" stroke="#388e3c" stroke-width="2"/>
+                <circle cx="185" cy="53" r="5" fill="#9c27b0"/>
+                <circle cx="185" cy="53" r="2" fill="#fff176"/>
+              </g>
+              <g class="flower-sway">
+                <line x1="105" y1="100" x2="105" y2="62" stroke="#388e3c" stroke-width="2"/>
+                <circle cx="105" cy="57" r="4.5" fill="#f44336"/>
+                <circle cx="105" cy="57" r="2" fill="#fff176"/>
+              </g>
+            </svg>
+
+            <!-- 蝴蝶 -->
+            <div class="butterfly">
+              <svg width="28" height="24" viewBox="0 0 28 24">
+                <ellipse class="butterfly-wing-l" cx="9" cy="12" rx="8" ry="10" fill="#e91e63" opacity="0.8"/>
+                <ellipse class="butterfly-wing-r" cx="19" cy="12" rx="8" ry="10" fill="#e91e63" opacity="0.8"/>
+                <ellipse cx="14" cy="12" rx="1.5" ry="8" fill="#333"/>
+              </svg>
+            </div>
+            <div class="butterfly">
+              <svg width="24" height="20" viewBox="0 0 28 24">
+                <ellipse class="butterfly-wing-l" cx="9" cy="12" rx="7" ry="9" fill="#9c27b0" opacity="0.8"/>
+                <ellipse class="butterfly-wing-r" cx="19" cy="12" rx="7" ry="9" fill="#9c27b0" opacity="0.8"/>
+                <ellipse cx="14" cy="12" rx="1.5" ry="7" fill="#333"/>
+              </svg>
+            </div>
+
+            <!-- 蜜蜂 -->
+            <div class="bee">
+              <svg width="20" height="16" viewBox="0 0 20 16">
+                <ellipse class="bee-wing" cx="7" cy="5" rx="5" ry="3" fill="rgba(255,255,255,0.7)"/>
+                <ellipse cx="10" cy="10" rx="6" ry="4" fill="#ffc107"/>
+                <rect x="7" y="7" width="2" height="6" fill="#333"/>
+                <rect x="11" y="7" width="2" height="6" fill="#333"/>
+              </svg>
+            </div>
+            <div class="bee">
+              <svg width="16" height="14" viewBox="0 0 20 16">
+                <ellipse class="bee-wing" cx="7" cy="5" rx="4" ry="2.5" fill="rgba(255,255,255,0.7)"/>
+                <ellipse cx="10" cy="10" rx="5" ry="3.5" fill="#ffc107"/>
+                <rect x="7" y="7" width="2" height="5" fill="#333"/>
+                <rect x="11" y="7" width="2" height="5" fill="#333"/>
+              </svg>
+            </div>
+
+            <!-- 飘落花瓣（微风效果） -->
+            <svg class="floating-petal" width="8" height="8" viewBox="0 0 8 8"><ellipse cx="4" cy="4" rx="3" ry="4" fill="#f8bbd0"/></svg>
+            <svg class="floating-petal" width="6" height="6" viewBox="0 0 8 8"><ellipse cx="4" cy="4" rx="3" ry="4" fill="#ce93d8"/></svg>
+            <svg class="floating-petal" width="7" height="7" viewBox="0 0 8 8"><ellipse cx="4" cy="4" rx="3" ry="4" fill="#a5d6a7"/></svg>
+            <svg class="floating-petal" width="5" height="5" viewBox="0 0 8 8"><ellipse cx="4" cy="4" rx="3" ry="4" fill="#ffccbc"/></svg>
           </div>
 
           <!-- 进度条 -->
@@ -940,7 +1246,7 @@
       '谢谢观看！'
     ];
 
-    // 女幼童可爱语音解说 - 分段播报模拟幼童说话节奏
+    // 婴幼儿可爱语音解说 - 逐词分段+超慢速+长停顿模拟婴幼儿说话
     let childVoiceCache = null;
     function loadChildVoice() {
       if (!("speechSynthesis" in window)) return null;
@@ -966,23 +1272,24 @@
     function speakCaption(text, rate) {
       if (!("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
-      // 分段：在逗号/句号/感叹号处断句，每段单独播报，中间微停顿
-      const segments = text.split(/([，。！？])/).filter(s => s.length > 0);
+      // 将文案按标点分段，再按2-3字切分，模拟婴幼儿一字一顿说话
+      const phrases = text.split(/[，。！？]/).filter(s => s.length > 0);
+      let chunks = [];
+      phrases.forEach(p => {
+        for (let i = 0; i < p.length; i += 2) {
+          chunks.push(p.slice(i, i + 2));
+        }
+      });
       let delay = 0;
-      segments.forEach(seg => {
-        if (/^[，。！？]$/.test(seg)) { delay += 150; return; }
-        const u = new SpeechSynthesisUtterance(seg);
+      chunks.forEach((chunk, i) => {
+        const u = new SpeechSynthesisUtterance(chunk);
         u.lang = "zh-CN";
-        u.pitch = 2.0;    // 最高音调
-        u.rate = 0.75;    // 大幅减速，模拟幼童说话节奏
+        u.pitch = 2.0;    // 最高音调，模拟婴幼儿声线
+        u.rate = 0.55;    // 超慢速，模拟婴幼儿缓慢说话
         u.volume = 1;
         if (childVoiceCache) u.voice = childVoiceCache;
-        if (delay > 0) {
-          setTimeout(() => window.speechSynthesis.speak(u), delay);
-        } else {
-          window.speechSynthesis.speak(u);
-        }
-        delay += seg.length * 350;  // 估算这段话的时长，安排下一段的延迟
+        setTimeout(() => window.speechSynthesis.speak(u), delay);
+        delay += chunk.length * 500 + 200;  // 每字500ms + 段间200ms停顿
       });
     }
 
