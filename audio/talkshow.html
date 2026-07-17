@@ -520,40 +520,19 @@
                 alt="扫码收听" width="180" height="180" style="display:block; border-radius:8px;" />
             </div>
             <p style="font-size:13px; color:var(--text-light); margin-top:14px; position:relative;">手机扫码即可收听🎤</p>
-            <a id="downloadTalkshowQR" href="#" download="小小普法员开讲啦_二维码.png" 
+            <a id="downloadTalkshowQR" href="#" 
               style="display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:8px 24px; 
               background:linear-gradient(135deg, #43E97B, #38F9D7); color:white; 
               text-decoration:none; border-radius:var(--radius-xl); font-size:13px; font-weight:600; 
               box-shadow:0 3px 12px rgba(67,233,123,0.3); transition:all 0.3s; position:relative;">
-              ⬇ 下载二维码
+              📱 查看二维码
             </a>
           </div>
         </div>
         <script>
           document.getElementById('downloadTalkshowQR').addEventListener('click', function(e) {
             e.preventDefault();
-            const qrImg = document.getElementById('talkshowQR');
-            const canvas = document.createElement('canvas');
-            canvas.width = 180; canvas.height = 180;
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = function() {
-              ctx.drawImage(img, 0, 0, 180, 180);
-              canvas.toBlob(function(blob) {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url; a.download = '小小普法员开讲啦_二维码.png';
-                document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-              }, 'image/png');
-            };
-            img.onerror = function() {
-              const a = document.createElement('a');
-              a.href = qrImg.src; a.download = '小小普法员开讲啦_二维码.png'; a.target = '_blank';
-              document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            };
-            img.src = qrImg.src;
+            openQRModal('小小普法员开讲啦', 'https://yesheng999.github.io/zuopin/audio/talkshow.html');
           });
         </script>
 
@@ -637,6 +616,7 @@
     }
   </script>
 
+  <script src="../common/qr-modal.js"></script>
   <script>
     // 普法粒子背景
     const particles = ['⚖️', '⭐', '🛡️', '📜', '✨', '🎤'];

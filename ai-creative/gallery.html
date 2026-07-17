@@ -841,40 +841,19 @@
                 alt="扫码查看" width="180" height="180" style="display:block; border-radius:8px;" />
             </div>
             <p style="font-size:13px; color:var(--text-light); margin-top:14px; position:relative;">手机扫码即可查看🎨</p>
-            <a id="downloadGalleryQR" href="#" download="我的法治成长日记_二维码.png" 
+            <a id="downloadGalleryQR" href="#" 
               style="display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:8px 24px; 
               background:linear-gradient(135deg, #A18CD1, #FBC2EB); color:white; 
               text-decoration:none; border-radius:var(--radius-xl); font-size:13px; font-weight:600; 
               box-shadow:0 3px 12px rgba(161,140,209,0.3); transition:all 0.3s; position:relative;">
-              ⬇ 下载二维码
+              📱 查看二维码
             </a>
           </div>
         </div>
         <script>
           document.getElementById('downloadGalleryQR').addEventListener('click', function(e) {
             e.preventDefault();
-            const qrImg = document.getElementById('galleryQR');
-            const canvas = document.createElement('canvas');
-            canvas.width = 180; canvas.height = 180;
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = function() {
-              ctx.drawImage(img, 0, 0, 180, 180);
-              canvas.toBlob(function(blob) {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url; a.download = '我的法治成长日记_二维码.png';
-                document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-              }, 'image/png');
-            };
-            img.onerror = function() {
-              const a = document.createElement('a');
-              a.href = qrImg.src; a.download = '我的法治成长日记_二维码.png'; a.target = '_blank';
-              document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            };
-            img.src = qrImg.src;
+            openQRModal('我的法治成长日记', 'https://yesheng999.github.io/zuopin/ai-creative/gallery.html');
           });
         </script>
 
@@ -917,6 +896,7 @@
     }
   </script>
 
+  <script src="../common/qr-modal.js"></script>
   <script>
     // 普法粒子背景
     const particles = ['⚖️', '⭐', '🛡️', '📜', '✨', '🤖'];
