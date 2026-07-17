@@ -722,9 +722,9 @@
                     <rect x="20" y="-10" width="50" height="40" rx="3"/>
                     <rect x="100" y="-10" width="50" height="40" rx="3"/>
                   </g>
-                  <!-- 校牌 -->
-                  <rect x="-40" y="-70" width="80" height="25" rx="5" fill="white"/>
-                  <text x="0" y="-53" text-anchor="middle" font-size="10" fill="#FF6B35" font-weight="bold">杭州市翠苑第二小学</text>
+                  <!-- 校牌（背景自适应文本长度） -->
+                  <rect x="-65" y="-72" width="130" height="28" rx="5" fill="white" stroke="#FF6B35" stroke-width="1"/>
+                  <text x="0" y="-53" text-anchor="middle" font-size="11" fill="#FF6B35" font-weight="bold">杭州市翠苑第二小学</text>
                   <!-- 国旗杆 -->
                   <line x1="170" y1="-80" x2="170" y2="50" stroke="#666" stroke-width="3"/>
                   <rect x="155" y="-80" width="30" height="20" fill="#E74C3C"/>
@@ -1203,6 +1203,45 @@
           </ul>
         </div>
       </div>
+
+      <!-- 扫码访问 -->
+      <div style="margin-top:32px; display:flex; justify-content:center;">
+        <div style="background:var(--bg-card); border-radius:var(--radius-lg); padding:28px 36px; box-shadow:var(--shadow-md); text-align:center; position:relative; overflow:hidden;">
+          <div style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(255,107,53,0.05) 0%, transparent 50%); animation:spin-slow 20s linear infinite; pointer-events:none;"></div>
+          <h4 style="font-size:16px; color:var(--secondary); margin-bottom:16px; position:relative;">📱 扫码观看《法治小卫士历险记》</h4>
+          <div style="display:inline-block; padding:12px; background:white; border-radius:var(--radius-md); box-shadow:0 2px 12px rgba(0,0,0,0.08); position:relative;">
+            <img id="dongmanQR" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/video/dongman.html" 
+              alt="扫码观看" width="180" height="180" style="display:block; border-radius:8px;" />
+          </div>
+          <p style="font-size:13px; color:var(--text-light); margin-top:14px; position:relative;">手机扫码即可观看🎬</p>
+          <a id="downloadDongmanQR" href="#" download="法治小卫士历险记_二维码.png" 
+            style="display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:8px 24px; 
+            background:linear-gradient(135deg, var(--primary), var(--accent)); color:white; 
+            text-decoration:none; border-radius:var(--radius-xl); font-size:13px; font-weight:600; 
+            box-shadow:0 3px 12px rgba(255,107,53,0.3); transition:all 0.3s; position:relative;">
+            ⬇ 下载二维码
+          </a>
+        </div>
+      </div>
+      <script>
+        document.getElementById('downloadDongmanQR').addEventListener('click', function(e) {
+          e.preventDefault();
+          const qrImg = document.getElementById('dongmanQR');
+          fetch(qrImg.src)
+            .then(res => res.blob())
+            .then(blob => {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = '法治小卫士历险记_二维码.png';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            })
+            .catch(() => { window.open(qrImg.src, '_blank'); });
+        });
+      </script>
 
     </div>
   </div>

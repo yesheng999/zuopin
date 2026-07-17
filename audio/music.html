@@ -375,6 +375,9 @@
             <button class="play-circle" id="playBtn" title="播放/暂停" style="width:80px;height:80px;font-size:32px;">▶</button>
             <button class="play-circle" id="stopBtn" title="停止">■</button>
           </div>
+          <div style="margin-top:12px;">
+            <button id="vocalToggle" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:white; padding:6px 18px; border-radius:var(--radius-xl); font-size:12px; cursor:pointer; font-family:inherit;">🎤 童声：开</button>
+          </div>
 
           <div class="music-progress">
             <div class="music-progress-fill" id="musicProgress"></div>
@@ -389,7 +392,7 @@
         <div class="lyrics-section">
           <div class="lyrics-card">
             <h3>🎵 法治小星星</h3>
-            <p class="lyric-subtitle">旋律参考《小星星》，适合二年级小朋友演唱</p>
+            <p class="lyric-subtitle">旋律参考《小星星》，改编为法治主题儿歌</p>
 
             <div class="lyric-verse">
               <h4>【第一段】</h4>
@@ -435,7 +438,7 @@
 
         <!-- 简谱展示 -->
         <div class="score-section">
-          <h3>🎼 简谱（第一段）</h3>
+          <h3>🎼 简谱（完整版）</h3>
           <p style="text-align:center; color:var(--text-light); font-size:13px; margin-bottom:16px;">
             点击音符可单独试听，点击播放按钮演奏整首曲子
           </p>
@@ -498,12 +501,14 @@
     let melodyTimer = null;
     let noteIdx = 0;
 
-    // 旋律数据（第一段+副歌），参考《小星星》改编
+    // 旋律数据（完整版：第一段+副歌+第二段+副歌+结尾），参考《小星星》改编
     // 音名 + 频率(Hz) + 歌词 + 时长(拍)
     const C4 = 261.63, D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, B4 = 493.88;
     const C5 = 523.25;
+    const REST = 0; // 休止符
 
     const melody = [
+      // ===== 第一段 =====
       { freq: C4, lyric: '红', dur: 0.5 }, { freq: C4, lyric: '灯', dur: 0.5 },
       { freq: G4, lyric: '停', dur: 0.5 }, { freq: G4, lyric: '呀', dur: 0.5 },
       { freq: A4, lyric: '绿', dur: 0.5 }, { freq: A4, lyric: '灯', dur: 0.5 },
@@ -512,11 +517,74 @@
       { freq: E4, lyric: '路', dur: 0.5 }, { freq: E4, lyric: '呀', dur: 0.5 },
       { freq: D4, lyric: '要', dur: 0.5 }, { freq: D4, lyric: '小', dur: 0.5 },
       { freq: C4, lyric: '心', dur: 1.0 },
-      // 副歌
+      // 斑马线上慢慢走
+      { freq: G4, lyric: '斑', dur: 0.5 }, { freq: G4, lyric: '马', dur: 0.5 },
+      { freq: F4, lyric: '线', dur: 0.5 }, { freq: F4, lyric: '上', dur: 0.5 },
+      { freq: E4, lyric: '慢', dur: 0.5 }, { freq: E4, lyric: '慢', dur: 0.5 },
+      { freq: D4, lyric: '走', dur: 1.0 },
+      // 安全第一记在心
+      { freq: C4, lyric: '安', dur: 0.5 }, { freq: C4, lyric: '全', dur: 0.5 },
+      { freq: G4, lyric: '第', dur: 0.5 }, { freq: G4, lyric: '一', dur: 0.5 },
+      { freq: A4, lyric: '记', dur: 0.5 }, { freq: A4, lyric: '在', dur: 0.5 },
+      { freq: G4, lyric: '心', dur: 1.0 },
+      // ===== 副歌1 =====
       { freq: G4, lyric: '法', dur: 0.5 }, { freq: G4, lyric: '治', dur: 0.5 },
       { freq: F4, lyric: '小', dur: 0.5 }, { freq: F4, lyric: '星', dur: 0.5 },
       { freq: E4, lyric: '星', dur: 0.5 }, { freq: E4, lyric: '亮', dur: 0.5 },
       { freq: D4, lyric: '晶', dur: 1.0 },
+      { freq: C4, lyric: '守', dur: 0.5 }, { freq: C4, lyric: '规', dur: 0.5 },
+      { freq: D4, lyric: '则', dur: 0.5 }, { freq: D4, lyric: '呀', dur: 0.5 },
+      { freq: E4, lyric: '我', dur: 0.5 }, { freq: E4, lyric: '最', dur: 0.5 },
+      { freq: D4, lyric: '行', dur: 1.0 },
+      { freq: REST, lyric: '｜', dur: 0.3 },
+      // ===== 第二段 =====
+      { freq: C4, lyric: '捡', dur: 0.5 }, { freq: C4, lyric: '到', dur: 0.5 },
+      { freq: G4, lyric: '东', dur: 0.5 }, { freq: G4, lyric: '西', dur: 0.5 },
+      { freq: A4, lyric: '交', dur: 0.5 }, { freq: A4, lyric: '警', dur: 0.5 },
+      { freq: G4, lyric: '察', dur: 1.0 },
+      { freq: F4, lyric: '拾', dur: 0.5 }, { freq: F4, lyric: '金', dur: 0.5 },
+      { freq: E4, lyric: '不', dur: 0.5 }, { freq: E4, lyric: '昧', dur: 0.5 },
+      { freq: D4, lyric: '好', dur: 0.5 }, { freq: D4, lyric: '娃', dur: 0.5 },
+      { freq: C4, lyric: '娃', dur: 1.0 },
+      // 同学之间要友爱
+      { freq: G4, lyric: '同', dur: 0.5 }, { freq: G4, lyric: '学', dur: 0.5 },
+      { freq: F4, lyric: '之', dur: 0.5 }, { freq: F4, lyric: '间', dur: 0.5 },
+      { freq: E4, lyric: '要', dur: 0.5 }, { freq: E4, lyric: '友', dur: 0.5 },
+      { freq: D4, lyric: '爱', dur: 1.0 },
+      // 互相帮助笑哈哈
+      { freq: C4, lyric: '互', dur: 0.5 }, { freq: C4, lyric: '相', dur: 0.5 },
+      { freq: G4, lyric: '帮', dur: 0.5 }, { freq: G4, lyric: '助', dur: 0.5 },
+      { freq: A4, lyric: '笑', dur: 0.5 }, { freq: A4, lyric: '哈', dur: 0.5 },
+      { freq: G4, lyric: '哈', dur: 1.0 },
+      // ===== 副歌2 =====
+      { freq: G4, lyric: '法', dur: 0.5 }, { freq: G4, lyric: '治', dur: 0.5 },
+      { freq: F4, lyric: '小', dur: 0.5 }, { freq: F4, lyric: '星', dur: 0.5 },
+      { freq: E4, lyric: '星', dur: 0.5 }, { freq: E4, lyric: '亮', dur: 0.5 },
+      { freq: D4, lyric: '晶', dur: 1.0 },
+      { freq: C4, lyric: '守', dur: 0.5 }, { freq: C4, lyric: '规', dur: 0.5 },
+      { freq: D4, lyric: '则', dur: 0.5 }, { freq: D4, lyric: '呀', dur: 0.5 },
+      { freq: E4, lyric: '我', dur: 0.5 }, { freq: E4, lyric: '最', dur: 0.5 },
+      { freq: D4, lyric: '行', dur: 1.0 },
+      { freq: REST, lyric: '｜', dur: 0.3 },
+      // ===== 结尾 =====
+      { freq: C4, lyric: '在', dur: 0.5 }, { freq: C4, lyric: '浙', dur: 0.5 },
+      { freq: G4, lyric: '里', dur: 0.5 }, { freq: G4, lyric: '呀', dur: 0.5 },
+      { freq: A4, lyric: '看', dur: 0.5 }, { freq: A4, lyric: '法', dur: 0.5 },
+      { freq: G4, lyric: '治', dur: 1.0 },
+      { freq: F4, lyric: '美', dur: 0.5 }, { freq: F4, lyric: '丽', dur: 0.5 },
+      { freq: E4, lyric: '杭', dur: 0.5 }, { freq: E4, lyric: '州', dur: 0.5 },
+      { freq: D4, lyric: '是', dur: 0.5 }, { freq: D4, lyric: '我', dur: 0.5 },
+      { freq: C4, lyric: '家', dur: 1.0 },
+      // 从小做个好公民
+      { freq: G4, lyric: '从', dur: 0.5 }, { freq: G4, lyric: '小', dur: 0.5 },
+      { freq: F4, lyric: '做', dur: 0.5 }, { freq: F4, lyric: '个', dur: 0.5 },
+      { freq: E4, lyric: '好', dur: 0.5 }, { freq: E4, lyric: '公', dur: 0.5 },
+      { freq: D4, lyric: '民', dur: 1.0 },
+      // 法治阳光照大家
+      { freq: C4, lyric: '法', dur: 0.5 }, { freq: G4, lyric: '治', dur: 0.5 },
+      { freq: A4, lyric: '阳', dur: 0.5 }, { freq: G4, lyric: '光', dur: 0.5 },
+      { freq: F4, lyric: '照', dur: 0.5 }, { freq: E4, lyric: '大', dur: 0.5 },
+      { freq: D4, lyric: '家', dur: 1.5 },
     ];
 
     // 音符符号
@@ -529,10 +597,12 @@
       const block = document.createElement('div');
       block.className = 'note-block';
       block.dataset.idx = i;
-      const h = noteHeights[n.freq] || 50;
+      const isRest = n.freq === 0;
+      const h = isRest ? 10 : (noteHeights[n.freq] || 50);
+      const symbol = isRest ? '0' : (noteSymbols[n.freq] || '?');
       block.innerHTML = `
         <div class="note-bar"><span style="height:${h}%"></span></div>
-        <div class="note-symbol">${noteSymbols[n.freq] || '?'}</div>
+        <div class="note-symbol">${symbol}</div>
         <div class="note-lyric">${n.lyric}</div>
       `;
       block.addEventListener('click', () => playSingleNote(i));
@@ -544,30 +614,100 @@
       return audioCtx;
     }
 
+    // 婴幼儿音色：八音盒/钟琴合成 + 童声吟唱
+    let vocalEnabled = true; // 是否启用童声吟唱
+    const vocalToggle = document.getElementById('vocalToggle');
+    if (vocalToggle) {
+      vocalToggle.addEventListener('click', function() {
+        vocalEnabled = !vocalEnabled;
+        this.textContent = vocalEnabled ? '🎤 童声：开' : '🎤 童声：关';
+        this.style.opacity = vocalEnabled ? '1' : '0.5';
+      });
+    }
+
     function playTone(freq, duration) {
       const ctx = ensureAudio();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
+      const now = ctx.currentTime;
+      const masterGain = ctx.createGain();
+      masterGain.connect(ctx.destination);
 
-      osc.type = 'triangle'; // 温和的三角波，适合儿歌
-      osc.frequency.value = freq;
+      // === 主振荡器：正弦波（柔和钟琴音色） ===
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sine';
+      osc1.frequency.value = freq;
+      const gain1 = ctx.createGain();
+      gain1.gain.setValueAtTime(0, now);
+      gain1.gain.linearRampToValueAtTime(0.25, now + 0.02);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + duration);
+      osc1.connect(gain1); gain1.connect(masterGain);
 
-      // ADSR包络
-      gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
-      gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + duration * 0.7);
-      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+      // === 谐波1：2倍频（明亮泛音，模拟钟琴） ===
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'sine';
+      osc2.frequency.value = freq * 2;
+      const gain2 = ctx.createGain();
+      gain2.gain.setValueAtTime(0, now);
+      gain2.gain.linearRampToValueAtTime(0.12, now + 0.02);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.6);
+      osc2.connect(gain2); gain2.connect(masterGain);
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
+      // === 谐波2：3倍频（高亮泛音，增加童趣感） ===
+      const osc3 = ctx.createOscillator();
+      osc3.type = 'sine';
+      osc3.frequency.value = freq * 3;
+      const gain3 = ctx.createGain();
+      gain3.gain.setValueAtTime(0, now);
+      gain3.gain.linearRampToValueAtTime(0.06, now + 0.01);
+      gain3.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.4);
+      osc3.connect(gain3); gain3.connect(masterGain);
 
-      osc.start();
-      osc.stop(ctx.currentTime + duration);
+      // === 轻微颤音（vibrato，增加温暖感） ===
+      const vibrato = ctx.createOscillator();
+      vibrato.frequency.value = 5; // 5Hz颤音
+      const vibratoGain = ctx.createGain();
+      vibratoGain.gain.value = freq * 0.008;
+      vibrato.connect(vibratoGain);
+      vibratoGain.connect(osc1.frequency);
+
+      osc1.start(now); osc1.stop(now + duration);
+      osc2.start(now); osc2.stop(now + duration * 0.7);
+      osc3.start(now); osc3.stop(now + duration * 0.5);
+      vibrato.start(now); vibrato.stop(now + duration);
+    }
+
+    // 童声吟唱：用高pitch的TTS逐字唱歌词
+    let speechVoice = null;
+    function pickChildVoice() {
+      if (!('speechSynthesis' in window)) return null;
+      const voices = speechSynthesis.getVoices();
+      // 优先选择中文女声
+      const cnVoices = voices.filter(v => v.lang.startsWith('zh'));
+      return cnVoices.find(v => /female|女|童|child/i.test(v.name)) || cnVoices[0] || null;
+    }
+    if ('speechSynthesis' in window) {
+      speechSynthesis.onvoiceschanged = () => { speechVoice = pickChildVoice(); };
+      speechVoice = pickChildVoice();
+    }
+
+    function speakLyric(text) {
+      if (!vocalEnabled || !('speechSynthesis' in window)) return;
+      if (!text || text === '｜') return;
+      speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'zh-CN';
+      utter.pitch = 2.0;  // 最高pitch，模拟婴幼儿
+      utter.rate = 0.7;   // 稍慢，模拟幼儿说话
+      utter.volume = 0.6;
+      if (speechVoice) utter.voice = speechVoice;
+      speechSynthesis.speak(utter);
     }
 
     function playSingleNote(idx) {
       const n = melody[idx];
-      playTone(n.freq, n.dur * 0.4);
+      if (n.freq > 0) {
+        playTone(n.freq, n.dur * 0.4);
+        speakLyric(n.lyric); // 童声吟唱
+      }
       // 高亮音符
       const blocks = staff.querySelectorAll('.note-block');
       blocks.forEach(b => b.classList.remove('playing'));
@@ -591,7 +731,10 @@
         }
 
         const n = melody[noteIdx];
-        playTone(n.freq, n.dur * 0.35);
+        if (n.freq > 0) {
+          playTone(n.freq, n.dur * 0.35);
+          speakLyric(n.lyric); // 童声吟唱歌词
+        }
 
         // 高亮
         const blocks = staff.querySelectorAll('.note-block');
@@ -618,6 +761,7 @@
     function stopMelody() {
       isPlaying = false;
       clearTimeout(melodyTimer);
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
       document.getElementById('playBtn').textContent = '▶';
       document.getElementById('vinyl').classList.remove('spinning');
       document.querySelectorAll('.note-block').forEach(b => b.classList.remove('playing'));
@@ -645,6 +789,7 @@
       if (isPlaying) {
         isPlaying = false;
         clearTimeout(melodyTimer);
+        if ('speechSynthesis' in window) speechSynthesis.cancel();
         this.textContent = '▶';
         document.getElementById('vinyl').classList.remove('spinning');
       } else {

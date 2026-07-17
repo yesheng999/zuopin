@@ -516,6 +516,45 @@
         </div>
       </div>
 
+      <!-- 扫码访问 -->
+      <div style="margin-top:24px; display:flex; justify-content:center;">
+        <div style="background:var(--bg-card); border-radius:var(--radius-lg); padding:28px 36px; box-shadow:var(--shadow-md); text-align:center; position:relative; overflow:hidden;">
+          <div style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(102,126,234,0.05) 0%, transparent 50%); animation:spin-slow 20s linear infinite; pointer-events:none;"></div>
+          <h4 style="font-size:16px; color:var(--secondary); margin-bottom:16px; position:relative;">📱 扫码玩《法治知识大闯关》</h4>
+          <div style="display:inline-block; padding:12px; background:white; border-radius:var(--radius-md); box-shadow:0 2px 12px rgba(0,0,0,0.08); position:relative;">
+            <img id="h5QR" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/internet/h5.html" 
+              alt="扫码互动" width="180" height="180" style="display:block; border-radius:8px;" />
+          </div>
+          <p style="font-size:13px; color:var(--text-light); margin-top:14px; position:relative;">手机扫码即可玩🎮</p>
+          <a id="downloadH5QR" href="#" download="法治知识大闯关_二维码.png" 
+            style="display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:8px 24px; 
+            background:linear-gradient(135deg, #667EEA, #764BA2); color:white; 
+            text-decoration:none; border-radius:var(--radius-xl); font-size:13px; font-weight:600; 
+            box-shadow:0 3px 12px rgba(102,126,234,0.3); transition:all 0.3s; position:relative;">
+            ⬇ 下载二维码
+          </a>
+        </div>
+      </div>
+      <script>
+        document.getElementById('downloadH5QR').addEventListener('click', function(e) {
+          e.preventDefault();
+          const qrImg = document.getElementById('h5QR');
+          fetch(qrImg.src)
+            .then(res => res.blob())
+            .then(blob => {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = '法治知识大闯关_二维码.png';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            })
+            .catch(() => { window.open(qrImg.src, '_blank'); });
+        });
+      </script>
+
     </div>
   </div>
 
