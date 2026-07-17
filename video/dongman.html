@@ -370,7 +370,7 @@
                   <animateTransform attributeName="transform" type="translate" values="400 280; 400 272; 400 280" dur="2s" repeatCount="indefinite"/>
                 </g>
               </svg>
-              <div class="scene-caption">哇！法治小卫士来啦！大家好呀！</div>
+              <div class="scene-caption">法治小卫士闪亮登场！</div>
             </div>
 
             <!-- 场景2：红绿灯 -->
@@ -451,7 +451,7 @@
                   <circle cx="0" cy="-10" r="25" fill="#00B894"/>
                 </g>
               </svg>
-              <div class="scene-caption">红灯亮了要停下来哦，绿灯亮了才可以走呢！</div>
+              <div class="scene-caption">红灯停，绿灯行，安全第一记心里！</div>
             </div>
 
             <!-- 场景3：拾金不昧 -->
@@ -565,7 +565,7 @@
                   <text x="0" y="4" text-anchor="middle" font-size="12" fill="#1e3a5f" font-weight="bold">好棒！拾金不昧！</text>
                 </g>
               </svg>
-              <div class="scene-caption">咦？地上有个钱包！快交给警察叔叔吧，这叫拾金不昧哦！</div>
+              <div class="scene-caption">捡到东西要交给警察叔叔，这就是拾金不昧！</div>
             </div>
 
             <!-- 场景4：校园反欺凌 -->
@@ -665,7 +665,7 @@
                   </path>
                 </g>
               </svg>
-              <div class="scene-caption">在学校里呀，大家要做好朋友，互相帮助，不能欺负同学哦！</div>
+              <div class="scene-caption">在学校里，我们互相帮助，拒绝欺凌！</div>
             </div>
 
             <!-- 场景5：大合照 -->
@@ -769,7 +769,7 @@
                   <circle cx="740" cy="300" r="4" fill="#FF6B35"/>
                 </g>
               </svg>
-              <div class="scene-caption">我们都是法治小卫士！耶！</div>
+              <div class="scene-caption">人人争当法治小卫士！</div>
             </div>
 
             <!-- 场景6：结尾 -->
@@ -826,7 +826,7 @@
                   <rect x="-20" y="-18" width="40" height="6" rx="2" fill="#2D3436"/>
                 </g>
               </svg>
-              <div class="scene-caption">谢谢大家观看！拜拜啦！</div>
+              <div class="scene-caption">谢谢观看！</div>
             </div>
 
           </div>
@@ -930,31 +930,31 @@
 
     timeDisplay.textContent = '00:00 / ' + formatTime(totalDuration);
 
-    // 语音解说文案 - 一年级小朋友口语化表达
+    // 语音解说文案 - 与字幕完全一致
     const sceneCaptions = [
-      '哇！法治小卫士来啦！大家好呀！',
-      '红灯亮了要停下来哦，绿灯亮了才可以走呢！',
-      '咦？地上有个钱包！快交给警察叔叔吧，这叫拾金不昧哦！',
-      '在学校里呀，大家要做好朋友，互相帮助，不能欺负同学哦！',
-      '我们都是法治小卫士！耶！',
-      '谢谢大家观看！拜拜啦！'
+      '法治小卫士闪亮登场！',
+      '红灯停，绿灯行，安全第一记心里！',
+      '捡到东西要交给警察叔叔，这就是拾金不昧！',
+      '在学校里，我们互相帮助，拒绝欺凌！',
+      '人人争当法治小卫士！',
+      '谢谢观看！'
     ];
 
-    // 小朋友甜美语音解说 - 速率与文字入场同步
+    // 女幼童可爱语音解说 - 速率与文字入场同步
     function speakCaption(text, rate) {
       if (!("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = "zh-CN";
-      utter.rate = (rate || 1.0) * 0.8;  // 整体减速，更接近幼儿语速
-      utter.pitch = 2.0;   // 最高音调，模拟幼儿稚嫩声音
+      utter.rate = (rate || 1.0) * 0.85;  // 适度减速，更接近幼童语速
+      utter.pitch = 2.0;   // 最高音调，模拟女幼童可爱音色
       utter.volume = 1;
-      // 优先选择更年轻的女声（如Yaoyao），其次任意中文女声
+      // 优先选择幼童/年轻女声（如Yaoyao），其次中文女声，最后任意中文声
       const voices = window.speechSynthesis.getVoices();
-      const young = voices.find(v => v.lang.includes("zh") && /yaoyao|ya|tian|kid|child/i.test(v.name))
-                 || voices.find(v => v.lang.includes("zh") && /female|女|yao/i.test(v.name))
-                 || voices.find(v => v.lang.includes("zh"));
-      if (young) utter.voice = young;
+      const childVoice = voices.find(v => v.lang.includes("zh") && /yaoyao|kid|child|girl/i.test(v.name))
+                     || voices.find(v => v.lang.includes("zh") && /female|女|yao|hui/i.test(v.name))
+                     || voices.find(v => v.lang.includes("zh"));
+      if (childVoice) utter.voice = childVoice;
       window.speechSynthesis.speak(utter);
     }
 
