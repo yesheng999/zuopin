@@ -892,7 +892,6 @@
           <ul>
             <li>作品形式：动漫动画</li>
             <li>画面比例：16:9（1920×1080）</li>
-            <li>色彩：明亮温暖的橙黄色调</li>
             <li>角色：法治小卫士、小朋友、警察叔叔</li>
             <li>主题：法治守护每一天</li>
           </ul>
@@ -931,14 +930,14 @@
 
     timeDisplay.textContent = '00:00 / ' + formatTime(totalDuration);
 
-    // 语音解说文案
+    // 语音解说文案 - 一年级小朋友口语化表达
     const sceneCaptions = [
-      '法治小卫士闪亮登场！',
-      '红灯停，绿灯行，安全第一记心里！',
-      '捡到东西要交警察叔叔，这就是拾金不昧！',
-      '在学校里，我们互相帮助，拒绝欺凌！',
-      '人人争当法治小卫士！',
-      '谢谢观看！'
+      '哇！法治小卫士来啦！大家好呀！',
+      '红灯亮了要停下来哦，绿灯亮了才可以走呢！',
+      '咦？地上有个钱包！快交给警察叔叔吧，这叫拾金不昧哦！',
+      '在学校里呀，大家要做好朋友，互相帮助，不能欺负同学哦！',
+      '我们都是法治小卫士！耶！',
+      '谢谢大家观看！拜拜啦！'
     ];
 
     // 小朋友甜美语音解说 - 速率与文字入场同步
@@ -948,7 +947,7 @@
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = "zh-CN";
       utter.rate = rate || 1.0;
-      utter.pitch = 1.6;   // 高音调模拟小朋友声音
+      utter.pitch = 1.8;   // 更高音调模拟一年级稚嫩声音
       utter.volume = 1;
       // 尝试选择中文女声
       const voices = window.speechSynthesis.getVoices();
@@ -1007,6 +1006,17 @@
       playOverlay.classList.add('hidden');
       ctrlPlay.textContent = '⏸';
 
+      // 触发当前场景的语音解说和字幕动画
+      if (!("speechSynthesis" in window) || !window.speechSynthesis.speaking) {
+        const text = sceneCaptions[currentScene];
+        const charCount = text.length;
+        const charDelay = 0.12;
+        const animDuration = (charCount - 1) * charDelay + 0.6;
+        const targetRate = Math.min(Math.max((charCount * 0.22) / animDuration, 0.7), 1.5);
+        animateCaption(scenes[currentScene], charDelay);
+        speakCaption(text, targetRate);
+      }
+
       sceneTimer = setInterval(() => {
         sceneElapsed += 100;
         const dur = sceneDurations[currentScene];
@@ -1064,6 +1074,167 @@
         if (!isPlaying) startPlayback();
       });
     });
+  </script>
+
+  <script>
+    // ===== 场景动画增强 =====
+    (function() {
+      const NS = 'http://www.w3.org/2000/svg';
+
+      function animTransform(parent, type, values, dur, additive) {
+        const a = document.createElementNS(NS, 'animateTransform');
+        a.setAttribute('attributeName', 'transform');
+        a.setAttribute('type', type);
+        a.setAttribute('values', values);
+        a.setAttribute('dur', dur);
+        a.setAttribute('repeatCount', 'indefinite');
+        if (additive) a.setAttribute('additive', 'sum');
+        parent.appendChild(a);
+      }
+
+      function animAttr(parent, attr, values, dur) {
+        const a = document.createElementNS(NS, 'animate');
+        a.setAttribute('attributeName', attr);
+        a.setAttribute('values', values);
+        a.setAttribute('dur', dur);
+        a.setAttribute('repeatCount', 'indefinite');
+        parent.appendChild(a);
+      }
+
+      // 添加花朵
+      function addFlower(svg, x, y, color) {
+        const g = document.createElementNS(NS, 'g');
+        g.setAttribute('transform', `translate(${x},${y})`);
+        const stem = document.createElementNS(NS, 'rect');
+        stem.setAttribute('x', '-1.5'); stem.setAttribute('y', '0');
+        stem.setAttribute('width', '3'); stem.setAttribute('height', '22');
+        stem.setAttribute('fill', '#228B22');
+        g.appendChild(stem);
+        for (let i = 0; i < 5; i++) {
+          const petal = document.createElementNS(NS, 'circle');
+          const angle = (i * 72 - 90) * Math.PI / 180;
+          petal.setAttribute('cx', Math.cos(angle) * 7);
+          petal.setAttribute('cy', Math.sin(angle) * 7 - 10);
+          petal.setAttribute('r', '5');
+          petal.setAttribute('fill', color);
+          g.appendChild(petal);
+        }
+        const center = document.createElementNS(NS, 'circle');
+        center.setAttribute('cx', '0'); center.setAttribute('cy', '-10');
+        center.setAttribute('r', '4'); center.setAttribute('fill', '#FFD93D');
+        g.appendChild(center);
+        animTransform(g, 'rotate', `-10 0 22; 10 0 22; -10 0 22`, (1.5 + Math.random()) + 's');
+        svg.appendChild(g);
+      }
+
+      document.querySelectorAll('.scene').forEach((scene, idx) => {
+        const svg = scene.querySelector('svg');
+        if (!svg) return;
+
+        // 云朵漂浮
+        svg.querySelectorAll('g[opacity="0.8"]').forEach(g => {
+          if (g.querySelector('ellipse')) {
+            animTransform(g, 'translate', '0 0; ' + (15 + Math.random() * 15) + ' -3; 0 0', (8 + Math.random() * 4) + 's');
+          }
+        });
+
+        // 树木摇摆
+        svg.querySelectorAll('g[transform*="translate"]').forEach(g => {
+          const hasTrunk = g.querySelector('rect[fill="#8B4513"]');
+          const hasLeaves = g.querySelector('circle[fill="#00B894"], circle[fill="#228B22"]');
+          if (hasTrunk && hasLeaves) {
+            animTransform(g, 'rotate', '-6 0 60; 6 0 60; -6 0 60', (2.5 + Math.random()) + 's', true);
+          }
+        });
+
+        // 草丛摇摆
+        svg.querySelectorAll('g[fill="#228B22"]').forEach(g => {
+          animTransform(g, 'rotate', '-6 400 345; 6 400 345; -6 400 345', '2s', true);
+        });
+
+        // 太阳/月亮脉冲
+        svg.querySelectorAll('circle[fill="#FFD93D"][r="35"]').forEach(c => {
+          animAttr(c, 'r', '35; 39; 35', '3s');
+          animAttr(c, 'opacity', '0.9; 1; 0.9', '3s');
+        });
+
+        // 城市窗户灯光闪烁
+        svg.querySelectorAll('rect[fill="#FFD93D"][opacity]').forEach(r => {
+          if (r.getAttribute('width') === '8' && r.getAttribute('height') === '8') {
+            const baseOp = r.getAttribute('opacity');
+            animAttr(r, 'opacity', `${baseOp};${parseFloat(baseOp)*0.2};${baseOp}`, (1.5 + Math.random() * 2) + 's');
+          }
+        });
+
+        // 添加花朵到场景2/3/4
+        if (idx === 1) {
+          addFlower(svg, 500, 325, '#FF6B6B');
+          addFlower(svg, 680, 320, '#FF69B4');
+        } else if (idx === 2) {
+          addFlower(svg, 150, 320, '#FF6B6B');
+          addFlower(svg, 200, 325, '#FF8C42');
+          addFlower(svg, 450, 320, '#9B59B6');
+          addFlower(svg, 500, 325, '#FF1493');
+          addFlower(svg, 650, 320, '#FF69B4');
+        } else if (idx === 3) {
+          addFlower(svg, 100, 325, '#FF6B6B');
+          addFlower(svg, 700, 320, '#FF69B4');
+          addFlower(svg, 560, 325, '#9B59B6');
+        }
+      });
+
+      // 增强场景1角色：弹跳+眨眼+挥手
+      const scene1Svg = document.querySelectorAll('.scene')[0]?.querySelector('svg');
+      if (scene1Svg) {
+        // 角色弹跳 (additive到已有的translate)
+        const charGroup = scene1Svg.querySelector('g[transform*="translate(400, 280)"]');
+        if (charGroup) {
+          animTransform(charGroup, 'translate', '0 0; 0 -18; 0 0', '1.5s', true);
+          // 眨眼
+          charGroup.querySelectorAll('circle[r="6"]').forEach(c => {
+            if (c.getAttribute('fill') === '#2D3436') {
+              animAttr(c, 'r', '6; 6; 1; 6', '4s');
+            }
+          });
+        }
+        // 增强手臂挥动幅度
+        scene1Svg.querySelectorAll('ellipse animateTransform[type="rotate"]').forEach(a => {
+          const vals = a.getAttribute('values');
+          if (vals && vals.includes('-20 35 50')) {
+            a.setAttribute('values', '-20 35 50; 15 35 50; -20 35 50');
+            a.setAttribute('dur', '0.8s');
+          }
+        });
+      }
+
+      // 增强场景5角色弹跳
+      const scene5Svg = document.querySelectorAll('.scene')[4]?.querySelector('svg');
+      if (scene5Svg) {
+        const charGroup = scene5Svg.querySelector('g[transform*="translate(400, 230)"]');
+        if (charGroup) {
+          animTransform(charGroup, 'translate', '0 0; 0 -15; 0 0', '1.5s', true);
+        }
+        // 其他角色也弹跳
+        scene5Svg.querySelectorAll('g[transform*="translate(260, 240)"], g[transform*="translate(540, 240)"], g[transform*="translate(150, 245)"], g[transform*="translate(650, 240)"]').forEach(g => {
+          animTransform(g, 'translate', '0 0; 0 -10; 0 0', (1.5 + Math.random() * 0.5) + 's', true);
+        });
+      }
+
+      // 增强场景3/4角色动作幅度
+      [2, 3].forEach(sIdx => {
+        const sceneSvg = document.querySelectorAll('.scene')[sIdx]?.querySelector('svg');
+        if (!sceneSvg) return;
+        sceneSvg.querySelectorAll('g[transform*="translate"] ellipse animateTransform[type="rotate"]').forEach(a => {
+          const vals = a.getAttribute('values');
+          if (vals) {
+            // 增大旋转幅度
+            const newVals = vals.replace(/-30/g, '-45').replace(/-20/g, '-35').replace(/30 /g, '45 ').replace(/20 /g, '35 ');
+            a.setAttribute('values', newVals);
+            a.setAttribute('dur', '0.8s');
+          }
+        });
+      });
+    })();
   </script>
 
   <script>
