@@ -448,7 +448,7 @@
             <p>边玩边学法治知识</p>
             <p>看看你能闯几关！</p>
             <div class="info-badge">
-              <span>📊 共5道题</span>
+              <span>📊 共5道题（随机抽题）</span>
               <span>·</span>
               <span>⏱ 约2分钟</span>
             </div>
@@ -566,80 +566,159 @@
     </div>
   </div>
 
-  <script>
-    // ===== 题库 =====
-    const questions = [
-      {
-        icon: '🚦',
-        question: '红灯亮了，你应该怎么做？',
-        hint: '想一想交通规则哦～',
-        options: [
-          { text: '赶紧跑过去', correct: false },
-          { text: '停下来等绿灯', correct: true },
-          { text: '看看没车就过去', correct: false },
-        ],
-        feedback: {
-          correct: '太棒了！红灯停，绿灯行，安全第一记心里！',
-          wrong: '不对哦！红灯必须停下来等绿灯，安全最重要！'
-        }
-      },
-      {
-        icon: '👛',
-        question: '在公园捡到一个钱包，你应该？',
-        hint: '想想《民法典》怎么说～',
-        options: [
-          { text: '自己留着用', correct: false },
-          { text: '交给警察叔叔', correct: true },
-          { text: '扔到垃圾桶里', correct: false },
-        ],
-        feedback: {
-          correct: '真棒！拾金不昧是好品质，《民法典》也规定要归还失物哦！',
-          wrong: '不对哦！捡到东西应该交给警察叔叔，这叫拾金不昧！'
-        }
-      },
-      {
-        icon: '🏫',
-        question: '看到同学被欺负，你应该？',
-        hint: '想一想该怎么做才是对的～',
-        options: [
-          { text: '假装没看见', correct: false },
-          { text: '也去欺负他', correct: false },
-          { text: '告诉老师并帮助他', correct: true },
-        ],
-        feedback: {
-          correct: '你真是个好朋友！互相帮助，拒绝校园欺凌！',
-          wrong: '不对哦！我们应该帮助同学，告诉老师，不能让欺凌发生！'
-        }
-      },
-      {
-        icon: '👮',
-        question: '遇到困难或危险时，可以找谁帮忙？',
-        hint: '想想谁会保护我们～',
-        options: [
-          { text: '找警察叔叔', correct: true },
-          { text: '找陌生人帮忙', correct: false },
-          { text: '谁也不找', correct: false },
-        ],
-        feedback: {
-          correct: '答对了！警察叔叔会保护我们的安全，遇到困难可以找他们！',
-          wrong: '不对哦！遇到困难要找警察叔叔，他们专门保护我们的安全！'
-        }
-      },
-      {
-        icon: '⭐',
-        question: '在杭州，做一个好公民最重要的是？',
-        hint: '想一想我们活动的主题～',
-        options: [
-          { text: '遵守法律法规', correct: true },
-          { text: '只管自己开心', correct: false },
-          { text: '什么都不做', correct: false },
-        ],
-        feedback: {
-          correct: '完美！在浙里看见杭州法治，从小遵守规则，做守法好公民！',
-          wrong: '不对哦！遵守法律法规是最重要的，法治守护我们的每一天！'
-        }
-      }
+ <script>
+    // ===== 50题题库 =====
+    const questionBank = [
+      { icon:'🚦', question:'红灯亮了，你应该怎么做？', hint:'想一想交通规则哦～',
+        options:[{text:'赶紧跑过去',correct:false},{text:'停下来等绿灯',correct:true},{text:'看看没车就过去',correct:false}],
+        feedback:{correct:'太棒了！红灯停，绿灯行，安全第一记心里！',wrong:'不对哦！红灯必须停下来等绿灯，安全最重要！'} },
+      { icon:'👛', question:'在公园捡到一个钱包，你应该？', hint:'想想《民法典》怎么说～',
+        options:[{text:'自己留着用',correct:false},{text:'交给警察叔叔',correct:true},{text:'扔到垃圾桶里',correct:false}],
+        feedback:{correct:'真棒！拾金不昧是好品质，《民法典》也规定要归还失物哦！',wrong:'不对哦！捡到东西应该交给警察叔叔，这叫拾金不昧！'} },
+      { icon:'🏫', question:'看到同学被欺负，你应该？', hint:'想一想该怎么做才是对的～',
+        options:[{text:'假装没看见',correct:false},{text:'也去欺负他',correct:false},{text:'告诉老师并帮助他',correct:true}],
+        feedback:{correct:'你真是个好朋友！互相帮助，拒绝校园欺凌！',wrong:'不对哦！我们应该帮助同学，告诉老师，不能让欺凌发生！'} },
+      { icon:'👮', question:'遇到困难或危险时，可以找谁帮忙？', hint:'想想谁会保护我们～',
+        options:[{text:'找警察叔叔',correct:true},{text:'找陌生人帮忙',correct:false},{text:'谁也不找',correct:false}],
+        feedback:{correct:'答对了！警察叔叔会保护我们的安全，遇到困难可以找他们！',wrong:'不对哦！遇到困难要找警察叔叔，他们专门保护我们的安全！'} },
+      { icon:'⭐', question:'在杭州，做一个好公民最重要的是？', hint:'想一想我们活动的主题～',
+        options:[{text:'遵守法律法规',correct:true},{text:'只管自己开心',correct:false},{text:'什么都不做',correct:false}],
+        feedback:{correct:'完美！在浙里看见杭州法治，从小遵守规则，做守法好公民！',wrong:'不对哦！遵守法律法规是最重要的，法治守护我们的每一天！'} },
+      { icon:'🚸', question:'过马路时应该走哪里？', hint:'想想路上的白色线条～',
+        options:[{text:'翻越护栏',correct:false},{text:'走斑马线',correct:true},{text:'随便哪里都可以',correct:false}],
+        feedback:{correct:'太棒了！过马路一定要走斑马线，安全又文明！',wrong:'不对哦！过马路必须走斑马线，不能翻护栏！'} },
+      { icon:'🚗', question:'坐小汽车时为什么要系安全带？', hint:'想想安全带的作用～',
+        options:[{text:'保护安全',correct:true},{text:'因为好看',correct:false},{text:'不用系',correct:false}],
+        feedback:{correct:'答对了！安全带是保护我们安全的，坐车一定要系好！',wrong:'不对哦！安全带能在紧急刹车时保护我们，一定要系！'} },
+      { icon:'🚲', question:'骑自行车要在哪条道行驶？', hint:'想想马路上的车道～',
+        options:[{text:'机动车道',correct:false},{text:'非机动车道',correct:true},{text:'人行道',correct:false}],
+        feedback:{correct:'太棒了！自行车要走非机动车道，安全又守规！',wrong:'不对哦！自行车应该在非机动车道行驶！'} },
+      { icon:'🚏', question:'等公交车时应该怎么做？', hint:'想想排队的好处～',
+        options:[{text:'排队等候',correct:true},{text:'挤来挤去',correct:false},{text:'跑到马路上拦车',correct:false}],
+        feedback:{correct:'真棒！排队等车是文明好习惯！',wrong:'不对哦！等车要排队，不能挤也不能跑到马路上！'} },
+      { icon:'📵', question:'在图书馆里应该怎么做？', hint:'想想图书馆的规则～',
+        options:[{text:'大声说话',correct:false},{text:'保持安静',correct:true},{text:'大声打电话',correct:false}],
+        feedback:{correct:'太好了！图书馆是学习的地方，要保持安静！',wrong:'不对哦！图书馆里要安静，不能大声说话！'} },
+      { icon:'🗑️', question:'吃完零食的包装袋应该怎么处理？', hint:'想想垃圾桶的作用～',
+        options:[{text:'扔到地上',correct:false},{text:'扔进垃圾桶',correct:true},{text:'塞到座位里',correct:false}],
+        feedback:{correct:'真棒！垃圾要扔进垃圾桶，保护环境人人有责！',wrong:'不对哦！垃圾必须扔进垃圾桶，不能乱扔！'} },
+      { icon:'🌱', question:'我们可以为保护环境做什么？', hint:'想想日常生活中的小事～',
+        options:[{text:'乱摘花草',correct:false},{text:'爱护花草树木',correct:true},{text:'随便踩草坪',correct:false}],
+        feedback:{correct:'太棒了！爱护花草树木，保护环境从我做起！',wrong:'不对哦！我们要爱护花草树木，不能随意破坏！'} },
+      { icon:'💧', question:'洗完手后水龙头没关紧，你应该？', hint:'想想节约用水～',
+        options:[{text:'不管它',correct:false},{text:'帮忙关紧',correct:true},{text:'把水开更大',correct:false}],
+        feedback:{correct:'真棒！节约用水是好习惯，关紧水龙头人人有责！',wrong:'不对哦！看到没关紧的水龙头要帮忙关上！'} },
+      { icon:'🔥', question:'小朋友能不能玩火？', hint:'想想火的危险～',
+        options:[{text:'可以随便玩',correct:false},{text:'绝对不能玩',correct:true},{text:'偷偷玩一下',correct:false}],
+        feedback:{correct:'答对了！玩火非常危险，小朋友绝对不能玩火！',wrong:'不对哦！火很危险，小朋友千万不能玩火！'} },
+      { icon:'⚡', question:'不能用湿手碰什么？', hint:'想想安全用电～',
+        options:[{text:'玩具',correct:false},{text:'电器和插座',correct:true},{text:'书本',correct:false}],
+        feedback:{correct:'太棒了！湿手碰电器非常危险，一定要注意安全！',wrong:'不对哦！湿手不能碰电器和插座，会触电的！'} },
+      { icon:'🏠', question:'一个人在家时，陌生人敲门怎么办？', hint:'想想爸爸妈妈怎么教的～',
+        options:[{text:'马上开门',correct:false},{text:'不开门，问清楚是谁',correct:true},{text:'让他自己进来',correct:false}],
+        feedback:{correct:'真棒！陌生人敲门不能开，安全意识很强！',wrong:'不对哦！一个人在家时，陌生人敲门绝对不能开！'} },
+      { icon:'📱', question:'网上有陌生人问你的家庭住址，你应该？', hint:'想想网络安全～',
+        options:[{text:'告诉对方',correct:false},{text:'绝不告诉，告诉爸爸妈妈',correct:true},{text:'跟他聊天',correct:false}],
+        feedback:{correct:'答对了！网上陌生人问地址绝不能说，要告诉爸爸妈妈！',wrong:'不对哦！不能把家庭信息告诉网上的陌生人！'} },
+      { icon:'🆘', question:'遇到紧急情况要打哪个电话？', hint:'想想急救电话号码～',
+        options:[{text:'打110报警',correct:true},{text:'打游戏',correct:false},{text:'不用打电话',correct:false}],
+        feedback:{correct:'太棒了！遇到紧急情况要打110报警求助！',wrong:'不对哦！紧急情况要打110找警察帮忙！'} },
+      { icon:'🚑', question:'有人突然生病晕倒了，应该打什么电话？', hint:'想想急救电话～',
+        options:[{text:'打120叫救护车',correct:true},{text:'不管他',correct:false},{text:'打110',correct:false}],
+        feedback:{correct:'答对了！有人生病晕倒要赶紧打120叫救护车！',wrong:'不对哦！有人生病晕倒要打120急救电话！'} },
+      { icon:'🔥', question:'发生火灾时应该怎么做？', hint:'想想消防知识～',
+        options:[{text:'坐电梯下楼',correct:false},{text:'走楼梯逃生并拨打119',correct:true},{text:'躲到衣柜里',correct:false}],
+        feedback:{correct:'太棒了！火灾时不能坐电梯，要走楼梯逃生并打119！',wrong:'不对哦！火灾时不能坐电梯，要走楼梯逃生！'} },
+      { icon:'📖', question:'考试时可以偷看同学的答案吗？', hint:'想想诚实的重要性～',
+        options:[{text:'可以偷看',correct:false},{text:'绝对不可以',correct:true},{text:'看一眼没关系',correct:false}],
+        feedback:{correct:'真棒！考试要诚实，不能偷看别人的答案！',wrong:'不对哦！考试偷看是不诚实的行为，绝对不可以！'} },
+      { icon:'🤝', question:'借了同学的东西应该怎么办？', hint:'想想借东西的规矩～',
+        options:[{text:'忘记还',correct:false},{text:'及时归还并道谢',correct:true},{text:'不还了',correct:false}],
+        feedback:{correct:'太好了！借东西要及时归还，还要说谢谢！',wrong:'不对哦！借了别人的东西要及时归还！'} },
+      { icon:'🙅', question:'同学不小心碰到你，你应该？', hint:'想想友善相处～',
+        options:[{text:'打他一顿',correct:false},{text:'说没关系',correct:true},{text:'再也不理他',correct:false}],
+        feedback:{correct:'真棒！同学不是故意的，说没关系就好！',wrong:'不对哦！同学不小心碰到你，应该原谅他！'} },
+      { icon:'🌟', question:'在学校里应该怎样对待老师？', hint:'想想尊师重道～',
+        options:[{text:'不听老师话',correct:false},{text:'尊重老师，认真听课',correct:true},{text:'跟老师顶嘴',correct:false}],
+        feedback:{correct:'太棒了！尊重老师、认真听课是好学生！',wrong:'不对哦！我们要尊重老师，上课认真听讲！'} },
+      { icon:'📢', question:'在公共场所可以大声喧哗吗？', hint:'想想公共秩序～',
+        options:[{text:'可以随便喊',correct:false},{text:'保持安静，不大声喧哗',correct:true},{text:'想喊就喊',correct:false}],
+        feedback:{correct:'真棒！公共场所要保持安静，不能大声喧哗！',wrong:'不对哦！公共场所要遵守秩序，不能大声喧哗！'} },
+      { icon:'🌳', question:'在公园里可以随便摘花吗？', hint:'想想爱护公物～',
+        options:[{text:'可以随便摘',correct:false},{text:'不能摘花，要爱护花草',correct:true},{text:'摘一朵没关系',correct:false}],
+        feedback:{correct:'太好了！公园里的花是给大家看的，不能随便摘！',wrong:'不对哦！公园的花草要爱护，不能随意采摘！'} },
+      { icon:'🐕', question:'在路上遇到没有牵绳的狗，应该怎么做？', hint:'想想安全距离～',
+        options:[{text:'跑过去摸它',correct:false},{text:'远离它，不要靠近',correct:true},{text:'大声吼它',correct:false}],
+        feedback:{correct:'答对了！遇到没牵绳的狗要远离，不要靠近！',wrong:'不对哦！遇到没牵绳的狗要远离，不能靠近或激怒它！'} },
+      { icon:'🚱', question:'看到"禁止游泳"的牌子，你应该？', hint:'想想安全提示～',
+        options:[{text:'还是下水游泳',correct:false},{text:'不下水，遵守规定',correct:true},{text:'在旁边玩水',correct:false}],
+        feedback:{correct:'太棒了！禁止游泳的地方一定不能下水，很危险！',wrong:'不对哦！看到禁止游泳的牌子绝对不能下水！'} },
+      { icon:'🍝', question:'吃饭前应该先做什么？', hint:'想想卫生习惯～',
+        options:[{text:'直接吃',correct:false},{text:'洗手后再吃',correct:true},{text:'边玩边吃',correct:false}],
+        feedback:{correct:'真棒！饭前洗手是好习惯，讲究卫生！',wrong:'不对哦！吃饭前要先洗手，讲卫生！'} },
+      { icon:'🦷', question:'吃完糖后应该怎么做？', hint:'想想保护牙齿～',
+        options:[{text:'不刷牙',correct:false},{text:'早晚刷牙漱口',correct:true},{text:'只吃糖不刷牙',correct:false}],
+        feedback:{correct:'太好了！吃完糖要刷牙漱口，保护牙齿！',wrong:'不对哦！吃完糖要刷牙，不然会蛀牙！'} },
+      { icon:'🌞', question:'夏天出门为什么要涂防晒霜？', hint:'想想防晒的作用～',
+        options:[{text:'保护皮肤不被晒伤',correct:true},{text:'因为好看',correct:false},{text:'不用涂',correct:false}],
+        feedback:{correct:'答对了！防晒霜能保护皮肤不被太阳晒伤！',wrong:'不对哦！防晒霜能保护皮肤，夏天出门要涂！'} },
+      { icon:'🚪', question:'乘坐电梯时应该怎么做？', hint:'想想电梯安全～',
+        options:[{text:'在电梯里蹦蹦跳跳',correct:false},{text:'安静站立，不乱按按钮',correct:true},{text:'扒电梯门',correct:false}],
+        feedback:{correct:'太棒了！乘电梯要安静站立，不能蹦跳或扒门！',wrong:'不对哦！电梯里不能蹦跳或扒门，很危险！'} },
+      { icon:'🚥', question:'黄灯亮了表示什么意思？', hint:'想想交通信号～',
+        options:[{text:'赶紧冲过去',correct:false},{text:'准备停车，注意安全',correct:true},{text:'可以玩手机',correct:false}],
+        feedback:{correct:'答对了！黄灯表示要减速准备停车，注意安全！',wrong:'不对哦！黄灯亮了要减速准备停车！'} },
+      { icon:'🛴', question:'小朋友能不能在马路上滑滑板？', hint:'想想交通安全～',
+        options:[{text:'可以随便滑',correct:false},{text:'不行，很危险',correct:true},{text:'在车中间滑',correct:false}],
+        feedback:{correct:'太棒了！马路上滑滑板非常危险，绝对不可以！',wrong:'不对哦！马路上不能滑滑板，太危险了！'} },
+      { icon:'🍜', question:'买到过期的食品应该怎么办？', hint:'想想消费者权益～',
+        options:[{text:'吃了算了',correct:false},{text:'找商家退换或拨打12315',correct:true},{text:'偷偷扔掉',correct:false}],
+        feedback:{correct:'真棒！买到过期食品可以找商家退换或拨打12315维权！',wrong:'不对哦！买到过期食品要维权，可以拨打12315！'} },
+      { icon:'🎭', question:'在电影院看电影时应该怎么做？', hint:'想想文明观影～',
+        options:[{text:'大声说话',correct:false},{text:'安静观看，不吵闹',correct:true},{text:'站起来挡住别人',correct:false}],
+        feedback:{correct:'太好了！看电影要保持安静，不影响别人！',wrong:'不对哦！电影院里要安静，不能大声说话！'} },
+      { icon:'🚷', question:'能不能在教室里追逐打闹？', hint:'想想校园安全～',
+        options:[{text:'可以随便闹',correct:false},{text:'不行，容易受伤',correct:true},{text:'爬窗户玩',correct:false}],
+        feedback:{correct:'答对了！教室里不能追逐打闹，容易受伤！',wrong:'不对哦！教室里追逐打闹很危险！'} },
+      { icon:'📋', question:'在学校里排队的正确做法是？', hint:'想想秩序的重要性～',
+        options:[{text:'插队到最前面',correct:false},{text:'按顺序排队等候',correct:true},{text:'推前面的同学',correct:false}],
+        feedback:{correct:'太棒了！排队要按顺序，不插队不推人！',wrong:'不对哦！排队要按顺序，不能插队！'} },
+      { icon:'🧹', question:'值日打扫卫生时应该怎么做？', hint:'想想劳动意识～',
+        options:[{text:'偷懒不干',correct:false},{text:'认真打扫，保持教室整洁',correct:true},{text:'把垃圾扫到角落',correct:false}],
+        feedback:{correct:'真棒！认真打扫卫生是爱劳动的好表现！',wrong:'不对哦！值日要认真打扫，不能偷懒！'} },
+      { icon:'🛡️', question:'法律的作用是什么？', hint:'想想法律保护我们什么～',
+        options:[{text:'保护大家的安全和权益',correct:true},{text:'专门惩罚好人的',correct:false},{text:'没什么用',correct:false}],
+        feedback:{correct:'太好了！法律是保护我们安全和权益的规则！',wrong:'不对哦！法律是保护我们的，不是惩罚好人的！'} },
+      { icon:'📜', question:'小朋友在学校要遵守什么规则？', hint:'想想学校的规则～',
+        options:[{text:'校规校纪',correct:true},{text:'想做什么就做什么',correct:false},{text:'不用守规则',correct:false}],
+        feedback:{correct:'答对了！在学校要遵守校规校纪，做守纪好学生！',wrong:'不对哦！在学校要遵守校规校纪！'} },
+      { icon:'⚖️', question:'"法律面前人人平等"是什么意思？', hint:'想想公平的含义～',
+        options:[{text:'所有人都要遵守法律',correct:true},{text:'只有大人要遵守',correct:false},{text:'小朋友不用遵守',correct:false}],
+        feedback:{correct:'太棒了！法律面前人人平等，所有人都要遵守法律！',wrong:'不对哦！法律面前人人平等，小朋友也要遵守！'} },
+      { icon:'🪙', question:'不小心弄坏了同学的东西，应该怎么办？', hint:'想想承担责任～',
+        options:[{text:'假装不知道',correct:false},{text:'道歉并赔偿',correct:true},{text:'说是别人弄的',correct:false}],
+        feedback:{correct:'真棒！弄坏别人东西要道歉并赔偿，勇于承担责任！',wrong:'不对哦！弄坏别人东西要道歉，不能逃避责任！'} },
+      { icon:'🤐', question:'同学告诉你一个秘密，你应该怎么做？', hint:'想想信任和尊重～',
+        options:[{text:'告诉所有人',correct:false},{text:'保守秘密，不乱说',correct:true},{text:'嘲笑同学',correct:false}],
+        feedback:{correct:'太好了！别人的秘密要尊重，不乱说才是好朋友！',wrong:'不对哦！同学信任你才告诉你秘密，不能乱说！'} },
+      { icon:'🌃', question:'晚上一个人在外面走，应该怎么做？', hint:'想想夜间安全～',
+        options:[{text:'走明亮人多的路',correct:true},{text:'走黑黑的小巷子',correct:false},{text:'跟陌生人走',correct:false}],
+        feedback:{correct:'答对了！晚上要走明亮人多的路，不走小巷子！',wrong:'不对哦！晚上不能走黑巷子，要走明亮人多的路！'} },
+      { icon:'🎯', question:'别人做错了事，你应该？', hint:'想想宽容和理解～',
+        options:[{text:'嘲笑他',correct:false},{text:'鼓励他改正错误',correct:true},{text:'再也不理他',correct:false}],
+        feedback:{correct:'真棒！别人做错事要鼓励他改正，不能嘲笑！',wrong:'不对哦！别人做错事要鼓励他改正，不能嘲笑！'} },
+      { icon:'🌈', question:'在杭州，法治让我们的生活变得怎样？', hint:'想一想杭州法治的美好～',
+        options:[{text:'更安全更美好',correct:true},{text:'更可怕',correct:false},{text:'没变化',correct:false}],
+        feedback:{correct:'太棒了！法治让杭州更安全更美好，法治守护每一天！',wrong:'不对哦！法治让我们的生活更安全更美好！'} },
     ];
+
+    // ===== 从50题题库中随机抽取5题 =====
+    function pickRandomQuestions() {
+      const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, 5);
+    }
+    // 页面加载时随机抽题，不同人进入看到不同题目
+    let selectedQuestions = pickRandomQuestions();
 
     let currentQ = 0;
     let score = 0;
@@ -656,10 +735,10 @@
 
     function showQuestion() {
       answered = false;
-      const q = questions[currentQ];
-      document.getElementById('progressText').textContent = `第 ${currentQ + 1} 题 / 共 ${questions.length} 题`;
+      const q = selectedQuestions[currentQ];
+      document.getElementById('progressText').textContent = `第 ${currentQ + 1} 题 / 共 ${selectedQuestions.length} 题`;
       document.getElementById('scoreDisplay').textContent = `⭐ ${score} 分`;
-      document.getElementById('quizProgressFill').style.width = `${(currentQ / questions.length) * 100}%`;
+      document.getElementById('quizProgressFill').style.width = `${(currentQ / selectedQuestions.length) * 100}%`;
       document.getElementById('quizSceneIcon').textContent = q.icon;
       document.getElementById('quizQuestion').textContent = q.question;
       document.getElementById('quizHint').textContent = q.hint;
@@ -682,7 +761,7 @@
       if (answered) return;
       answered = true;
 
-      const q = questions[currentQ];
+      const q = selectedQuestions[currentQ];
       const allOptions = document.querySelectorAll('.quiz-option');
       allOptions.forEach(o => o.classList.add('disabled'));
 
@@ -713,13 +792,13 @@
       // 显示反馈
       setTimeout(() => {
         feedback.classList.add('show');
-        feedbackBtn.textContent = currentQ < questions.length - 1 ? '下一题 →' : '查看成绩 →';
+        feedbackBtn.textContent = currentQ < selectedQuestions.length - 1 ? '下一题 →' : '查看成绩 →';
       }, 600);
     }
 
     function nextQuestion() {
       document.getElementById('quizFeedback').classList.remove('show');
-      if (currentQ < questions.length - 1) {
+      if (currentQ < selectedQuestions.length - 1) {
         currentQ++;
         setTimeout(showQuestion, 300);
       } else {
