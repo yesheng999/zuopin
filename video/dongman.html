@@ -370,7 +370,7 @@
                   <animateTransform attributeName="transform" type="translate" values="400 280; 400 272; 400 280" dur="2s" repeatCount="indefinite"/>
                 </g>
               </svg>
-              <div class="scene-caption">法治小卫士闪亮登场！</div>
+              <div class="scene-caption">哇！法治小卫士来啦！大家好呀！</div>
             </div>
 
             <!-- 场景2：红绿灯 -->
@@ -451,7 +451,7 @@
                   <circle cx="0" cy="-10" r="25" fill="#00B894"/>
                 </g>
               </svg>
-              <div class="scene-caption">红灯停，绿灯行，安全第一记心里！</div>
+              <div class="scene-caption">红灯亮了要停下来哦，绿灯亮了才可以走呢！</div>
             </div>
 
             <!-- 场景3：拾金不昧 -->
@@ -565,7 +565,7 @@
                   <text x="0" y="4" text-anchor="middle" font-size="12" fill="#1e3a5f" font-weight="bold">好棒！拾金不昧！</text>
                 </g>
               </svg>
-              <div class="scene-caption">捡到东西要交警察叔叔，这就是拾金不昧！</div>
+              <div class="scene-caption">咦？地上有个钱包！快交给警察叔叔吧，这叫拾金不昧哦！</div>
             </div>
 
             <!-- 场景4：校园反欺凌 -->
@@ -665,7 +665,7 @@
                   </path>
                 </g>
               </svg>
-              <div class="scene-caption">在学校里，我们互相帮助，拒绝欺凌！</div>
+              <div class="scene-caption">在学校里呀，大家要做好朋友，互相帮助，不能欺负同学哦！</div>
             </div>
 
             <!-- 场景5：大合照 -->
@@ -769,7 +769,7 @@
                   <circle cx="740" cy="300" r="4" fill="#FF6B35"/>
                 </g>
               </svg>
-              <div class="scene-caption">人人争当法治小卫士！</div>
+              <div class="scene-caption">我们都是法治小卫士！耶！</div>
             </div>
 
             <!-- 场景6：结尾 -->
@@ -826,7 +826,7 @@
                   <rect x="-20" y="-18" width="40" height="6" rx="2" fill="#2D3436"/>
                 </g>
               </svg>
-              <div class="scene-caption">谢谢观看！</div>
+              <div class="scene-caption">谢谢大家观看！拜拜啦！</div>
             </div>
 
           </div>
@@ -946,14 +946,15 @@
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = "zh-CN";
-      utter.rate = rate || 1.0;
-      utter.pitch = 1.8;   // 更高音调模拟一年级稚嫩声音
+      utter.rate = (rate || 1.0) * 0.8;  // 整体减速，更接近幼儿语速
+      utter.pitch = 2.0;   // 最高音调，模拟幼儿稚嫩声音
       utter.volume = 1;
-      // 尝试选择中文女声
+      // 优先选择更年轻的女声（如Yaoyao），其次任意中文女声
       const voices = window.speechSynthesis.getVoices();
-      const cnVoice = voices.find(v => v.lang.includes("zh") && v.name.includes("Female"))
-                   || voices.find(v => v.lang.includes("zh"));
-      if (cnVoice) utter.voice = cnVoice;
+      const young = voices.find(v => v.lang.includes("zh") && /yaoyao|ya|tian|kid|child/i.test(v.name))
+                 || voices.find(v => v.lang.includes("zh") && /female|女|yao/i.test(v.name))
+                 || voices.find(v => v.lang.includes("zh"));
+      if (young) utter.voice = young;
       window.speechSynthesis.speak(utter);
     }
 
@@ -972,22 +973,31 @@
       });
     }
 
+    // 预加载语音引擎
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
+
+    // 从HTML字幕元素读取文案，确保语音与显示完全一致
+    function getCaptionText(idx) {
+      const el = scenes[idx].querySelector(".scene-caption");
+      return el ? el.textContent : (sceneCaptions[idx] || "");
+    }
+
     function showScene(idx) {
       if ("speechSynthesis" in window) window.speechSynthesis.cancel();
       scenes.forEach((s, i) => s.classList.toggle("active", i === idx));
       thumbs.forEach((t, i) => t.classList.toggle("active", i === idx));
       currentScene = idx;
       sceneElapsed = 0;
-      // 计算文字入场与语音同步参数
-      const text = sceneCaptions[idx];
+      // 从HTML字幕读取文案，确保与显示一致
+      const text = getCaptionText(idx);
       const charCount = text.length;
-      const charDelay = 0.12; // 每字入场间隔
-      const animDuration = (charCount - 1) * charDelay + 0.6; // 总入场时间
-      // 中文TTS约每字0.22秒(rate=1.0)，调整速率使语音时长≈入场时长
+      const charDelay = 0.12;
+      const animDuration = (charCount - 1) * charDelay + 0.6;
       const targetRate = Math.min(Math.max((charCount * 0.22) / animDuration, 0.7), 1.5);
-      // 文字跳动入场
       animateCaption(scenes[idx], charDelay);
-      // 语音同步播放
       speakCaption(text, targetRate);
     }
 
@@ -1008,7 +1018,7 @@
 
       // 触发当前场景的语音解说和字幕动画
       if (!("speechSynthesis" in window) || !window.speechSynthesis.speaking) {
-        const text = sceneCaptions[currentScene];
+        const text = getCaptionText(currentScene);
         const charCount = text.length;
         const charDelay = 0.12;
         const animDuration = (charCount - 1) * charDelay + 0.6;
