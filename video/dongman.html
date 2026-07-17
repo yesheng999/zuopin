@@ -1210,7 +1210,7 @@
           <div style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(255,107,53,0.05) 0%, transparent 50%); animation:spin-slow 20s linear infinite; pointer-events:none;"></div>
           <h4 style="font-size:16px; color:var(--secondary); margin-bottom:16px; position:relative;">📱 扫码观看《法治小卫士历险记》</h4>
           <div style="display:inline-block; padding:12px; background:white; border-radius:var(--radius-md); box-shadow:0 2px 12px rgba(0,0,0,0.08); position:relative;">
-            <img id="dongmanQR" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/video/dongman.html" 
+            <img id="dongmanQR" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/video/dongman.html" 
               alt="扫码观看" width="180" height="180" style="display:block; border-radius:8px;" />
           </div>
           <p style="font-size:13px; color:var(--text-light); margin-top:14px; position:relative;">手机扫码即可观看🎬</p>
@@ -1227,19 +1227,27 @@
         document.getElementById('downloadDongmanQR').addEventListener('click', function(e) {
           e.preventDefault();
           const qrImg = document.getElementById('dongmanQR');
-          fetch(qrImg.src)
-            .then(res => res.blob())
-            .then(blob => {
+          const canvas = document.createElement('canvas');
+          canvas.width = 180; canvas.height = 180;
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = function() {
+            ctx.drawImage(img, 0, 0, 180, 180);
+            canvas.toBlob(function(blob) {
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
-              a.href = url;
-              a.download = '法治小卫士历险记_二维码.png';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
+              a.href = url; a.download = '法治小卫士历险记_二维码.png';
+              document.body.appendChild(a); a.click(); document.body.removeChild(a);
               URL.revokeObjectURL(url);
-            })
-            .catch(() => { window.open(qrImg.src, '_blank'); });
+            }, 'image/png');
+          };
+          img.onerror = function() {
+            const a = document.createElement('a');
+            a.href = qrImg.src; a.download = '法治小卫士历险记_二维码.png'; a.target = '_blank';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          };
+          img.src = qrImg.src;
         });
       </script>
 
