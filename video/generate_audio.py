@@ -23,14 +23,14 @@ import time
 
 try:
     import dashscope
-    from dashscope.audio.tts_v2 import SpeechSynthesizer
+    from dashscope.audio.tts_v2 import SpeechSynthesizer, AudioFormat, ResultCallback
 except ImportError:
     print("请先安装 dashscope:  pip install dashscope")
     sys.exit(1)
 
 # ==================== 配置区 ====================
-# 替换为你的阿里云百炼 API Key
-API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+# 从环境变量读取 API Key（安全：不写入代码）
+API_KEY = os.environ.get("DASHSCOPE_API_KEY", "")
 
 # 童声音色
 VOICE = "longhuhu"        # 龙呼呼 — 天真烂漫女童
@@ -60,16 +60,14 @@ def generate_audio(text, output_path):
     synthesizer = SpeechSynthesizer(
         model=MODEL,
         voice=VOICE,
-        format="mp3",
-        sample_rate=22050,
+        format=AudioFormat.MP3_22050HZ_MONO_256KBPS,
     )
     audio_data = synthesizer.call(text)
     
-    if audio_data is None:
-        print(f"  [失败] 返回为空，错误信息: {synthesizer.get_last_response()}")
+    if not audio_data or not isinstance(audio_data, bytes):
+        print(f"  [失败] 未获取到音频数据")
         return False
     
-    # 写入文件
     with open(output_path, "wb") as f:
         f.write(audio_data)
     
