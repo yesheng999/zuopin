@@ -490,8 +490,7 @@
             <div class="result-title" id="resultTitle">法治小达人！</div>
             <div class="result-msg" id="resultMsg">恭喜你完成了所有题目！</div>
             <div class="result-btns">
-              <button class="result-btn primary" onclick="restartQuiz()">🔄 再玩一次</button>
-
+              <button class="result-btn primary" id="resultBtn1" onclick="restartQuiz()">🔄 再玩一次</button>
             </div>
           </div>
 
@@ -522,7 +521,7 @@
           <div style="position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(102,126,234,0.05) 0%, transparent 50%); animation:spin-slow 20s linear infinite; pointer-events:none;"></div>
           <h4 style="font-size:16px; color:var(--secondary); margin-bottom:16px; position:relative;">📱 扫码玩《法治知识大闯关》</h4>
           <div style="display:inline-block; padding:12px; background:white; border-radius:var(--radius-md); box-shadow:0 2px 12px rgba(0,0,0,0.08); position:relative;">
-            <img id="h5QR" crossorigin="anonymous" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/internet/h5.html" 
+            <img id="h5QR" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yesheng999.github.io/zuopin/internet/h5.html"
               alt="扫码互动" width="180" height="180" style="display:block; border-radius:8px;" />
           </div>
           <p style="font-size:13px; color:var(--text-light); margin-top:14px; position:relative;">手机扫码即可玩🎮</p>
@@ -830,9 +829,29 @@
       document.getElementById('resultTrophy').textContent = trophy;
       document.getElementById('resultTitle').textContent = title;
       document.getElementById('resultMsg').textContent = msg;
+
+      // 根据成绩动态切换按钮
+      const btn = document.getElementById('resultBtn1');
+      if (score === 100) {
+        // 全部答对：再次答题时更换全部题目
+        btn.textContent = '🔄 再次答题（换新题）';
+        btn.onclick = restartWithNewQuestions;
+      } else {
+        // 未全部答对：再答一次时题目不变，直到全答对
+        btn.textContent = '🔁 再答一次（相同题目）';
+        btn.onclick = restartWithSameQuestions;
+      }
     }
 
-    function restartQuiz() {
+    // 全部答对后再次答题：更换全部题目
+    function restartWithNewQuestions() {
+      selectedQuestions = pickRandomQuestions();
+      document.getElementById('h5Result').classList.remove('active');
+      document.getElementById('h5Start').style.display = 'flex';
+    }
+
+    // 未全答对再答一次：保持相同题目
+    function restartWithSameQuestions() {
       document.getElementById('h5Result').classList.remove('active');
       document.getElementById('h5Start').style.display = 'flex';
     }
