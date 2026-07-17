@@ -1314,19 +1314,13 @@
     // 预生成音频对象（阿里云CosyVoice龙呼呼童声）
     const sceneAudios = [];
     let currentAudio = null;
-    let audioAvailable = false;
 
     function initSceneAudios() {
       for (let i = 0; i < 6; i++) {
         const audio = new Audio(`audio/scene${i}.mp3`);
         audio.preload = 'auto';
-        audio.addEventListener('error', () => { /* 文件不存在时静默 */ });
         sceneAudios.push(audio);
       }
-      // 检测第一个文件是否可用
-      fetch('audio/scene0.mp3', { method: 'HEAD' })
-        .then(res => { audioAvailable = res.ok; })
-        .catch(() => { audioAvailable = false; });
     }
     initSceneAudios();
 
@@ -1335,8 +1329,8 @@
       if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; currentAudio = null; }
       if ("speechSynthesis" in window) window.speechSynthesis.cancel();
 
-      // 优先：播放预生成的童声音频
-      if (audioAvailable && sceneAudios[sceneIdx]) {
+      // 始终优先播放预生成的童声音频，仅在播放失败时降级到TTS
+      if (sceneAudios[sceneIdx]) {
         const audio = sceneAudios[sceneIdx];
         audio.currentTime = 0;
         audio.play().then(() => {
