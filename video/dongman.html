@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>法治小卫士历险记 - 视频类·动漫</title>
-  <link rel="stylesheet" href="../css/style.css?v=20260716">
+  <link rel="stylesheet" href="../css/style.css?v=20260716b">
   <style>
     .player-wrapper {
       max-width: 900px;
@@ -419,10 +419,6 @@
         <p class="work-subtitle">在浙里·看见杭州法治——我与杭州法治20年</p>
         <div class="author-info">
           <span>👤 作者：杭州市翠苑第二小学102班岳沐宸</span>
-          <span class="sep"></span>
-          <span>📐 分辨率：1920×1080</span>
-          <span class="sep"></span>
-          <span>📁 格式：MP4</span>
         </div>
       </div>
 
@@ -955,7 +951,7 @@
                 <!-- 信息 -->
                 <text x="400" y="265" text-anchor="middle" font-size="16" fill="white" opacity="0.8">作品名称：法治小卫士历险记</text>
                 <text x="400" y="290" text-anchor="middle" font-size="14" fill="white" opacity="0.6">作者：杭州市翠苑第二小学102班岳沐宸</text>
-                <text x="400" y="310" text-anchor="middle" font-size="14" fill="white" opacity="0.6">形式：动漫 · MP4 · 1920×1080</text>
+                
                 <!-- 法治小卫士（小） -->
                 <g transform="translate(400, 370) scale(0.5)">
                   <ellipse cx="0" cy="60" rx="25" ry="38" fill="#FF6B35"/>
@@ -1207,8 +1203,6 @@
         <div class="desc-card">
           <h4>🎨 创作说明</h4>
           <ul>
-            <li>作品形式：动漫动画</li>
-            <li>画面比例：16:9（1920×1080）</li>
             <li>角色：法治小卫士、小朋友、警察叔叔</li>
             <li>主题：法治守护每一天</li>
           </ul>
@@ -1301,39 +1295,26 @@
       window.speechSynthesis.onvoiceschanged = () => { childVoiceCache = loadChildVoice(); };
     }
 
-    // 预生成音频对象（阿里云CosyVoice龙呼呼童声）
-    const sceneAudios = [];
+    // 预生成音频对象（阿里云CosyVoice龙呼呼童声）— 使用单个Audio元素避免移动端多Audio冲突
+    let sceneAudioEl = new Audio();
+    sceneAudioEl.preload = 'auto';
     let currentAudio = null;
-
-    function initSceneAudios() {
-      for (let i = 0; i < 6; i++) {
-        const audio = new Audio(`audio/scene${i}.mp3`);
-        audio.preload = 'auto';
-        sceneAudios.push(audio);
-      }
-    }
-    initSceneAudios();
 
     function speakCaption(text, rate, sceneIdx) {
       // 停止当前播放
-      if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; currentAudio = null; }
+      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
       if ("speechSynthesis" in window) window.speechSynthesis.cancel();
 
       // 始终优先播放预生成的童声音频，仅在播放失败时降级到TTS
-      if (sceneAudios[sceneIdx]) {
-        const audio = sceneAudios[sceneIdx];
-        audio.currentTime = 0;
-        audio.play().then(() => {
-          currentAudio = audio;
-        }).catch(() => {
-          // 播放失败，降级到浏览器TTS
-          speakWithTTS(text);
-        });
-        return;
-      }
-
-      // 降级：浏览器TTS（婴幼儿音色）
-      speakWithTTS(text);
+      var audioSrc = `audio/scene${sceneIdx}.mp3`;
+      sceneAudioEl.src = audioSrc;
+      sceneAudioEl.currentTime = 0;
+      sceneAudioEl.play().then(() => {
+        currentAudio = sceneAudioEl;
+      }).catch(() => {
+        // 播放失败，降级到浏览器TTS
+        speakWithTTS(text);
+      });
     }
 
     function speakWithTTS(text) {
@@ -1642,7 +1623,7 @@
     })();
   </script>
 
-  <script src="../common/qr-modal.js?v=20260716"></script>
+  <script src="../common/qr-modal.js?v=20260716b"></script>
 <script>
     // 普法粒子背景
     const particles = ['⚖️', '⭐', '🛡️', '📜', '✨', '🌟'];
@@ -1659,6 +1640,14 @@
       bg.appendChild(p);
     }
   </script>
+
+  <!-- 浮动下载按钮 -->
+  <style>
+    .download-fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:linear-gradient(135deg,#FF6B35,#f7931e);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;text-decoration:none;box-shadow:0 4px 12px rgba(255,107,53,0.4);z-index:998;cursor:pointer;transition:transform 0.3s;}
+    .download-fab:hover{transform:scale(1.1);}
+    @media(max-width:480px){.download-fab{width:48px;height:48px;font-size:20px;bottom:16px;right:16px;}}
+  </style>
+  <a href="../export.html" class="download-fab" title="下载作品">⬇</a>
 
 </body>
 </html>

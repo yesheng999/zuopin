@@ -222,11 +222,10 @@
           }
         })
         .catch(function () {
-          // fetch失败：尝试直接下载当前显示的图片
+          // fetch失败：使用已加载的弹窗图片展示全屏遮罩，用户可长按保存/转发
           var modalImg = document.getElementById('qrModalImg');
-          if (modalImg.src) {
-            downloadImageDirect(modalImg.src, _currentTitle + '_二维码.png');
-            showShareGuide('saved');
+          if (modalImg && modalImg.src && modalImg.complete && modalImg.naturalWidth > 0) {
+            showQRFullScreenOverlay(modalImg.src);
           } else {
             copyUrlToClipboard();
           }
@@ -243,24 +242,23 @@
       saveBtn.textContent = '\u23F3 正在保存...';
       saveBtn.style.opacity = '0.7';
 
-      fetchQRBlob(_currentUrl, 400)
-        .then(function (blob) {
-          saveImageToDevice(blob, _currentTitle + '_二维码.png');
-          alert('\u2705 二维码图片已保存！\n\n请打开微信或QQ，在聊天中选择图片发送给好友。');
-        })
-        .catch(function () {
-          var modalImg = document.getElementById('qrModalImg');
-          if (modalImg.src) {
-            downloadImageDirect(modalImg.src, _currentTitle + '_二维码.png');
-            alert('\u2705 二维码图片已保存！\n\n请打开微信或QQ，在聊天中选择图片发送给好友。');
-          } else {
+      var modalImg = document.getElementById('qrModalImg');
+      if (modalImg && modalImg.src && modalImg.complete && modalImg.naturalWidth > 0) {
+        // 图片已加载——全屏展示，用户可长按保存到相册
+        showQRFullScreenOverlay(modalImg.src);
+      } else {
+        // 图片未加载——尝试fetch下载
+        fetchQRBlob(_currentUrl, 400)
+          .then(function (blob) {
+            saveImageToDevice(blob, _currentTitle + '_\u4E8C\u7EF4\u7801.png');
+          })
+          .catch(function () {
             copyUrlToClipboard();
-          }
-        })
-        .finally(function () {
-          saveBtn.textContent = '\uD83D\uDCBE 保存二维码图片';
-          saveBtn.style.opacity = '1';
-        });
+          });
+      }
+
+      saveBtn.textContent = '\uD83D\uDCBE \u4FDD\u5B58\u4E8C\u7EF4\u7801\u56FE\u7247';
+      saveBtn.style.opacity = '1';
     });
 
     // ========== 复制链接按钮 ==========
@@ -278,6 +276,29 @@
     });
 
     // ========== 辅助函数 ==========
+    function showQRFullScreenOverlay(imgSrc) {
+      var overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+
+      var img = document.createElement('img');
+      img.src = imgSrc;
+      img.style.cssText = 'max-width:80vw;max-height:65vh;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3);';
+
+      var tip = document.createElement('p');
+      tip.innerHTML = '\uD83D\u4466 \u957F\u6309\u4E8C\u7EF4\u7801\u56FE\u7247<br>\u9009\u62E9\u201C\u4FDD\u5B58\u56FE\u7247\u201D\u5230\u76F8\u518C';
+      tip.style.cssText = 'color:white;font-size:16px;margin-top:20px;text-align:center;line-height:1.8;';
+
+      var closeBtn = document.createElement('button');
+      closeBtn.textContent = '\u2715 \u5173\u95ED';
+      closeBtn.style.cssText = 'margin-top:20px;padding:10px 30px;background:#FF6B35;color:white;border:none;border-radius:8px;font-size:16px;cursor:pointer;';
+      closeBtn.onclick = function () { document.body.removeChild(overlay); };
+
+      overlay.appendChild(img);
+      overlay.appendChild(tip);
+      overlay.appendChild(closeBtn);
+      document.body.appendChild(overlay);
+    }
+
     function fetchQRBlob(url, size) {
       return fetch('https://quickchart.io/qr?text=' + url + '&size=' + size)
         .then(function (res) { return res.blob(); });
